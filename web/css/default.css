@@ -1,0 +1,198 @@
+body {
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    color: #000000;  
+    margin: 10px;
+}
+
+a:link, a:visited {
+    color: #045491;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+a:link:hover, a:visited:hover  {
+    color: #045491;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+.botao{
+    font-size:10px;
+    font-family:Verdana,Helvetica;
+    font-weight:bold;
+    color:white;
+    background:#638cb5;
+    border:0px;
+    width:80px;
+    height:19px;
+}
+
+top{
+    font-size: 24px;
+    color: #33cc00;
+    background-color: #0066cc;
+}
+
+.bg {
+    background-image: url("../imagens/menu_bg_lilas.png");
+    background-repeat: repeat-x;
+    height: 48px;
+}
+
+.falta {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.info {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #333333;
+    font-weight: normal;
+    text-align:center;
+    background-color:#FFF7D5;
+    border-color:#FFCC00;
+    width:25%;
+}
+
+.infoConflito {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #333333;
+    font-weight: normal;
+    text-align:center;
+    background-color:#FFF7D5;
+    border-color:#FFCC00;
+    width: 40%;
+}
+
+.resumo {
+    text-align:center;
+    background-color:#fbfbe2;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+}
+
+.resumoDiaHoraExtra {   
+    background-color:#ECF3FE;
+    border-right-style: inset;
+    border-left-style: inset;
+    border-bottom-style: inset;
+    border-top-style: inset;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+}
+
+.aviso {
+    text-align:center;
+    background-color:#fbfbe0;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    font-weight: normal;
+    font-style: normal;
+    color: #000000;
+    font-size: 13px;
+}
+
+.msg{    
+    font-size: 12px;
+    color: #000000;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.perfil {
+    width:230px;
+    text-align: left;
+
+}
+
+.inplace{
+    border: none;
+}
+.hover {
+    color: #999999;
+    background-color: #ffffcc;
+}
+
+.cellTop {
+    vertical-align:top;
+}
+
+.n {
+    vertical-align:top;
+}
+
+.rightt {
+    text-align: right;
+}
+
+.up{
+    vertical-align:top;
+}
+
+.down{
+    vertical-align:bottom;
+}
+
+.carregando {
+    width:100px;
+    height:70px;
+    z-index:100;
+    background-color: #FFFFFF;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border: 1px solid #333333;
+    background-image: url("../images/carregando.gif");
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-top:-95px;
+    margin-left:-50px;
+}
+
+.branco {
+    width: 230px;
+    margin-right: auto;
+    margin-left: auto;
+    height: 0px;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.right {
+    text-align: right;
+}
+
+.zebra1 {
+    background-color:#FCFFFE;
+}
+
+.zebra2 {
+    background-color: #ECF3FE;
+}
+
+.zebra3 {
+    background-color: #fbfbc0;
+}
+
+.zebra4 {
+    background-color: #f2f1f1;
+}
+
+.type{
+    font-weight:bold;
+    cursor:pointer;
+    float:left;
+    margin:5px;
+    text-decoration: underline;
+    color: blue;
+}

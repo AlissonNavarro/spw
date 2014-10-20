@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <!-- Plugging the "Blue Sky" skin into the project -->
+    <context-param>
+        <param-name>org.richfaces.SKIN</param-name>
+        <param-value>blueSky</param-value>
+    </context-param>
+    <!-- Making the RichFaces skin spread to standard HTML controls -->
+    <context-param>
+        <param-name>org.richfaces.CONTROL_SKINNING</param-name>
+        <param-value>enable</param-value>
+    </context-param>
+    <!-- Defining and mapping the RichFaces filter -->
+    <filter>
+        <display-name>RichFaces Filter</display-name>
+        <filter-name>richfaces</filter-name>
+        <filter-class>org.ajax4jsf.Filter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>richfaces</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <context-param>
+        <param-name>com.sun.faces.verifyObjects</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.validateXml</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <filter>
+        <filter-name>Filtro Seguranca</filter-name>
+        <filter-class>Filtro.FiltroSeguranca</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Filtro Seguranca</filter-name>
+        <url-pattern>/faces/admin/*</url-pattern>
+    </filter-mapping>       
+    <filter>
+        <filter-name>SessionTimeoutFilter</filter-name>
+        <filter-class>Filtro.SessionTimeoutFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionTimeoutFilter</filter-name>
+        <url-pattern>/faces/*</url-pattern>
+    </filter-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>faces/login.jsp</welcome-file>
+    </welcome-file-list>
+   
+   <error-page>
+        <error-code>500</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>303</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>501</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>502</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>503</error-code>
+        <location>/faces/login.jsp</location>
+    </error-page>
+
+ <!--     <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>
+                Entire Application
+            </web-resource-name>
+            <url-pattern>/faces/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>member</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Modulo apenas para administradores</realm-name>
+    </login-config>-->
+    
+    <!-- 
+        HTTPS abaixo
+    -->
+<!--
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>securedapp</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+-->
+    </web-app>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <nextCatalog catalog="nbproject/private/retriever/catalog.xml"/>
+    <system systemId="http://localhost/SGNManagerWS/WebService1.asmx?WSDL" uri="wsdl/localhost/SGNManagerWS/WebService1.asmx.wsdl"/>
+    <system systemId="http://172.16.0.6/SGNManagerWS/WebService1.asmx?WSDL" uri="wsdl/172.16.0.6/SGNManagerWS/WebService1.asmx.wsdl"/>
+    <system systemId="http://172.16.0.6/SGNManagerWS/WebService1.asmx?wsdl" uri="wsdl/172.16.0.6/SGNManagerWS/WebService1.asmx.wsdl"/>
+</catalog>

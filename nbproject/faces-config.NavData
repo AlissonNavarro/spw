@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="www/novoUsuario.jsp" x="400" y="450" zoom="true"/>
+        <Node id="admin/teste.jsp" x="400" y="900" zoom="true"/>
+        <Node id="admin/folhapagamento.jsp" x="650" y="750" zoom="true"/>
+        <Node id="admin/Escalas.jsp" x="150" y="600" zoom="true"/>
+        <Node id="admin/consultaFrequenciaAdmin.jsp" x="650" y="600" zoom="true"/>
+        <Node id="admin/Jornada.jsp" x="400" y="750" zoom="true"/>
+        <Node id="admin/deslocamentoTemporario.jsp" x="150" y="900" zoom="true"/>
+        <Node id="admin/relatorioMensal.jsp" x="150" y="300" zoom="true"/>
+        <Node id="admin/Escala.jsp" x="1150" y="150" zoom="true"/>
+        <Node id="admin/solicitacaoAbono.jsp?param=atualizar" x="900" y="300" zoom="true"/>
+        <Node id="www/consultaFrequencia.jsp" x="900" y="450" zoom="true"/>
+        <Node id="admin/listaPresenca.jsp" x="400" y="150" zoom="true"/>
+        <Node id="admin/adicionarHoraExtra.jsp" x="650" y="150" zoom="true"/>
+        <Node id="admin/ClockManager.jsp" x="1900" y="150" zoom="true"/>
+        <Node id="admin/pagamento.jsp" x="900" y="600" zoom="true"/>
+        <Node id="www/_top.jsp" x="150" y="750" zoom="true"/>
+        <Node id="admin/Configuracoes.jsp" x="1650" y="150" zoom="true"/>
+        <Node id="www/_bot.jsp" x="150" y="1050" zoom="true"/>
+        <Node id="admin/abonar.jsp" x="650" y="300" zoom="true"/>
+        <Node id="www/consultaDiaPonto.jsp" x="900" y="150" zoom="true"/>
+        <Node id="admin/consultaFrequenciaAdmin.jsp?param=clear" x="650" y="450" zoom="true"/>
+        <Node id="admin/abonarDiaAberto.jsp" x="150" y="450" zoom="true"/>
+        <Node id="admin/deslocamentoTemporario.jsp?param=atualizar" x="1400" y="300" zoom="true"/>
+        <Node id="admin/Administrador.jsp" x="400" y="600" zoom="true"/>
+        <Node id="admin/solicitacaoAbono.jsp" x="1150" y="300" zoom="true"/>
+        <Node id="login.jsp" x="1400" y="150" zoom="true"/>
+        <Node id="www/teste.jsp" x="400" y="300" zoom="true"/>
+        <Node id="admin/cadastros.jsp" x="152" y="152" zoom="true"/>
+        <Node id="www/conexaoBanco.jsp" x="1150" y="450" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RelatorioPonto" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="style1" isDefault="false" fontSize="10" isItalic="true" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="inicio" class="java.lang.String"/>
+	<parameter name="fim" class="java.lang.String"/>
+	<parameter name="matricula" class="java.lang.Integer"/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="cpf" class="java.lang.String"/>
+	<parameter name="lotacao" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cargo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="administradorNome" class="java.lang.String"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from relatorio_sem_escala]]>
+	</queryString>
+	<field name="data" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pontos" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="Matrícula" class="java.lang.String">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="variable1" class="java.lang.String"/>
+	<title>
+		<band height="66" splitType="Stretch">
+			<rectangle>
+				<reportElement x="3" y="2" width="799" height="63"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="28" width="801" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatório de Frequência]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="-1" y="45" width="802" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Período: "+$P{inicio}+" à "+$P{fim}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="2" width="798" height="26"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="30" width="801" height="13"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="30" width="83" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="4" y="7" width="798" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Matrícula: "+$P{matricula}+"    Nome: "+$P{nome}+"    CPF: " +$P{cpf}+"     Lotação: "+$P{lotacao}+"   Cargo: "+$P{cargo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="84" y="30" width="717" height="13"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PONTOS REGISTRADOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="84" y="30" width="1" height="13"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="1" width="801" height="13" isPrintWhenDetailOverflows="true"/>
+			</rectangle>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="84" y="0" width="1" height="13" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="83" height="13" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="96" y="1" width="706" height="13" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pontos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="126" splitType="Stretch">
+			<line>
+				<reportElement mode="Opaque" x="0" y="112" width="802" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="727" y="114" width="74" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="112" width="236" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Gerado por: "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="349" y="61" width="215" height="1"/>
+			</line>
+			<line>
+				<reportElement x="585" y="61" width="215" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="585" y="84" width="215" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[ ___/___/___]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="585" y="65" width="215" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="349" y="84" width="215" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[ ___/___/___]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="65" width="215" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Assinatura do supervisor]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<subDataset name="dataset1"/>
+	<subDataset name="dataset2"/>
+	<subDataset name="dataset3"/>
+	<parameter name="diasMesList" class="java.util.List" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="semanasDoMesList" class="java.util.List" isForPrompting="false"/>
+	<parameter name="horaAno" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="mesAno" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="dept" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="legendaSigla" class="java.lang.String"/>
+	<parameter name="legendaNumero" class="java.lang.String"/>
+	<parameter name="legendaAfastamento" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from relatorioResumoEscala]]>
+	</queryString>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="1" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="2" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="3" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="4" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="5" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="6" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="7" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="8" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="9" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="10" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="11" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="12" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="13" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="14" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="15" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="16" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="17" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="18" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="19" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="20" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="21" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="22" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="23" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="24" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="25" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="26" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="27" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="28" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="29" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="30" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="31" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="58" splitType="Stretch">
+			<rectangle>
+				<reportElement x="7" y="4" width="265" height="45"/>
+				<graphicElement>
+					<pen lineWidth="0.75" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="285" y="4" width="235" height="45"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="532" y="4" width="264" height="45"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="285" y="6" width="235" height="43"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESCALA DE SERVIÇO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="535" y="33" width="245" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" SETOR: "+$P{dept}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="535" y="19" width="245" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" MÊS/ANO: "+$P{mesAno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="535" y="6" width="191" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" DATA/HORA: "+$P{horaAno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="6" width="265" height="43"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<rectangle>
+				<reportElement x="7" y="2" width="790" height="37"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="2" width="201" height="37"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Nome do Funcionário]]></text>
+			</staticText>
+			<line>
+				<reportElement x="208" y="20" width="588" height="1"/>
+			</line>
+			<line>
+				<reportElement x="208" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="227" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="246" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="265" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="284" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="303" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="322" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="341" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="360" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="379" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="398" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="417" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="436" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="455" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="474" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="493" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="512" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="531" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="550" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="569" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="588" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="607" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="626" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="645" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="664" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="683" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="702" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="721" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="740" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="759" y="2" width="1" height="37"/>
+			</line>
+			<line>
+				<reportElement x="778" y="2" width="1" height="37"/>
+			</line>
+			<textField>
+				<reportElement x="209" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(0)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(1)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="247" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(3)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="285" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(5)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(6)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(7)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(8)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(9)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(10)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="418" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(11)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="437" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(12)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(13)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(14)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="494" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(15)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="513" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(16)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="532" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(17)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="551" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(18)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(19)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="589" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(20)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="608" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(21)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="627" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(22)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="646" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(23)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="665" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(24)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="684" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(25)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="703" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(26)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="722" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(27)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="741" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(28)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="760" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(29)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="779" y="21" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{diasMesList}.get(30)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="209" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(0)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="228" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(1)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="247" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(3)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="285" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="304" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(5)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(6)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(7)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(8)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(9)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(10)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="418" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(11)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="437" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(12)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(13)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(14)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="494" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(15)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="513" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(16)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="532" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(17)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="551" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(18)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(19)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="589" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(20)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="608" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(21)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="627" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(22)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="646" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(23)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="665" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(24)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="684" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(25)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="703" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(26)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="722" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(27)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="741" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(28)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="760" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(29)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="779" y="2" width="18" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{semanasDoMesList}.get(30)]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToTallestObject" x="7" y="0" width="790" height="22" isPrintWhenDetailOverflows="true"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="7" y="0" width="202" height="22" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="208" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="227" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="246" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="265" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="284" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="303" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="322" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="341" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="379" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="398" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="417" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="436" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="474" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="493" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="512" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="531" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="550" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="569" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="588" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="607" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="626" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="645" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="664" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="683" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="702" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="721" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="740" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="759" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<line>
+				<reportElement stretchType="RelativeToTallestObject" x="778" y="0" width="1" height="22" isPrintWhenDetailOverflows="true"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="208" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="227" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="246" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="265" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{4}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="284" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{5}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="303" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{6}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="322" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{7}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="341" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{8}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{9}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="379" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{10}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="398" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{11}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="417" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{12}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="436" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{13}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="455" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{14}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="474" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{15}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="493" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{16}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="512" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{17}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="531" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{18}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="550" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{19}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="569" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{20}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="588" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{21}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="607" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{22}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="626" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{23}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="645" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{24}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="664" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{25}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="683" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{26}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="702" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{27}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="721" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{28}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="740" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{29}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="759" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{30}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="778" y="0" width="19" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{31}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="11">
+			<textField>
+				<reportElement x="747" y="0" width="55" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Pag. "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="151" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="14" width="770" height="15"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LEGENDAS]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="9" y="32" width="784" height="14">
+					<printWhenExpression><![CDATA[($P{legendaSigla} != null) || !($P{legendaSigla}.equals(""))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="7" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LEGENDA DAS SIGLAS: "+$P{legendaSigla}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="9" y="52" width="784" height="14">
+					<printWhenExpression><![CDATA[($P{legendaNumero} != null) || !($P{legendaNumero}.equals(""))]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="7" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LEGENDA DOS NÚMEROS: "+$P{legendaNumero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="9" y="72" width="784" height="14">
+					<printWhenExpression><![CDATA[($P{legendaAfastamento} != null) || !($P{legendaAfastamento}.equals(""))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="7" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LEGENDA AFASTAMENTO: "+$P{legendaAfastamento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="97" y="136" width="85" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="283" y="137" width="175" height="1"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="528" y="137" width="190" height="1"/>
+			</line>
+			<staticText>
+				<reportElement positionType="Float" x="79" y="111" width="119" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="310" y="111" width="126" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHEFE DO SERVIÇO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="564" y="111" width="120" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRETOR DA DIVISÃO]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>
