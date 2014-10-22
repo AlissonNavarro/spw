@@ -1,8 +1,6 @@
 package AjustaHorarios;
 
-import Metodos.Metodos;
 import java.io.Serializable;
-import java.lang.Integer;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -10,14 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 //import java.util.logging.Logger;
 
 public class Bank implements Serializable {

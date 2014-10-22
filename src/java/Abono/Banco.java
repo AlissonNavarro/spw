@@ -7,7 +7,6 @@ package Abono;
 import ConsultaPonto.Jornada;
 import Metodos.Metodos;
 import Usuario.Usuario;
-import com.sun.crypto.provider.RSACipher;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
@@ -27,8 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-//import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 
 /**

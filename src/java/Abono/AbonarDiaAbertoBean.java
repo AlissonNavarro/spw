@@ -5,7 +5,6 @@
 package Abono;
 
 import ConsultaPonto.ConsultaFrequenciaComEscalaBean;
-import ConsultaPonto.DetalheDiaBean.TabelaFuncionario;
 import ConsultaPonto.DiaComEscala;
 import ConsultaPonto.Jornada;
 import ConsultaPonto.RegistroAdicionado;

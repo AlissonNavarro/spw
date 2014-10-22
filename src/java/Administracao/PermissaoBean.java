@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import org.ajax4jsf.model.KeepAlive;
 
 /**
  *
