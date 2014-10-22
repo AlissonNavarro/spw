@@ -206,12 +206,6 @@
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>teste</managed-bean-name>
-        <managed-bean-class>Teste.Teste</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
         <managed-bean-name>abonarDiaAbertoBean</managed-bean-name>
         <managed-bean-class>Abono.AbonarDiaAbertoBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
