@@ -271,7 +271,7 @@
                                                     </rich:column>
                                                     <rich:column sortBy="#{linha.nome}" style="text-align:center">
                                                         <f:facet name="header">
-                                                            <h:outputText value="NOME"/>
+                                                            <h:outputText value="NOME"/>a
                                                         </f:facet>
                                                         <h:outputText value="#{linha.nome}" />
                                                     </rich:column>
