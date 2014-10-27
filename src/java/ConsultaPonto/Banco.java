@@ -226,7 +226,6 @@ public class Banco {
             stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
         }
         return diaPontoList;
     }
@@ -265,7 +264,6 @@ public class Banco {
             stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
         }
         return diaPontoList;
     }
@@ -303,7 +301,6 @@ public class Banco {
             rs.close();
             stmt.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             System.out.println(e.getMessage());
         }
         return diaPontoList;
@@ -2622,19 +2619,18 @@ public class Banco {
                 Boolean combinarSaida = rs.getBoolean("CombineOut");
 
                 /*if (inicioDescanso1 == null && inicioDescanso2 == null) {
-                    inicioDescanso1 = null;
-                    fimDescanso1 = null;
-                    inicioIntrajornada = null;
-                    fimIntrajornada = null;
-                    inicioDescanso2 = null;
-                    fimDescanso2 = null;
-                } else if (inicioDescanso1 != null) {
-                    inicioIntrajornada = null;
-                    fimIntrajornada = null;
-                    inicioDescanso2 = null;
-                    fimDescanso2 = null;
-                }*/
-
+                 inicioDescanso1 = null;
+                 fimDescanso1 = null;
+                 inicioIntrajornada = null;
+                 fimIntrajornada = null;
+                 inicioDescanso2 = null;
+                 fimDescanso2 = null;
+                 } else if (inicioDescanso1 != null) {
+                 inicioIntrajornada = null;
+                 fimIntrajornada = null;
+                 inicioDescanso2 = null;
+                 fimDescanso2 = null;
+                 }*/
                 Jornada jornada = new Jornada();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String cometimeSrt = sdf.format(cometime.getTime());
@@ -4124,28 +4120,50 @@ public class Banco {
             System.out.println(e.getMessage());
         }
         return regimeList;
-
     }
 
-    public HashMap<Integer, Integer> getcod_funcionarioRegime() {
+    public List<SelectItem> getCargoSelectItem() {
 
-        HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        List<SelectItem> cargoList = new ArrayList<SelectItem>();
         PreparedStatement pstmt = null;
         ResultSet rs;
-
+        cargoList.add(new SelectItem(-1, "TODOS"));
         try {
-            String query = "select userid,cod_regime from userinfo";
+            String query = "select * from cargo";
 
             pstmt = c.prepareStatement(query);
 
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                Integer cargo = rs.getInt("cod_cargo");
+                String nome = rs.getString("nome");
+                cargoList.add(new SelectItem(cargo, nome));
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return cargoList;
+
+    }
+
+    public HashMap<Integer, Integer> getcod_funcionarioRegime() {
+        HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+            String query = "select userid,cod_regime from userinfo";
+            pstmt = c.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 Integer cod_regime = rs.getInt("cod_regime");
                 cod_funcionarioRegimeHashMap.put(userid, cod_regime);
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
@@ -4159,6 +4177,40 @@ public class Banco {
             }
         }
         return cod_funcionarioRegimeHashMap;
+
+    }
+
+    public HashMap<Integer, Integer> getcod_funcionarioCargo() {
+        HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+        System.out.println("pesquisando getcod_funcionarioCargo");
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+            String query = "select userid,CARGO from userinfo";
+            pstmt = c.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Integer userid = rs.getInt("userid");
+                Integer cargo = rs.getInt("CARGO");
+                cod_funcionarioCargoHashMap.put(userid, cargo);
+                System.out.println("funcCargo: " + userid + ", " + cargo);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (c != null) {
+                    pstmt.close();
+                    c.close();
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return cod_funcionarioCargoHashMap;
 
     }
 

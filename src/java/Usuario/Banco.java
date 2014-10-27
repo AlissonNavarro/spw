@@ -1,9 +1,7 @@
 package Usuario;
 
-import ClockManager.ClockManagerBean;
 import Metodos.Metodos;
 import Perfil.Perfil;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -11,15 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 
 /**
@@ -859,28 +852,5 @@ public class Banco {
         rs.close();
         stmt.close();
 
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        Connection c = new Banco().Conectarr();
-        Statement stmt = c.createStatement();
-        //       File file = new File("myimage.gif");
-        //       FileInputStream fis = new FileInputStream(file);
-        //       PreparedStatement ps =
-//                conn.prepareStatement("insert into images values (?,?)");
-//        ps.setString(1, file.getName());
-//        ps.setBinaryStream(2, fis, (int) file.length());
-
-    }
-
-    public Connection Conectarr() throws SQLException {
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            Connection c = DriverManager.getConnection("jdbc:jtds:sqlserver://FS-DESEN-05:1904/lurdes;user=user_web;password=123@net");
-            //         executeStatement(con);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe);
-        }
-        return c;
     }
 }
