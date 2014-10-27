@@ -226,7 +226,6 @@ public class Banco {
             stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
         }
         return diaPontoList;
     }
@@ -265,7 +264,6 @@ public class Banco {
             stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
         }
         return diaPontoList;
     }
@@ -303,7 +301,6 @@ public class Banco {
             rs.close();
             stmt.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             System.out.println(e.getMessage());
         }
         return diaPontoList;

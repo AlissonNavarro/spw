@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-//import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -267,7 +266,6 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                         for (PeriodoJornada periodoJornada : dataPeriodoJornadaList) {
 
                             inicializarAtributosConsultaDias2();
-                            Integer num_jornada = periodoJornada.getNum_jornada();
                             //Date startDate = banco.consultaStartDate(num_jornada, periodoJornada.getInicioJornada(), dataInicio);
                             Date startDate = periodoJornada.getInicioJornada();
 
@@ -282,20 +280,20 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
 
                                 List<Integer> diasDeslocadosFolgas = banco.consultaDiasDeslocadosSemTrabalho(cod_funcionario, periodoJornada.getInicio(), periodoJornada.getFim());
 
-                                List<Integer> diasTrabalhoList = banco.consultaDiasTrabalho(cod_funcionario, num_jornada, periodoJornada.getInicio(),
+                                List<Integer> diasTrabalhoList = banco.consultaDiasTrabalho(cod_funcionario, periodoJornada.getNum_jornada(), periodoJornada.getInicio(),
                                         periodoJornada.getFim(), startDate, diasDeslocadosFolgas, feriadoList);
 
                                 addDiasDeslocados(diasTrabalhoList, diasDeslocadosAdicionais);
 
-                                qntDSR += calcDSR(num_jornada, periodoJornada.getInicio(), periodoJornada.getFim(), startDate, diasDeslocadosFolgas, feriadoList);
+                                qntDSR += calcDSR(periodoJornada.getNum_jornada(), periodoJornada.getInicio(), periodoJornada.getFim(), startDate, diasDeslocadosFolgas, feriadoList);
 
                                 List<Ponto> pontoList = banco.consultaChechInOut(cod_funcionario, periodoJornada.getInicio(), periodoJornada.getFim());
 
                                 pontos = addListPontoSemRedundancia(pontos, pontoList);
 
-                                jornadaList = banco.consultaRegraJornada(cod_funcionario, num_jornada);
+                                jornadaList = banco.consultaRegraJornada(cod_funcionario, periodoJornada.getNum_jornada());
 
-                                HashMap<Integer, List<Integer>> diaMesHash = banco.getDiaHashMap(cod_funcionario, num_jornada, periodoJornada.getInicio(), periodoJornada.getFim(), startDate);
+                                HashMap<Integer, List<Integer>> diaMesHash = banco.getDiaHashMap(cod_funcionario, periodoJornada.getNum_jornada(), periodoJornada.getInicio(), periodoJornada.getFim(), startDate);
                                 sdiasHashMap.putAll(diaMesHash);
 
                                 List<DiaComEscala> diasComEscala = apurarDiasTrabalhados(pontos, diasTrabalhoList, mapaDiaEraDataStr);
