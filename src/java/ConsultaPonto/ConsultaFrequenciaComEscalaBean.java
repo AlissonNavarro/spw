@@ -62,10 +62,13 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     private List<DiaSemEscala> diasComRegistroSemEscalaList;
     private List<SelectItem> departamentolist;
     private List<SelectItem> regimeOpcaoFiltroFuncionarioList;
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
     private List<SelectItem> gestorFiltroFuncionarioList;
     private Integer regimeSelecionadoOpcaoFiltroFuncionario;
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
     private Integer tipoGestorSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioRegimeHashMap;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<String> horasTrabalhadasDiaList;
     private List<String> horasaSeremTrabalhadasDiaList;
@@ -4166,10 +4169,13 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     }
 
     private void iniciarOpcoesFiltro() {
+        System.out.println("teste de filtro");
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
+        cargoOpcaoFiltroFuncionarioList = b.getCargoSelectItem();
         cod_funcionarioRegimeHashMap = b.getcod_funcionarioRegime();
+        cod_funcionarioCargoHashMap = b.getcod_funcionarioCargo();
 
     }
 
@@ -4191,11 +4197,11 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
             SelectItem funcionario = it.next();
             if (!funcionario.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario);
+                Boolean criterioCargo = isFuncionarioDentroCriterioCargo(funcionario);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario);
-
-                if (criterioGestor && criterioRegime) {
+                if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario);
-                }
+                } 
             } else {
                 funcionarioList_.add(funcionario);
             }
@@ -4209,6 +4215,13 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
 
         return criterioRegime;
+    }
+
+    private Boolean isFuncionarioDentroCriterioCargo(SelectItem funcionarioSelectItem) {
+        Boolean criterioCargo = false;
+        Integer cargo = cod_funcionarioCargoHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
+        criterioCargo = (cargoSelecionadoOpcaoFiltroFuncionario == -1) || cargo.equals(cargoSelecionadoOpcaoFiltroFuncionario);
+        return criterioCargo;
     }
 
     private Boolean isFuncionarioDentroCriterioGestor(SelectItem funcionarioSelectItem) {
@@ -4291,9 +4304,11 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         cod_funcionario = 0;
         diasList = new ArrayList<DiaComEscala>();
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoSelecionadoOpcaoFiltroFuncionario = -1;
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         departamento = null;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         diasDeslocamentoTempHashMap = new HashMap<String, DescolamentoTemporario>();
         afastamento = new Afastamento();
         setAfastamentoList(new ArrayList<Afastamento>());
@@ -4700,6 +4715,22 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
 
     public List<SelectItem> getRegimeOpcaoFiltroFuncionarioList() {
         return regimeOpcaoFiltroFuncionarioList;
+    }
+
+    public List<SelectItem> getCargoOpcaoFiltroFuncionarioList() {
+        return cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public void setCargoOpcaoFiltroFuncionarioList(List<SelectItem> cargoOpcaoFiltroFuncionarioList) {
+        this.cargoOpcaoFiltroFuncionarioList = cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public Integer getCargoSelecionadoOpcaoFiltroFuncionario() {
+        return cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public void setCargoSelecionadoOpcaoFiltroFuncionario(Integer cargoSelecionadoOpcaoFiltroFuncionario) {
+        this.cargoSelecionadoOpcaoFiltroFuncionario = cargoSelecionadoOpcaoFiltroFuncionario;
     }
 
     public void setRegimeOpcaoFiltroFuncionarioList(List<SelectItem> regimeOpcaoFiltroFuncionarioList) {

@@ -98,13 +98,6 @@
                                                                  reRender="funcionario,dias,resumo,f_messagens"/>
 
                                                 </h:selectOneMenu>
-                                                <rich:spacer width="10"/>
-
-                                                <h:selectOneMenu id="funcionario" value="#{consultaFrequenciaComEscalaBean.cod_funcionario}">
-                                                    <f:selectItems value="#{consultaFrequenciaComEscalaBean.funcionarioList}"/>
-                                                    <a4j:support event="onchange"  action="#{consultaFrequenciaComEscalaBean.consultaDias}"
-                                                                 reRender="panel,dias,resumo,f_messagens"/>
-                                                </h:selectOneMenu>
                                                 <h:outputLink id="filtroFuncionarioComEscala" value="#">
                                                     <center>
                                                         <h:graphicImage  value="../images/filtro.gif" style="border:0"/>
@@ -112,6 +105,13 @@
                                                     <rich:componentControl for="filtroFuncionarioComEscalaModalPanel"
                                                                            attachTo="filtroFuncionarioComEscala" operation="show" event="onclick"/>
                                                 </h:outputLink>
+
+                                                <h:selectOneMenu id="funcionario" value="#{consultaFrequenciaComEscalaBean.cod_funcionario}">
+                                                    <f:selectItems value="#{consultaFrequenciaComEscalaBean.funcionarioList}"/>
+                                                    <a4j:support event="onchange"  action="#{consultaFrequenciaComEscalaBean.consultaDias}"
+                                                                 reRender="panel,dias,resumo,f_messagens"/>
+                                                </h:selectOneMenu>
+                                                <rich:spacer width="10"/>
 
                                                 <rich:calendar inputSize="8" locale="#{consultaFrequenciaComEscalaBean.objLocale}" value="#{consultaFrequenciaComEscalaBean.dataInicio}" >
                                                     <a4j:support event="onchanged" ajaxSingle="true"  action="#{consultaFrequenciaComEscalaBean.consultaDias}"
@@ -146,7 +146,7 @@
                                                 </h:panelGrid>
                                             </rich:modalPanel>
                                             <rich:modalPanel id="filtroFuncionarioComEscalaModalPanel"
-                                                             width="750" height="250"  style="text-align:center;float:center;" >
+                                                             width="750" height="350"  style="text-align:center;float:center;" >
                                                 <f:facet name="header">
                                                     <h:panelGroup>
                                                         <h:outputText value="Filtrar funcionários"></h:outputText>
@@ -159,6 +159,15 @@
                                                     </h:panelGroup>
                                                 </f:facet>
                                                 <center>
+                                                    <fieldset class="demo_fieldset" >
+                                                        <legend style="font-weight: bold;">Por Cargo</legend>
+                                                        <h:panelGroup>
+                                                            <h:selectOneMenu value="#{consultaFrequenciaComEscalaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                                <f:selectItems value="#{consultaFrequenciaComEscalaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                            </h:selectOneMenu>
+                                                        </h:panelGroup>
+                                                    </fieldset>
+                                                    <br> 
                                                     <fieldset class="demo_fieldset" >
                                                         <legend style="font-weight: bold;">Por Regime</legend>
                                                         <h:panelGroup>
