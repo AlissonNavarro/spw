@@ -47,7 +47,7 @@ public class RelatorioMensalBean implements Serializable {
 
     public RelatorioMensalBean() {
         inicializarAtributos();
-        departamentosSelecItem = new ArrayList<SelectItem>();
+        departamentosSelecItem = new ArrayList<>();
         objLocale = new Locale("pt", "BR");
         dataInicio = getPrimeiroDiaMes();
         dataFim = getUltimoDiaMes();
@@ -92,22 +92,14 @@ public class RelatorioMensalBean implements Serializable {
 
             ConsultaFrequenciaComEscalaBean c = new ConsultaFrequenciaComEscalaBean("");
 
-            //Date dataInicio_ = (Date) dataInicio.clone();
-            //Date dataFim_ = (Date) dataFim.clone();
-            //c.setDataInicio(dataInicio_);
-            //c.setDataFim(dataFim_);
             c.setDataInicio(dataInicio);
             c.setDataFim(dataFim);
-            List<Integer> matriculasList = new ArrayList<Integer>();
-            List<Integer> matriculasMergeList = new ArrayList<Integer>();
+            List<Integer> matriculasList = new ArrayList<>();
+            List<Integer> matriculasMergeList = new ArrayList<>();
             Banco banco = new Banco();
             matriculasList = banco.consultaFuncionarioDepartamento(Integer.parseInt(departamentoSelecionado), incluirSubSetores);
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
-                //dataInicio_ = (Date) dataInicio.clone();
-                //dataFim_ = (Date) dataFim.clone();
                 c = new ConsultaFrequenciaComEscalaBean("");
-                //c.setDataInicio(dataInicio_);
-                //c.setDataFim(dataFim_);
                 c.setDataInicio(dataInicio);
                 c.setDataFim(dataFim);
                 Integer userid = it.next();
@@ -144,9 +136,9 @@ public class RelatorioMensalBean implements Serializable {
 
             c.setDataInicio(dataInicio);
             c.setDataFim(dataFim);
-            List<Integer> matriculasList = new ArrayList<Integer>();
+            List<Integer> matriculasList = new ArrayList<>();
             List<Integer> matriculasMergeList = new ArrayList<Integer>();
-            List<Funcionario> funcionariosSemEscalaList = new ArrayList<Funcionario>();
+            List<Funcionario> funcionariosSemEscalaList = new ArrayList<>();
 
             matriculasList = getFuncionarios();
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
@@ -294,21 +286,16 @@ public class RelatorioMensalBean implements Serializable {
 
             ConsultaFrequenciaComEscalaBean c = new ConsultaFrequenciaComEscalaBean("");
 
-            Date dataInicio_ = (Date) dataInicio.clone();
-            Date dataFim_ = (Date) dataFim.clone();
-
-            c.setDataInicio(dataInicio_);
-            c.setDataFim(dataFim_);
+            c.setDataInicio(dataInicio);
+            c.setDataFim(dataFim);
             List<Integer> matriculasList = new ArrayList<>();
             List<Integer> matriculasMergeList = new ArrayList<>();
             Banco banco = new Banco();
             matriculasList = banco.consultaFuncionarioDepartamento(Integer.parseInt(departamentoSelecionado), incluirSubSetores);
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
-                dataInicio_ = (Date) dataInicio.clone();
-                dataFim_ = (Date) dataFim.clone();
                 c = new ConsultaFrequenciaComEscalaBean("");
-                c.setDataInicio(dataInicio_);
-                c.setDataFim(dataFim_);
+                c.setDataInicio(dataInicio);
+                c.setDataFim(dataFim);
                 Integer userid = it.next();
                 c.setCod_funcionario(userid);
                 System.out.println("Matrícula funcionario: " + userid);
