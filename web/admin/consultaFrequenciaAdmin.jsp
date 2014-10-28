@@ -167,7 +167,7 @@
                                                             </h:selectOneMenu>
                                                         </h:panelGroup>
                                                     </fieldset>
-                                                    <br> 
+                                                    <br>
                                                     <fieldset class="demo_fieldset" >
                                                         <legend style="font-weight: bold;">Por Regime</legend>
                                                         <h:panelGroup>
@@ -560,6 +560,15 @@
                                             </f:facet>
                                             <center>
                                                 <fieldset class="demo_fieldset" >
+                                                    <legend style="font-weight: bold;">Por Cargo</legend>
+                                                    <h:panelGroup>
+                                                        <h:selectOneMenu value="#{consultaFrequenciaSemEscalaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                            <f:selectItems value="#{consultaFrequenciaSemEscalaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                        </h:selectOneMenu>
+                                                    </h:panelGroup>
+                                                </fieldset>
+                                                <br>
+                                                <fieldset class="demo_fieldset" >
                                                     <legend style="font-weight: bold;">Por Regime</legend>
                                                     <h:panelGroup >
                                                         <h:selectOneRadio
@@ -725,6 +734,14 @@
                                                 </h:panelGroup>
                                             </f:facet>
                                             <center>
+                                                <fieldset class="demo_fieldset" >
+                                                    <legend style="font-weight: bold;">Por Cargo</legend>
+                                                    <h:panelGroup>
+                                                        <h:selectOneMenu value="#{consultaFrequenciaHoraExtraBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                            <f:selectItems value="#{consultaFrequenciaHoraExtraBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                        </h:selectOneMenu>
+                                                    </h:panelGroup>
+                                                </fieldset>
                                                 <fieldset class="demo_fieldset" >
                                                     <legend style="font-weight: bold;">Por Regime</legend>
                                                     <h:panelGroup >

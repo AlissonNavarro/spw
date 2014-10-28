@@ -36,14 +36,20 @@ public class FuncionarioBean implements Serializable {
     private Boolean incluirSubSetores;
     private Funcionario funcionario;
     private Funcionario newFuncionario;
+    //Filtro por regime
     private List<SelectItem> regimeOpcaoFiltroFuncionarioList;
     private Integer regimeSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioRegimeHashMap;
+    //Filtro por gestor
     private Integer tipoGestorSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<SelectItem> gestorFiltroFuncionarioList;
     private List<SelectItem> regimelist;
     private String ip;
+    //Filtro por cargo
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
 
     public String getIp() {
         return ip;
@@ -277,8 +283,10 @@ public class FuncionarioBean implements Serializable {
 
     private void inicializarAtributos() {
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoSelecionadoOpcaoFiltroFuncionario = -1;
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         iniciarOpcoesFiltro();
         cod_funcionario = null;
     }
@@ -287,7 +295,9 @@ public class FuncionarioBean implements Serializable {
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
+        cargoOpcaoFiltroFuncionarioList = b.getCargoSelectItem();
         cod_funcionarioRegimeHashMap = b.getcod_funcionarioRegime();
+        cod_funcionarioCargoHashMap = b.getcod_funcionarioCargo();
 
     }
 
@@ -327,6 +337,13 @@ public class FuncionarioBean implements Serializable {
         criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
 
         return criterioRegime;
+    }
+    
+    private Boolean isFuncionarioDentroCriterioCargo(SelectItem funcionarioSelectItem) {
+        Boolean criterioCargo = false;
+        Integer cargo = cod_funcionarioCargoHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
+        criterioCargo = (cargoSelecionadoOpcaoFiltroFuncionario == -1) || cargo.equals(cargoSelecionadoOpcaoFiltroFuncionario);
+        return criterioCargo;
     }
 
     private Boolean isFuncionarioDentroCriterioGestor(SelectItem funcionarioSelectItem) {

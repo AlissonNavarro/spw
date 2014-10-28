@@ -205,6 +205,15 @@
                                                             </f:facet>
                                                             <center>
                                                                 <fieldset class="demo_fieldset" >
+                                                                        <legend style="font-weight: bold;">Por Cargo</legend>
+                                                                        <h:panelGroup>
+                                                                            <h:selectOneMenu value="#{listaPresencaTotalBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                                                <f:selectItems value="#{listaPresencaTotalBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                                            </h:selectOneMenu>
+                                                                        </h:panelGroup>
+                                                                    </fieldset>
+                                                                    <br>
+                                                                <fieldset class="demo_fieldset" >
                                                                     <legend style="font-weight: bold;">Por Regime</legend>
                                                                     <h:panelGroup >
                                                                         <h:selectOneRadio
