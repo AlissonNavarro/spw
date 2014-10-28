@@ -4,7 +4,7 @@
         <Titulo>SGN</Titulo>
         <Server>localhost</Server>
         <Port>1433</Port>
-        <Database>card</Database>
+        <Database>sms</Database>
         <User>user_web</User>
         <Password>123@net</Password>
         <SenhaAdministrador>ol7LiUsfRxg=</SenhaAdministrador>
