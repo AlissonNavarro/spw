@@ -228,7 +228,7 @@ public class Banco {
     public Boolean insertADUser(String cpf, String aduser) {
         Boolean ok = false;
 
-        PreparedStatement pstmt = null;
+        PreparedStatement pstmt;
         try {
             String query = "UPDATE userinfo SET adusername = ? WHERE ssn = ?";
 
@@ -239,7 +239,7 @@ public class Banco {
 
             pstmt.close();
             ok = true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return ok;
@@ -305,7 +305,7 @@ public class Banco {
                 rs.close();
                 stmt.close();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
             try {
@@ -320,7 +320,7 @@ public class Banco {
 
     public List<SelectItem> getUsuarioVinculos(String login) {
 
-        List<SelectItem> vinculosList = new ArrayList<SelectItem>();
+        List<SelectItem> vinculosList = new ArrayList<>();
 
         try {
             Conectar();
@@ -340,7 +340,7 @@ public class Banco {
             }
 
             if ((vinculosList.size() < 2) || login.equals("000.000.000-00")) {
-                vinculosList = new ArrayList<SelectItem>();
+                vinculosList = new ArrayList<>();
             }
             rs.close();
             stmt.close();

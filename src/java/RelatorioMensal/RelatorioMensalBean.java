@@ -142,22 +142,17 @@ public class RelatorioMensalBean implements Serializable {
 
             ConsultaFrequenciaComEscalaBean c = new ConsultaFrequenciaComEscalaBean("");
 
-            Date dataInicio_ = (Date) dataInicio.clone();
-            Date dataFim_ = (Date) dataFim.clone();
-
-            c.setDataInicio(dataInicio_);
-            c.setDataFim(dataFim_);
+            c.setDataInicio(dataInicio);
+            c.setDataFim(dataFim);
             List<Integer> matriculasList = new ArrayList<Integer>();
             List<Integer> matriculasMergeList = new ArrayList<Integer>();
             List<Funcionario> funcionariosSemEscalaList = new ArrayList<Funcionario>();
 
             matriculasList = getFuncionarios();
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
-                dataInicio_ = (Date) dataInicio.clone();
-                dataFim_ = (Date) dataFim.clone();
                 c = new ConsultaFrequenciaComEscalaBean("");
-                c.setDataInicio(dataInicio_);
-                c.setDataFim(dataFim_);
+                c.setDataInicio(dataInicio);
+                c.setDataFim(dataFim);
                 Integer userid = it.next();
                 c.setCod_funcionario(userid);
                 c.consultaDiasSemMsgErro();
@@ -199,22 +194,17 @@ public class RelatorioMensalBean implements Serializable {
 
             ConsultaFrequenciaComEscalaBean c = new ConsultaFrequenciaComEscalaBean("");
 
-            Date dataInicio_ = (Date) dataInicio.clone();
-            Date dataFim_ = (Date) dataFim.clone();
-
-            c.setDataInicio(dataInicio_);
-            c.setDataFim(dataFim_);
-            List<Integer> matriculasList = new ArrayList<Integer>();
-            List<Integer> matriculasMergeList = new ArrayList<Integer>();
-            List<Funcionario> funcionariosSemEscalaList = new ArrayList<Funcionario>();
+            c.setDataInicio(dataInicio);
+            c.setDataFim(dataFim);
+            List<Integer> matriculasList = new ArrayList<>();
+            List<Integer> matriculasMergeList = new ArrayList<>();
+            List<Funcionario> funcionariosSemEscalaList = new ArrayList<>();
 
             matriculasList = getFuncionarios();
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
-                dataInicio_ = (Date) dataInicio.clone();
-                dataFim_ = (Date) dataFim.clone();
                 c = new ConsultaFrequenciaComEscalaBean("");
-                c.setDataInicio(dataInicio_);
-                c.setDataFim(dataFim_);
+                c.setDataInicio(dataInicio);
+                c.setDataFim(dataFim);
                 Integer userid = it.next();
                 c.setCod_funcionario(userid);
                 System.out.println("Matrícula funcionario: " + userid);
@@ -261,8 +251,8 @@ public class RelatorioMensalBean implements Serializable {
 
             c.setDataInicio(dataInicio_);
             c.setDataFim(dataFim_);
-            List<Integer> matriculasList = new ArrayList<Integer>();
-            List<Integer> matriculasMergeList = new ArrayList<Integer>();
+            List<Integer> matriculasList = new ArrayList<>();
+            List<Integer> matriculasMergeList = new ArrayList<>();
             Banco banco = new Banco();
             matriculasList = banco.consultaFuncionarioDepartamento(Integer.parseInt(departamentoSelecionado), incluirSubSetores);
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
@@ -309,8 +299,8 @@ public class RelatorioMensalBean implements Serializable {
 
             c.setDataInicio(dataInicio_);
             c.setDataFim(dataFim_);
-            List<Integer> matriculasList = new ArrayList<Integer>();
-            List<Integer> matriculasMergeList = new ArrayList<Integer>();
+            List<Integer> matriculasList = new ArrayList<>();
+            List<Integer> matriculasMergeList = new ArrayList<>();
             Banco banco = new Banco();
             matriculasList = banco.consultaFuncionarioDepartamento(Integer.parseInt(departamentoSelecionado), incluirSubSetores);
             for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
@@ -355,7 +345,7 @@ public class RelatorioMensalBean implements Serializable {
 
     public void consultaFuncionario() {
         Banco banco = new Banco();
-        funcionarioList = new ArrayList<SelectItem>();
+        funcionarioList = new ArrayList<>();
         funcionarioList = banco.consultaFuncionario2(Integer.parseInt(departamentoSelecionado), incluirSubSetores);
         funcionarioList = filtrarFuncionario();
         
@@ -377,7 +367,7 @@ public class RelatorioMensalBean implements Serializable {
     }
 
     private List<SelectItem> getOpcaoFiltroGestor() {
-        List<SelectItem> tipoFiltroGestorList = new ArrayList<SelectItem>();
+        List<SelectItem> tipoFiltroGestorList = new ArrayList<>();
         tipoFiltroGestorList.add(new SelectItem(-1, "TODOS"));
         tipoFiltroGestorList.add(new SelectItem(0, "GESTORES SUBORDINADOS AO DEPARTAMENTO"));
         tipoFiltroGestorList.add(new SelectItem(1, "GESTORES SUBORDINADOS DIRETAMENTE AO DEPARTAMENTO"));
@@ -388,10 +378,8 @@ public class RelatorioMensalBean implements Serializable {
     private List<SelectItem> filtrarFuncionario() {
         Banco b = new Banco();
         cod_funcionarioGestorHashMap = b.getcod_funcionarioSubordinacaoDepartamento(Integer.parseInt(departamentoSelecionado));
-        List<SelectItem> funcionarioList_ = new ArrayList<SelectItem>();
-
-        for (Iterator<SelectItem> it = funcionarioList.iterator(); it.hasNext();) {
-            SelectItem funcionario_ = it.next();
+        List<SelectItem> funcionarioList_ = new ArrayList<>();
+        for (SelectItem funcionario_ : funcionarioList) {
             if (!funcionario_.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario_);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario_);
@@ -407,10 +395,8 @@ public class RelatorioMensalBean implements Serializable {
     }
 
     private Boolean isFuncionarioDentroCriterioRegime(SelectItem funcionarioSelectItem) {
-        Boolean criterioRegime = false;
         Integer regime = cod_funcionarioRegimeHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
-        criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
-
+        Boolean criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
         return criterioRegime;
     }
 
@@ -433,7 +419,7 @@ public class RelatorioMensalBean implements Serializable {
 
 
     private List<Integer> getFuncionarios() {
-        List<Integer> funcionarioList_ = new ArrayList<Integer>();
+        List<Integer> funcionarioList_ = new ArrayList<>();
         for (Iterator<SelectItem> it = funcionarioList.iterator(); it.hasNext();) {
             SelectItem funcionario = it.next();
             Integer matricula = Integer.parseInt(funcionario.getValue().toString());

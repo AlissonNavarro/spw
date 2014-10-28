@@ -28,27 +28,9 @@ import java.util.List;
  */
 public class MergePDF {
 
-    public static void main(String[] args) {
-        try {
-            List<InputStream> pdfs = new ArrayList<InputStream>();
-
-            pdfs.add(new FileInputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_1.pdf"));
-            pdfs.add(new FileInputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_2.pdf"));
-            pdfs.add(new FileInputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_3.pdf"));
-            pdfs.add(new FileInputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_4.pdf"));
-            pdfs.add(new FileInputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_5.pdf"));
-
-            OutputStream output = new FileOutputStream("C:/Documents and Settings/amsgama/Meus documentos/Downloads/RelatorioMensal_jan_huse.pdf");
-            MergePDF.concatPDFs2(pdfs, output, true);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public static void gerarPDFUnico(List<Integer> matriculas, String relatorio) throws FileNotFoundException {
-        List<InputStream> pdfs = new ArrayList<InputStream>();
-        for (Iterator<Integer> it = matriculas.iterator(); it.hasNext();) {
-            Integer matricula = it.next();
+        List<InputStream> pdfs = new ArrayList<>();
+        for (Integer matricula : matriculas) {
             pdfs.add(new FileInputStream(Metodos.getPath() + "temp/" + matricula + ".pdf"));
         }
         OutputStream output = new FileOutputStream(Metodos.getPath() + relatorio + ".pdf");
@@ -56,9 +38,8 @@ public class MergePDF {
     }
 
     public static void gerarPDFUnicoHorizontal(List<Integer> matriculas, String relatorio) throws FileNotFoundException {
-        List<InputStream> pdfs = new ArrayList<InputStream>();
-        for (Iterator<Integer> it = matriculas.iterator(); it.hasNext();) {
-            Integer matricula = it.next();
+        List<InputStream> pdfs = new ArrayList<>();
+        for (Integer matricula : matriculas) {
             pdfs.add(new FileInputStream(Metodos.getPath() + "temp/" + matricula + ".pdf"));
         }
         OutputStream output = new FileOutputStream(Metodos.getPath() + relatorio + ".pdf");
@@ -68,9 +49,8 @@ public class MergePDF {
     public static void gerarPDFUnicoHorizontalComListaDeFuncinarioSemEscala(List<Integer> matriculas,
             String relatorio, Boolean hasFuncinarioSemEscala) throws FileNotFoundException, IOException {
         
-        List<InputStream> pdfs = new ArrayList<InputStream>();
-        for (Iterator<Integer> it = matriculas.iterator(); it.hasNext();) {
-            Integer matricula = it.next();
+        List<InputStream> pdfs = new ArrayList<>();
+        for (Integer matricula : matriculas) {
             pdfs.add(new FileInputStream(Metodos.getPath() + "temp/" + matricula + ".pdf"));
         }
         if (hasFuncinarioSemEscala) {
@@ -84,9 +64,8 @@ public class MergePDF {
 
     public static void gerarPDFUnicoHorizontalComListaDeFuncinarioSemRegistro(List<Integer> matriculas,
             String relatorio, Boolean hasFuncinarioSemEscala) throws FileNotFoundException, IOException {
-        List<InputStream> pdfs = new ArrayList<InputStream>();
-        for (Iterator<Integer> it = matriculas.iterator(); it.hasNext();) {
-            Integer matricula = it.next();
+        List<InputStream> pdfs = new ArrayList<>();
+        for (Integer matricula : matriculas) {
             pdfs.add(new FileInputStream(Metodos.getPath() + "tempSE/" + matricula + ".pdf"));
         }
         if (hasFuncinarioSemEscala) {
@@ -99,9 +78,8 @@ public class MergePDF {
     }
 
     public static void gerarPDFUnicoDepartamento(List<Integer> matriculas) throws FileNotFoundException, IOException {
-        List<InputStream> pdfs = new ArrayList<InputStream>();
-        for (Iterator<Integer> it = matriculas.iterator(); it.hasNext();) {
-            Integer matricula = it.next();
+        List<InputStream> pdfs = new ArrayList<>();
+        for (Integer matricula : matriculas) {
             pdfs.add(new FileInputStream(Metodos.getPath() + "tempSE/" + matricula + ".pdf"));
         }
         OutputStream output = new FileOutputStream(Metodos.getPath() + "FrequenciaMensal.pdf");
@@ -115,8 +93,7 @@ public class MergePDF {
         Document document = new Document(PageSize.A4.rotate());
         try {
             List<InputStream> pdfs = streamOfPDFFiles;
-            List<PdfReader> readers = new ArrayList<PdfReader>();
-            int totalPages = 0;
+            List<PdfReader> readers = new ArrayList<>();
             Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -124,7 +101,6 @@ public class MergePDF {
                 InputStream pdf = iteratorPDFs.next();
                 PdfReader pdfReader = new PdfReader(pdf);
                 readers.add(pdfReader);
-                totalPages += pdfReader.getNumberOfPages();
             }
             // Create a writer for the outputstream
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -135,7 +111,6 @@ public class MergePDF {
             // data
 
             PdfImportedPage page;
-            int currentPageNumber = 0;
             int pageOfCurrentReaderPDF = 0;
             Iterator<PdfReader> iteratorPDFReader = readers.iterator();
 
@@ -147,7 +122,6 @@ public class MergePDF {
                 while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
                     document.newPage();
                     pageOfCurrentReaderPDF++;
-                    currentPageNumber++;
                     page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
                     cb.addTemplate(page, 0, 0);
 
@@ -185,8 +159,7 @@ public class MergePDF {
         Document document = new Document();
         try {
             List<InputStream> pdfs = streamOfPDFFiles;
-            List<PdfReader> readers = new ArrayList<PdfReader>();
-            int totalPages = 0;
+            List<PdfReader> readers = new ArrayList<>();
             Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -194,7 +167,6 @@ public class MergePDF {
                 InputStream pdf = iteratorPDFs.next();
                 PdfReader pdfReader = new PdfReader(pdf);
                 readers.add(pdfReader);
-                totalPages += pdfReader.getNumberOfPages();
             }
             // Create a writer for the outputstream
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -205,7 +177,6 @@ public class MergePDF {
             // data
 
             PdfImportedPage page;
-            int currentPageNumber = 0;
             int pageOfCurrentReaderPDF = 0;
             Iterator<PdfReader> iteratorPDFReader = readers.iterator();
 
@@ -217,7 +188,6 @@ public class MergePDF {
                 while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
                     document.newPage();
                     pageOfCurrentReaderPDF++;
-                    currentPageNumber++;
                     page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
                     cb.addTemplate(page, 0, 0);
 
@@ -255,8 +225,7 @@ public class MergePDF {
         Document document = new Document(PageSize.A4);
         try {
             List<InputStream> pdfs = streamOfPDFFiles;
-            List<PdfReader> readers = new ArrayList<PdfReader>();
-            int totalPages = 0;
+            List<PdfReader> readers = new ArrayList<>();
             Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -264,7 +233,6 @@ public class MergePDF {
                 InputStream pdf = iteratorPDFs.next();
                 PdfReader pdfReader = new PdfReader(pdf);
                 readers.add(pdfReader);
-                totalPages += pdfReader.getNumberOfPages();
             }
             // Create a writer for the outputstream
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
@@ -275,7 +243,6 @@ public class MergePDF {
             // data
 
             PdfImportedPage page;
-            int currentPageNumber = 0;
             int pageOfCurrentReaderPDF = 0;
             Iterator<PdfReader> iteratorPDFReader = readers.iterator();
 
@@ -287,7 +254,6 @@ public class MergePDF {
                 while (pageOfCurrentReaderPDF < pdfReader.getNumberOfPages()) {
                     document.newPage();
                     pageOfCurrentReaderPDF++;
-                    currentPageNumber++;
                     page = writer.getImportedPage(pdfReader, pageOfCurrentReaderPDF);
                     cb.addTemplate(page, 0, 0);
 

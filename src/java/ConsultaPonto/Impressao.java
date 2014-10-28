@@ -192,6 +192,12 @@ public class Impressao {
         parameters.put("administradorNome", administradorNome);
         parameters.put("titulo", Metodos.getTitulo());
 
+        //verifica se diretorio onde sera gerando o relatorio existe, caso nao cria
+        File diretorio = new File(Metodos.getPath() + "tempSE/");
+        if (!diretorio.exists()) {
+            diretorio.mkdir();
+        }
+        
         JasperRunManager.runReportToPdfFile(Metodos.getPath() + "RelatorioPontoSEscalada.jasper",
                 Metodos.getPath() + "tempSE/" + matricula + ".pdf", parameters, jrRS);
 

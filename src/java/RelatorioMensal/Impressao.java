@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package RelatorioMensal;
 
 import Metodos.Metodos;
-import ConsultaPonto.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,10 +22,6 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 
-/**
- *
- * @author amsgama
- */
 public class Impressao {
 
     private static Connection getConnection() throws
@@ -75,10 +66,8 @@ public class Impressao {
 
         //   FacesContext context = FacesContext.getCurrentInstance();
         //     ServletContext sc = (ServletContext) context.getExternalContext().getContext();
-
         //     String path = sc.getRealPath("web/relatorio/RelatorioPonto.pdf");
         //      System.out.println(path);
-
         JasperRunManager.runReportToPdfFile(Metodos.getPath() + "RelatorioPonto.jasper",
                 Metodos.getPath() + "temp/" + matricula + ".pdf", parameters, jrRS);
 
@@ -224,13 +213,18 @@ public class Impressao {
         /* HashMap de parametros utilizados no relatório. Sempre instanciados */
         Map parameters = new HashMap();
 
-         parameters.put("titulo", Metodos.getTitulo());
-         parameters.put("totalFuncionario", totalFuncionarios);
-         parameters.put("versao", Metodos.getVersao());
+        parameters.put("titulo", Metodos.getTitulo());
+        parameters.put("totalFuncionario", totalFuncionarios);
+        parameters.put("versao", Metodos.getVersao());
+        
+        File diretorio = new File(Metodos.getPath() + "temp/");
+        if (!diretorio.exists()) {
+            diretorio.mkdir();
+        }
 
-        JasperRunManager.runReportToPdfFile(Metodos.getPath() +
-                "RelatorioFuncionarioSemEscala.jasper", Metodos.getPath() + "temp/"
-                +"listaFuncionarioSemEscala.pdf", parameters, jrRS);
+        JasperRunManager.runReportToPdfFile(Metodos.getPath()
+                + "RelatorioFuncionarioSemEscala.jasper", Metodos.getPath() + "temp/"
+                + "listaFuncionarioSemEscala.pdf", parameters, jrRS);
     }
 
     public static void geraRelatorioListaFuncionarioSemRegistrodePonto(Integer totalFuncionarios) throws JRException, Exception {
@@ -245,13 +239,13 @@ public class Impressao {
         /* HashMap de parametros utilizados no relatório. Sempre instanciados */
         Map parameters = new HashMap();
 
-         parameters.put("titulo", Metodos.getTitulo());
-         parameters.put("totalFuncionario", totalFuncionarios);
-         parameters.put("versao", Metodos.getVersao());
+        parameters.put("titulo", Metodos.getTitulo());
+        parameters.put("totalFuncionario", totalFuncionarios);
+        parameters.put("versao", Metodos.getVersao());
 
-        JasperRunManager.runReportToPdfFile(Metodos.getPath() +
-                "RelatorioFuncionarioSemRegistro.jasper", Metodos.getPath() + "temp/"
-                +"RelatorioFuncionarioSemRegistro.pdf", parameters, jrRS);
+        JasperRunManager.runReportToPdfFile(Metodos.getPath()
+                + "RelatorioFuncionarioSemRegistro.jasper", Metodos.getPath() + "temp/"
+                + "RelatorioFuncionarioSemRegistro.pdf", parameters, jrRS);
     }
 
     public static String geraRelatorioPortaria1510Resumo(String matricula, String nome, String cpf,
@@ -408,10 +402,4 @@ public class Impressao {
         download(teste, "RelatorioResumoEscala.pdf");
         return null;
     }
-
-    public static void main(String[] args) throws JRException, Exception {
-        File file = new File("d");
-
-    }
 }
-
