@@ -56,6 +56,10 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
     private Integer tipoGestorSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<SelectItem> gestorFiltroFuncionarioList;
+    //Filtro por cargo
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
 
     public ConsultaFrequenciaHoraExtraBean() throws SQLException {
 
@@ -257,8 +261,10 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
     private void inicializarAtributos() {
         cod_categoria = null;
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoSelecionadoOpcaoFiltroFuncionario = -1;
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         categoriaJustificativaList = new ArrayList<SelectItem>();
         iniciarOpcoesFiltro();
     }
@@ -286,7 +292,9 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
+        cargoOpcaoFiltroFuncionarioList = b.getCargoSelectItem();
         cod_funcionarioRegimeHashMap = b.getcod_funcionarioRegime();
+        cod_funcionarioCargoHashMap = b.getcod_funcionarioCargo();
 
     }
 
@@ -308,9 +316,10 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
             SelectItem funcionario = it.next();
             if (!funcionario.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario);
+                Boolean criterioCargo = isFuncionarioDentroCriterioCargo(funcionario);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario);
 
-                if (criterioGestor && criterioRegime) {
+                if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario);
                 }
             } else {
@@ -326,6 +335,13 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
         criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
 
         return criterioRegime;
+    }
+    
+    private Boolean isFuncionarioDentroCriterioCargo(SelectItem funcionarioSelectItem) {
+        Boolean criterioCargo = false;
+        Integer cargo = cod_funcionarioCargoHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
+        criterioCargo = (cargoSelecionadoOpcaoFiltroFuncionario == -1) || cargo.equals(cargoSelecionadoOpcaoFiltroFuncionario);
+        return criterioCargo;
     }
 
     private Boolean isFuncionarioDentroCriterioGestor(SelectItem funcionarioSelectItem) {
@@ -566,4 +582,29 @@ public class ConsultaFrequenciaHoraExtraBean implements Serializable {
     public void setGestorFiltroFuncionarioList(List<SelectItem> gestorFiltroFuncionarioList) {
         this.gestorFiltroFuncionarioList = gestorFiltroFuncionarioList;
     }
+
+    public List<SelectItem> getCargoOpcaoFiltroFuncionarioList() {
+        return cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public void setCargoOpcaoFiltroFuncionarioList(List<SelectItem> cargoOpcaoFiltroFuncionarioList) {
+        this.cargoOpcaoFiltroFuncionarioList = cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public Integer getCargoSelecionadoOpcaoFiltroFuncionario() {
+        return cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public void setCargoSelecionadoOpcaoFiltroFuncionario(Integer cargoSelecionadoOpcaoFiltroFuncionario) {
+        this.cargoSelecionadoOpcaoFiltroFuncionario = cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public HashMap<Integer, Integer> getCod_funcionarioCargoHashMap() {
+        return cod_funcionarioCargoHashMap;
+    }
+
+    public void setCod_funcionarioCargoHashMap(HashMap<Integer, Integer> cod_funcionarioCargoHashMap) {
+        this.cod_funcionarioCargoHashMap = cod_funcionarioCargoHashMap;
+    }
+    
 }

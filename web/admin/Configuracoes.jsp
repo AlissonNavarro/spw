@@ -246,6 +246,15 @@
                                                         </f:facet>
                                                         <center>
                                                             <fieldset class="demo_fieldset" >
+                                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                                <h:panelGroup>
+                                                                    <h:selectOneMenu value="#{funcionarioBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                                        <f:selectItems value="#{funcionarioBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                                    </h:selectOneMenu>
+                                                                </h:panelGroup>
+                                                            </fieldset>
+                                                            <br>
+                                                            <fieldset class="demo_fieldset" >
                                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                                 <h:panelGroup >
                                                                     <h:selectOneRadio
@@ -623,7 +632,7 @@
                                                                              </center>
                                                                 </h:panelGrid>
 
-                                                                
+
                                                                 <rich:spacer width="10" rendered="#{not empty empresaBean.ipDigitSender}"/>
                                                                 <h:panelGrid columns="1" style="text-align:center;float:center" rendered="#{not empty empresaBean.ipDigitSender}">    
                                                                     <center>
@@ -634,7 +643,7 @@
                                                                         <h:outputText value="Enviar aos Relógios" styleClass="label"/>
                                                                     </center>
                                                                 </h:panelGrid>
-                                                                
+
 
                                                                 <rich:spacer width="10"/>
                                                                 <h:panelGrid columns="1" style="text-align:center;float:center" rendered="#{funcionarioBean.cod_funcionario != null&&

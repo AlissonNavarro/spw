@@ -60,6 +60,10 @@ public class ConsultaFrequenciaSemEscalaBean {
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<SelectItem> gestorFiltroFuncionarioList;
     private HashMap<Integer, Integer> cod_funcionarioRegimeHashMap;
+    //Filtro por cargo
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
 
     public ConsultaFrequenciaSemEscalaBean() throws SQLException {
 
@@ -466,8 +470,10 @@ public class ConsultaFrequenciaSemEscalaBean {
 
     private void inicializarAtributos() {
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoSelecionadoOpcaoFiltroFuncionario = -1;
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         iniciarOpcoesFiltro();
     }
 
@@ -566,6 +572,8 @@ public class ConsultaFrequenciaSemEscalaBean {
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
         cod_funcionarioRegimeHashMap = b.getcod_funcionarioRegime();
+        cargoOpcaoFiltroFuncionarioList = b.getCargoSelectItem();
+        cod_funcionarioCargoHashMap = b.getcod_funcionarioCargo();
 
     }
 
@@ -587,9 +595,10 @@ public class ConsultaFrequenciaSemEscalaBean {
             SelectItem funcionario = it.next();
             if (!funcionario.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario);
+                Boolean criterioCargo = isFuncionarioDentroCriterioCargo(funcionario);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario);
 
-                if (criterioGestor && criterioRegime) {
+                if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario);
                 }
             } else {
@@ -605,6 +614,13 @@ public class ConsultaFrequenciaSemEscalaBean {
         criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
 
         return criterioRegime;
+    }
+    
+    private Boolean isFuncionarioDentroCriterioCargo(SelectItem funcionarioSelectItem) {
+        Boolean criterioCargo = false;
+        Integer cargo = cod_funcionarioCargoHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
+        criterioCargo = (cargoSelecionadoOpcaoFiltroFuncionario == -1) || cargo.equals(cargoSelecionadoOpcaoFiltroFuncionario);
+        return criterioCargo;
     }
 
     private Boolean isFuncionarioDentroCriterioGestor(SelectItem funcionarioSelectItem) {
@@ -812,6 +828,30 @@ public class ConsultaFrequenciaSemEscalaBean {
 
     public void setGestorFiltroFuncionarioList(List<SelectItem> gestorFiltroFuncionarioList) {
         this.gestorFiltroFuncionarioList = gestorFiltroFuncionarioList;
+    }
+
+    public List<SelectItem> getCargoOpcaoFiltroFuncionarioList() {
+        return cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public void setCargoOpcaoFiltroFuncionarioList(List<SelectItem> cargoOpcaoFiltroFuncionarioList) {
+        this.cargoOpcaoFiltroFuncionarioList = cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public Integer getCargoSelecionadoOpcaoFiltroFuncionario() {
+        return cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public void setCargoSelecionadoOpcaoFiltroFuncionario(Integer cargoSelecionadoOpcaoFiltroFuncionario) {
+        this.cargoSelecionadoOpcaoFiltroFuncionario = cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public HashMap<Integer, Integer> getCod_funcionarioCargoHashMap() {
+        return cod_funcionarioCargoHashMap;
+    }
+
+    public void setCod_funcionarioCargoHashMap(HashMap<Integer, Integer> cod_funcionarioCargoHashMap) {
+        this.cod_funcionarioCargoHashMap = cod_funcionarioCargoHashMap;
     }
 
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
