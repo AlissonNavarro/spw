@@ -505,7 +505,7 @@ public class ConsultaFrequenciaSemEscalaBean {
 
     public void imprimir() throws JRException, Exception {
         if (!diasList.isEmpty()) {
-            List<DiaSemEscala> pontoAcessoTotalList = new ArrayList<DiaSemEscala>();
+            List<DiaSemEscala> pontoAcessoTotalList = new ArrayList<>();
             for (Iterator<DiaSemEscala> it = diasList.iterator(); it.hasNext();) {
                 DiaSemEscala dia = it.next();
                 Date data = dia.getData();
@@ -518,7 +518,7 @@ public class ConsultaFrequenciaSemEscalaBean {
             banco.insertRelatorioSemEscala(pontoAcessoTotalList);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             banco = new Banco();
-            List<String> userInfoList = new ArrayList<String>();
+            List<String> userInfoList = new ArrayList<>();
             userInfoList = banco.consultaInfoUsuario(cod_funcionario);
 
             Impressao.geraRelatorioSemEscala(sdf.format(dataInicio.getTime()), sdf.format(dataFim.getTime()),
