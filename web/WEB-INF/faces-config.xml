@@ -278,14 +278,6 @@
     </managed-bean>
 
     <navigation-rule>
-        <navigation-case>
-            <from-outcome>teste</from-outcome>
-            <to-view-id>/www/teste.jsp</to-view-id>
-            <redirect/>
-        </navigation-case>
-    </navigation-rule>
-
-    <navigation-rule>
         <from-view-id>/login.jsp</from-view-id>
         <navigation-case>
             <from-outcome>consultaFrequencia</from-outcome>

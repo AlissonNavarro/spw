@@ -16,10 +16,10 @@ public class PeriodoJornada {
     private Date inicio;
     private Date fim;
     private Date inicioJornada;
-    private Integer num_jornada;
-    private Integer tipo;
-    private Integer ciclo;
-    private Boolean invalido;
+    private int num_jornada;
+    private int tipo;
+    private int ciclo;
+    private boolean invalido;
 
     public Date getFim() {
         return fim;
@@ -37,7 +37,7 @@ public class PeriodoJornada {
         this.inicio = inicio;
     }
 
-    public Integer getNum_jornada() {
+    public int getNum_jornada() {
         return num_jornada;
     }
 
@@ -57,27 +57,27 @@ public class PeriodoJornada {
         this.inicioJornada = inicioJornada;
     }
 
-    public Integer getTipo() {
+    public int getTipo() {
         return tipo;
     }
 
-    public void setTipo(Integer tipo) {
+    public void setTipo(int tipo) {
         this.tipo = tipo;
     }
 
-    public Integer getCiclo() {
+    public int getCiclo() {
         return ciclo;
     }
 
-    public void setCiclo(Integer ciclo) {
+    public void setCiclo(int ciclo) {
         this.ciclo = ciclo;
     }
 
-    public Boolean getInvalido() {
+    public boolean getInvalido() {
         return invalido;
     }
 
-    public void setInvalido(Boolean invalido) {
+    public void setInvalido(boolean invalido) {
         this.invalido = invalido;
     }
 }

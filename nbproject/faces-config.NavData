@@ -3,10 +3,9 @@
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
         <Node id="www/novoUsuario.jsp" x="400" y="450" zoom="true"/>
-        <Node id="admin/teste.jsp" x="400" y="900" zoom="true"/>
         <Node id="admin/folhapagamento.jsp" x="650" y="750" zoom="true"/>
-        <Node id="admin/consultaFrequenciaAdmin.jsp" x="650" y="600" zoom="true"/>
         <Node id="admin/Escalas.jsp" x="150" y="600" zoom="true"/>
+        <Node id="admin/consultaFrequenciaAdmin.jsp" x="650" y="600" zoom="true"/>
         <Node id="admin/Jornada.jsp" x="400" y="750" zoom="true"/>
         <Node id="admin/deslocamentoTemporario.jsp" x="150" y="900" zoom="true"/>
         <Node id="admin/relatorioMensal.jsp" x="150" y="300" zoom="true"/>
@@ -14,8 +13,8 @@
         <Node id="admin/solicitacaoAbono.jsp?param=atualizar" x="900" y="300" zoom="true"/>
         <Node id="www/consultaFrequencia.jsp" x="900" y="450" zoom="true"/>
         <Node id="admin/listaPresenca.jsp" x="400" y="150" zoom="true"/>
-        <Node id="admin/ClockManager.jsp" x="1900" y="150" zoom="true"/>
         <Node id="admin/adicionarHoraExtra.jsp" x="650" y="150" zoom="true"/>
+        <Node id="admin/ClockManager.jsp" x="1900" y="150" zoom="true"/>
         <Node id="admin/pagamento.jsp" x="900" y="600" zoom="true"/>
         <Node id="www/_top.jsp" x="150" y="750" zoom="true"/>
         <Node id="admin/Configuracoes.jsp" x="1650" y="150" zoom="true"/>
