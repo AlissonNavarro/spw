@@ -193,8 +193,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                 } else {
 
                     // Buscando todas as jornadas associadas ao funcionário no período especificado
-                    List<PeriodoJornada> dataPeriodoJornadaList = new ArrayList<PeriodoJornada>();
-                    dataPeriodoJornadaList = banco.consultaPeriodoJornada(cod_funcionario, dataInicio, dataFim);
+                    List<PeriodoJornada> dataPeriodoJornadaList = banco.consultaPeriodoJornada(cod_funcionario, dataInicio, dataFim);
 
                     //O attendance permite a associação da jornada de forma que a data inicial seja maior que a final. Então foi feito o tratamento.
                     if (isPeridoInvalido(dataPeriodoJornadaList)) {
@@ -1706,11 +1705,11 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     private HashMap<Integer, String> mapearDiaEraDataStr(Date dataInicio, Date dataFim) {
 
         SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
-        HashMap<Integer, String> mapaDiaEraDataStr = new HashMap<Integer, String>();
+        HashMap<Integer, String> mapaDiaEraDataStr = new HashMap<>();
 
         GregorianCalendar diaHorainicio = new GregorianCalendar();
         diaHorainicio.setTime(dataInicio);
-        Integer diaInicio = diaHorainicio.get(Calendar.DAY_OF_YEAR) + diaHorainicio.get(Calendar.YEAR) * 365;
+        int diaInicio = diaHorainicio.get(Calendar.DAY_OF_YEAR) + diaHorainicio.get(Calendar.YEAR) * 365;
 
         GregorianCalendar diaHoraFim = new GregorianCalendar();
         diaHoraFim.setTime(dataFim);

@@ -359,10 +359,7 @@ public class Banco {
 
             ResultSet rs;
             Statement stmt;
-            String sql;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-            sql = " select ur.num_of_run_id, ur.startdate, ur.enddate, nr.units, nr.cyle"
+            String sql = " select ur.num_of_run_id, ur.startdate, ur.enddate, nr.units, nr.cyle"
                     + " from user_of_run ur, num_run nr"
                     + " where ur.userid = " + userid + " and"
                     + "       ur.num_of_run_id = nr.num_runid"
@@ -375,13 +372,15 @@ public class Banco {
 
                 PeriodoJornada periodoJornada = new PeriodoJornada();
 
-                int num_jornada = rs.getInt("num_of_run_id");
                 Date inicioTimes = rs.getDate("startdate");
                 Date fimTimes = rs.getDate("enddate");
-                int units = rs.getInt("units");
+                
+                periodoJornada.setNum_jornada(rs.getInt("num_of_run_id"));
+                periodoJornada.setTipo(rs.getInt("units"));
+                periodoJornada.setCiclo(rs.getInt("cyle"));               
+                
                 periodoJornada.setInicioJornada(inicioTimes);
-                periodoJornada.setTipo(units);
-                periodoJornada.setCiclo(rs.getInt("cyle"));
+
 
                 if (inicioTimes.getTime() > fimTimes.getTime()) {
                     periodoJornada.setInvalido(true);
@@ -400,7 +399,6 @@ public class Banco {
                 } else {
                     periodoJornada.setFim(fimTimes);
                 }
-                periodoJornada.setNum_jornada(num_jornada);
 
                 if ((inicioTimes.getTime() <= fim.getTime() && fimTimes.getTime() >= inicio.getTime())) {
                     dataPeriodoJornadaList.add(periodoJornada);
@@ -409,7 +407,7 @@ public class Banco {
             rs.close();
             stmt.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.getMessage();
         }
         return dataPeriodoJornadaList;
@@ -841,16 +839,14 @@ public class Banco {
         return nome;
     }
 
-    public Funcionario consultaFuncionario(Integer cod) {
+    public Funcionario consultaFuncionario(int cod) {
 
         Funcionario funcionario = new Funcionario();
-        PreparedStatement pstmt = null;
         try {
 
             ResultSet rs;
-            String sql;
-
-            sql = "select u.*, d.*, r.nome as regime "
+            PreparedStatement pstmt;
+            String sql = "select u.name, d.deptname, u.ssn, r.nome as regime "
                     + "from USERINFO u left join Regime_HoraExtra r on u.cod_regime = r.cod_regime, departments d"
                     + " where u.userid = ? and "
                     + " d.deptid = u.defaultdeptid";
@@ -859,20 +855,16 @@ public class Banco {
             pstmt.setInt(1, cod);
             rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                String nome = rs.getString("Name");
-                String deptname = rs.getString("deptname");
-                String ssn = rs.getString("ssn");
-                String regime = rs.getString("regime");
-                funcionario.setCpf(ssn);
-                funcionario.setNome(nome);
-                funcionario.setDept(deptname);
-                funcionario.setNome_regime(regime);
+            if (rs.next()) {
+                funcionario.setNome(rs.getString("Name"));
+                funcionario.setDept(rs.getString("deptname"));
+                funcionario.setCpf(rs.getString("ssn"));
+                funcionario.setNome_regime(rs.getString("regime"));
             }
 
             rs.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("ConsultaPonto.Banco.consultaFuncionario" + e.getMessage());
         }
         return funcionario;
     }
@@ -3172,24 +3164,22 @@ public class Banco {
             rs.close();
             stmt.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return diasDeslocado;
     }
 
-    public List<TipoHoraExtra> consultaTipoHoraExtra(Integer userID) {
+    public List<TipoHoraExtra> consultaTipoHoraExtra(int userID) {
 
-        List<TipoHoraExtra> tipoHoraExtraList = new ArrayList<TipoHoraExtra>();
-        List<DetalheHoraExtra> detalheHoraExtraList = new ArrayList<DetalheHoraExtra>();
+        List<TipoHoraExtra> tipoHoraExtraList = new ArrayList<>();
+        List<DetalheHoraExtra> detalheHoraExtraList = new ArrayList<>();
 
         try {
 
             ResultSet rs;
             Statement stmt;
-            String sql;
-
-            sql = " select th.*,dh.*"
+            String sql = " select th.*,dh.*"
                     + " from userinfo u, tipo_HoraExtra th, detalhe_HoraExtra dh"
                     + " where u.userid = " + userID + " and "
                     + " u.cod_regime = th.cod_regime and"
@@ -3200,34 +3190,23 @@ public class Banco {
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-
-                Integer cod_tipo = rs.getInt("cod_tipo");
-                Integer cod_regime = rs.getInt("cod_regime");
-                String nome = rs.getString("nome");
-                Boolean padrao = rs.getBoolean("padrao");
-                String verba = rs.getString("verba");
-                Float valor = rs.getFloat("valor");
-                Integer dia = rs.getInt("dia");
-                Float inicio = rs.getFloat("inicio");
-                Boolean dia_inteiro = rs.getBoolean("dia_inteiro");
-
-                TipoHoraExtra tipoHoraExtra = new TipoHoraExtra(cod_regime, cod_tipo, nome, padrao);
-                tipoHoraExtra.setValor(valor);
-                tipoHoraExtra.setVerba(verba);
-                DetalheHoraExtra detalhaHoraExtra = new DetalheHoraExtra(cod_tipo, dia, inicio, dia_inteiro);
+                TipoHoraExtra tipoHoraExtra = new TipoHoraExtra(rs.getInt("cod_regime"), rs.getInt("cod_tipo"), rs.getString("nome"), rs.getBoolean("padrao"));
+                tipoHoraExtra.setValor(rs.getFloat("valor"));
+                tipoHoraExtra.setVerba(rs.getString("verba"));
+                DetalheHoraExtra detalhaHoraExtra = new DetalheHoraExtra(rs.getInt("cod_tipo"), rs.getInt("dia"), rs.getFloat("inicio"), rs.getBoolean("dia_inteiro"));
                 detalheHoraExtraList.add(detalhaHoraExtra);
 
                 if (detalheHoraExtraList.size() == 8) {
                     tipoHoraExtra.setDetalheHoraExtra(detalheHoraExtraList);
                     tipoHoraExtraList.add(tipoHoraExtra);
-                    detalheHoraExtraList = new ArrayList<DetalheHoraExtra>();
+                    detalheHoraExtraList = new ArrayList<>();
                 }
             }
 
             rs.close();
             stmt.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return tipoHoraExtraList;
