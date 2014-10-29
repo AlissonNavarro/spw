@@ -4169,7 +4169,7 @@ public class Banco {
                 Integer userid = rs.getInt("userid");
                 Integer cargo = rs.getInt("CARGO");
                 cod_funcionarioCargoHashMap.put(userid, cargo);
-                System.out.println("funcCargo: " + userid + ", " + cargo);
+                //System.out.println("funcCargo: " + userid + ", " + cargo);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
