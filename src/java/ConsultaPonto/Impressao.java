@@ -142,7 +142,7 @@ public class Impressao {
 
         Connection con = getConnection();
         Statement stm = con.createStatement();
-        String query = "select * from relatorio_sem_escala";
+        String query = "select * from relatorio_sem_escala order by data";
         ResultSet rs = stm.executeQuery(query);
         /* implementação da interface JRDataSource para DataSource ResultSet */
         JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);

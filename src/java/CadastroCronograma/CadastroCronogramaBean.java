@@ -74,9 +74,15 @@ public class CadastroCronogramaBean implements Serializable {
     private Boolean incluirSubSetores;
     private String tituloDeslocTemp;
     private ConsultaFrequenciaComEscalaBean c;
+    //Filtro por Regime
     private List<SelectItem> regimeOpcaoFiltroFuncionarioList;
     private Integer regimeSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioRegimeHashMap;
+    //Filtro por Cargo
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
+    //Filtro por Gestor
     private Integer tipoGestorSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<SelectItem> gestorFiltroFuncionarioList;
@@ -1566,8 +1572,10 @@ public class CadastroCronogramaBean implements Serializable {
 
     private void inicializarAtributos() {
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoSelecionadoOpcaoFiltroFuncionario = -1;
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
+        cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         iniciarOpcoesFiltro();
     }
 
@@ -1575,7 +1583,9 @@ public class CadastroCronogramaBean implements Serializable {
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
+        cargoOpcaoFiltroFuncionarioList = b.getCargoSelectItem();
         cod_funcionarioRegimeHashMap = b.getcod_funcionarioRegime();
+        cod_funcionarioCargoHashMap = b.getcod_funcionarioCargo();
 
     }
 
@@ -1607,9 +1617,10 @@ public class CadastroCronogramaBean implements Serializable {
             SelectItem funcionario = it.next();
             if (!funcionario.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario);
+                Boolean criterioCargo = isFuncionarioDentroCriterioCargo(funcionario);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario);
 
-                if (criterioGestor && criterioRegime) {
+                if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario);
                 }
             } else {
@@ -1625,6 +1636,13 @@ public class CadastroCronogramaBean implements Serializable {
         criterioRegime = (regimeSelecionadoOpcaoFiltroFuncionario == -1) || regime.equals(regimeSelecionadoOpcaoFiltroFuncionario);
 
         return criterioRegime;
+    }
+    
+    private Boolean isFuncionarioDentroCriterioCargo(SelectItem funcionarioSelectItem) {
+        Boolean criterioCargo = false;
+        Integer cargo = cod_funcionarioCargoHashMap.get(Integer.parseInt(funcionarioSelectItem.getValue().toString()));
+        criterioCargo = (cargoSelecionadoOpcaoFiltroFuncionario == -1) || cargo.equals(cargoSelecionadoOpcaoFiltroFuncionario);
+        return criterioCargo;
     }
 
     private Boolean isFuncionarioDentroCriterioGestor(SelectItem funcionarioSelectItem) {
@@ -1993,4 +2011,29 @@ public class CadastroCronogramaBean implements Serializable {
     public void setDiasJornadaList(List<DiaJornada> diasJornadaList) {
         this.diasJornadaList = diasJornadaList;
     }
+
+    public Integer getCargoSelecionadoOpcaoFiltroFuncionario() {
+        return cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public void setCargoSelecionadoOpcaoFiltroFuncionario(Integer cargoSelecionadoOpcaoFiltroFuncionario) {
+        this.cargoSelecionadoOpcaoFiltroFuncionario = cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public HashMap<Integer, Integer> getCod_funcionarioCargoHashMap() {
+        return cod_funcionarioCargoHashMap;
+    }
+
+    public void setCod_funcionarioCargoHashMap(HashMap<Integer, Integer> cod_funcionarioCargoHashMap) {
+        this.cod_funcionarioCargoHashMap = cod_funcionarioCargoHashMap;
+    }
+
+    public List<SelectItem> getCargoOpcaoFiltroFuncionarioList() {
+        return cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public void setCargoOpcaoFiltroFuncionarioList(List<SelectItem> cargoOpcaoFiltroFuncionarioList) {
+        this.cargoOpcaoFiltroFuncionarioList = cargoOpcaoFiltroFuncionarioList;
+    }
+    
 }

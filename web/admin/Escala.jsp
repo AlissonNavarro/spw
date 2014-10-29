@@ -510,6 +510,15 @@
                                                                     </h:panelGroup>
                                                                 </f:facet>
                                                                 <center>
+                                                                    <fieldset class="demo_fieldset" >
+                                                                        <legend style="font-weight: bold;">Por Cargo</legend>
+                                                                        <h:panelGroup>
+                                                                            <h:selectOneMenu value="#{cadastroCronogramaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                                                <f:selectItems value="#{cadastroCronogramaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                                            </h:selectOneMenu>
+                                                                        </h:panelGroup>
+                                                                    </fieldset>
+                                                                    <br>
                                                                     <fieldset>
                                                                         <legend style="font-weight: bold;">Por Regime</legend>
                                                                         <h:panelGroup >
@@ -792,6 +801,15 @@
                                                                     </h:panelGroup>
                                                                 </f:facet>
                                                                 <center>
+                                                                    <fieldset class="demo_fieldset" >
+                                                                        <legend style="font-weight: bold;">Por Cargo</legend>
+                                                                        <h:panelGroup>
+                                                                            <h:selectOneMenu value="#{cadastroCronogramaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                                                <f:selectItems value="#{cadastroCronogramaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                                            </h:selectOneMenu>
+                                                                        </h:panelGroup>
+                                                                    </fieldset>
+                                                                    <br>
                                                                     <!--<fieldset class="demo_fieldset" >-->
                                                                     <fieldset>
                                                                         <legend style="font-weight: bold;">Por Regime</legend>

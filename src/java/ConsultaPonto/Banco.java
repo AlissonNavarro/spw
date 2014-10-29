@@ -4102,29 +4102,23 @@ public class Banco {
     }
 
     public List<SelectItem> getCargoSelectItem() {
-
         List<SelectItem> cargoList = new ArrayList<SelectItem>();
         PreparedStatement pstmt = null;
         ResultSet rs;
         cargoList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from cargo";
-
             pstmt = c.prepareStatement(query);
-
             rs = pstmt.executeQuery();
-
             while (rs.next()) {
                 Integer cargo = rs.getInt("cod_cargo");
                 String nome = rs.getString("nome");
                 cargoList.add(new SelectItem(cargo, nome));
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return cargoList;
-
     }
 
     public HashMap<Integer, Integer> getcod_funcionarioRegime() {

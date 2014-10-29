@@ -62,13 +62,10 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     private List<DiaSemEscala> diasComRegistroSemEscalaList;
     private List<SelectItem> departamentolist;
     private List<SelectItem> regimeOpcaoFiltroFuncionarioList;
-    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
     private List<SelectItem> gestorFiltroFuncionarioList;
     private Integer regimeSelecionadoOpcaoFiltroFuncionario;
-    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
     private Integer tipoGestorSelecionadoOpcaoFiltroFuncionario;
     private HashMap<Integer, Integer> cod_funcionarioRegimeHashMap;
-    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
     private HashMap<Integer, Integer> cod_funcionarioGestorHashMap;
     private List<String> horasTrabalhadasDiaList;
     private List<String> horasaSeremTrabalhadasDiaList;
@@ -117,6 +114,10 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     private Integer qnt_dias_adicional_noturno;
     private String listagemAtraso;
     private String listagemFalta;
+    //Filtro por cargo
+    private Integer cargoSelecionadoOpcaoFiltroFuncionario;
+    private HashMap<Integer, Integer> cod_funcionarioCargoHashMap;
+    private List<SelectItem> cargoOpcaoFiltroFuncionarioList;
 
     public ConsultaFrequenciaComEscalaBean() throws SQLException {
 
@@ -4200,7 +4201,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario);
                 if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario);
-                } 
+                }
             } else {
                 funcionarioList_.add(funcionario);
             }
