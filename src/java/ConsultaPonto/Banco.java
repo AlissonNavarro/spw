@@ -2629,6 +2629,7 @@ public class Banco {
                 String leavetimeSrt = sdf.format(leavetime.getTime());
 
                 if (cometimeSrt.equals(leavetimeSrt)) {
+                    jornada.setTemVirada(false);
                     jornada.setNome(schName);
                     jornada.setSchClassID(schClassID);
                     jornada.setFloga(folga);
@@ -2713,6 +2714,7 @@ public class Banco {
                     }
                     schComeList.add(jornada);
                     diasComDeslocamento.put(cometimeSrt, schComeList);
+                    
                     ArrayList schLeaveList = new ArrayList();
                     Jornada jornada2 = new Jornada();
                     jornada2.setTemVirada(true);
@@ -2857,7 +2859,7 @@ public class Banco {
         return listaDeslocamentoTemporario;
     }
 
-    public HashMap<String, DescolamentoTemporario> consultaDiasDeslocamentoTemp(Integer cod, Date inicio, Date fim) {
+    public HashMap<String, DescolamentoTemporario> consultaDiasDeslocamentoTemp(int cod, Date inicio, Date fim) {
 
         HashMap<String, DescolamentoTemporario> diasDeslocamentoTempHashMap = new HashMap<String, DescolamentoTemporario>();
 
@@ -2881,14 +2883,8 @@ public class Banco {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
-                Integer userid = rs.getInt("userid");
-                Date cometime = rs.getDate("cometime");
-                Date leavetime = rs.getDate("leavetime");
-                Boolean isDiaExtra = rs.getBoolean("overtime");
-                Boolean folga = rs.getBoolean("folga");
-                Integer schClassId = rs.getInt("schClassId");
-                DescolamentoTemporario deslTemp = new DescolamentoTemporario(userid, cometime, leavetime, isDiaExtra, folga, schClassId);
-                String data = sdf.format(cometime.getTime());
+                DescolamentoTemporario deslTemp = new DescolamentoTemporario(rs.getInt("userid"), rs.getDate("cometime"), rs.getDate("leavetime"), rs.getBoolean("overtime"), rs.getBoolean("folga"), rs.getInt("schClassId"));
+                String data = sdf.format(rs.getDate("cometime").getTime());
                 if (diasDeslocamentoTempHashMap.get(data) == null) {
                     diasDeslocamentoTempHashMap.put(data, deslTemp);
                 }
@@ -2896,7 +2892,7 @@ public class Banco {
             rs.close();
             stmt.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return diasDeslocamentoTempHashMap;
@@ -3950,7 +3946,7 @@ public class Banco {
 
     }
 
-    public List<Integer> consultaDiasDeslocadosHoraExtra(Integer userID, Date inicio, Date fim) {
+    public List<Integer> consultaDiasDeslocadosHoraExtra(int userID, Date inicio, Date fim) {
 
         List<Integer> diasDeslocadoHoraExtra = new ArrayList<Integer>();
 
@@ -3979,14 +3975,14 @@ public class Banco {
                 Date fimDate = rs.getDate("leavetime");
                 GregorianCalendar dia = new GregorianCalendar();
                 dia.setTimeInMillis(inicioDate.getTime());
-                Integer diaInicio = dia.get(Calendar.DAY_OF_YEAR) + dia.get(Calendar.YEAR) * 365;
+                int diaInicio = dia.get(Calendar.DAY_OF_YEAR) + dia.get(Calendar.YEAR) * 365;
                 if (!diasDeslocadoHoraExtra.contains(diaInicio)) {
 
                     diasDeslocadoHoraExtra.add(diaInicio);
                 }
 
                 dia.setTimeInMillis(fimDate.getTime());
-                Integer fimInicio = dia.get(Calendar.DAY_OF_YEAR) + dia.get(Calendar.YEAR) * 365;
+                int fimInicio = dia.get(Calendar.DAY_OF_YEAR) + dia.get(Calendar.YEAR) * 365;
 
                 if (!diasDeslocadoHoraExtra.contains(fimInicio)) {
 
@@ -3997,7 +3993,7 @@ public class Banco {
             rs.close();
             stmt.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return diasDeslocadoHoraExtra;
