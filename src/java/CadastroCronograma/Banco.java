@@ -1526,7 +1526,7 @@ class Banco {
         HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         PreparedStatement pstmt = null;
         ResultSet rs;
-        System.out.println("pesquisando getcod_funcionarioCargo");
+        //System.out.println("pesquisando getcod_funcionarioCargo");
         try {
             if (c.isClosed()) {
                 Conectar();

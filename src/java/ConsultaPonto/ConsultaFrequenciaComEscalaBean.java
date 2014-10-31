@@ -4166,7 +4166,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     }
 
     private void iniciarOpcoesFiltro() {
-        System.out.println("teste de filtro");
+        //System.out.println("teste de filtro");
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();
