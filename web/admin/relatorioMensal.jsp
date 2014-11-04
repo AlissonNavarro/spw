@@ -1,7 +1,7 @@
-    <%--
-    Document   : relatorioMensal
-    Created on : Feb 1, 2010, 9:59:08 PM
-    Author     : Alexandre
+<%--
+Document   : relatorioMensal
+Created on : Feb 1, 2010, 9:59:08 PM
+Author     : Alexandre
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -130,6 +130,15 @@
                                         </f:facet>
                                         <center>
                                             <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{relatorioMensalBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{relatorioMensalBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
+                                            <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >
                                                     <h:selectOneRadio
@@ -226,7 +235,15 @@
                                             </h:panelGroup>
                                         </f:facet>
                                         <center>
-
+                                            <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{relatorioMensalSemEscalaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{relatorioMensalSemEscalaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
                                             <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >
@@ -340,6 +357,15 @@
                                             </h:panelGroup>
                                         </f:facet>
                                         <center>
+                                            <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{relatorioResumoFrequenciaBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{relatorioResumoFrequenciaBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
                                             <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >
@@ -808,6 +834,15 @@
                                         </f:facet>
                                         <center>
                                             <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{afdtBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{afdtBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
+                                            <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >
                                                     <h:selectOneRadio
@@ -911,6 +946,15 @@
                                         </f:facet>
                                         <center>
                                             <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{acjefBean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{acjefBean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
+                                            <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >
                                                     <h:selectOneRadio
@@ -1005,8 +1049,8 @@
                                             </h:panelGroup>
                                         </h:panelGrid>
                                         <h:panelGrid columns="1">
-                                            
-                                            
+
+
                                         </h:panelGrid>
                                         <h:commandButton value="Gerar" action="#{relatorioPortaria1510Bean.geraRelatorio}"/>
                                     </h:panelGrid>
@@ -1023,6 +1067,15 @@
                                             </h:panelGroup>
                                         </f:facet>
                                         <center>
+                                            <fieldset class="demo_fieldset" >
+                                                <legend style="font-weight: bold;">Por Cargo</legend>
+                                                <h:panelGroup>
+                                                    <h:selectOneMenu value="#{relatorioPortaria1510Bean.cargoSelecionadoOpcaoFiltroFuncionario}">
+                                                        <f:selectItems value="#{relatorioPortaria1510Bean.cargoOpcaoFiltroFuncionarioList}"/>
+                                                    </h:selectOneMenu>
+                                                </h:panelGroup>
+                                            </fieldset>
+                                            <br>
                                             <fieldset class="demo_fieldset" >
                                                 <legend style="font-weight: bold;">Por Regime</legend>
                                                 <h:panelGroup >

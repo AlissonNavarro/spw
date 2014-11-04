@@ -319,9 +319,10 @@ public class FuncionarioBean implements Serializable {
             SelectItem funcionario_ = it.next();
             if (!funcionario_.getValue().toString().equals("-1")) {
                 Boolean criterioRegime = isFuncionarioDentroCriterioRegime(funcionario_);
+                Boolean criterioCargo = isFuncionarioDentroCriterioCargo(funcionario_);
                 Boolean criterioGestor = isFuncionarioDentroCriterioGestor(funcionario_);
 
-                if (criterioGestor && criterioRegime) {
+                if (criterioGestor && criterioRegime && criterioCargo) {
                     funcionarioList_.add(funcionario_);
                 }
             } else {

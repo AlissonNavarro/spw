@@ -2169,6 +2169,58 @@ public class Banco implements Serializable {
         return cod_funcionarioRegimeHashMap;
 
     }
+    
+    public List<SelectItem> getCargoSelectItem() {
+        List<SelectItem> cargoList = new ArrayList<SelectItem>();
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+        cargoList.add(new SelectItem(-1, "TODOS"));
+        try {
+            String query = "select * from cargo";
+            pstmt = c.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Integer cargo = rs.getInt("cod_cargo");
+                String nome = rs.getString("nome");
+                cargoList.add(new SelectItem(cargo, nome));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return cargoList;
+    }
+    
+    public HashMap<Integer, Integer> getcod_funcionarioCargo() {
+        HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+            String query = "select userid,CARGO from userinfo";
+            pstmt = c.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Integer userid = rs.getInt("userid");
+                Integer cargo = rs.getInt("CARGO");
+                cod_funcionarioCargoHashMap.put(userid, cargo);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (c != null) {
+                    pstmt.close();
+                    c.close();
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return cod_funcionarioCargoHashMap;
+
+    }
 
     private String convertDate(String data) {
         if (data != null) {

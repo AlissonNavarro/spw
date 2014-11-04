@@ -4178,7 +4178,6 @@ public class Banco {
         HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
         PreparedStatement pstmt = null;
         ResultSet rs;
-        System.out.println("pesquisando getcod_funcionarioCargo");
         try {
             if (c.isClosed()) {
                 Conectar();
@@ -4190,7 +4189,6 @@ public class Banco {
                 Integer userid = rs.getInt("userid");
                 Integer cargo = rs.getInt("CARGO");
                 cod_funcionarioCargoHashMap.put(userid, cargo);
-                System.out.println("funcCargo: " + userid + ", " + cargo);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
