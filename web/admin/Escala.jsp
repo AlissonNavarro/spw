@@ -331,7 +331,7 @@
                                                                  reRender="editJornadaOutputPanel,addTurnoOutputPanel">
                                                         <f:param name="id_jornada" value="#{jornadaCadastro.id}"/>
                                                     </a4j:support>
-                                                    <rich:column sortable="false" id="col_1" width="30%">
+                                                    <rich:column sortable="false" id="col_1" width="44%">
                                                         <f:facet name="header">
                                                             <h:outputText value="Nome da Jornada" />
                                                         </f:facet>
@@ -357,7 +357,7 @@
                                                         </f:facet>
                                                         <h:outputText value="#{jornadaCadastro.quantidadeCiclos}" style="#{jornadaCadastro.css}"/>
                                                     </rich:column>
-                                                    <rich:column sortable="false" width="44%">
+                                                    <rich:column sortable="false" width="30%">
                                                         <f:facet name="header">
                                                             <h:outputText value="Responsável" />
                                                         </f:facet>

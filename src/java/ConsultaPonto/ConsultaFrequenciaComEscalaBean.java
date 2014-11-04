@@ -194,8 +194,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                 } else {
 
                     // Buscando todas as jornadas associadas ao funcionário no período especificado
-                    List<PeriodoJornada> dataPeriodoJornadaList = new ArrayList<PeriodoJornada>();
-                    dataPeriodoJornadaList = banco.consultaPeriodoJornada(cod_funcionario, dataInicio, dataFim);
+                    List<PeriodoJornada> dataPeriodoJornadaList = banco.consultaPeriodoJornada(cod_funcionario, dataInicio, dataFim);
 
                     //O attendance permite a associação da jornada de forma que a data inicial seja maior que a final. Então foi feito o tratamento.
                     if (isPeridoInvalido(dataPeriodoJornadaList)) {
@@ -214,11 +213,9 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                         tipo_valorHorasExtra = new HashMap<String, Integer>();
 
                         //Mapeia os dias do tipo deslocamento temporario do usuário
-                        diasDeslocadosHashMap = new HashMap<String, ArrayList<Jornada>>();
                         diasDeslocadosHashMap = banco.consultaDiasDeslocados(cod_funcionario, dataInicio, dataFim);
 
                         //Mapeia os dias do tipo deslocamento temporario que são hora extra do usuário
-                        diasDeslocadoshoraExtra = new ArrayList<Integer>();
                         diasDeslocadoshoraExtra = banco.consultaDiasDeslocadosHoraExtra(cod_funcionario, dataInicio, dataFim);
 
                         //Tras todos os deslocamentos temporários
@@ -231,11 +228,9 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                         diasComHorasExtraList = banco.consultaDiasHoraExtra(cod_funcionario, dataInicio, dataFim);
 
                         //Mapeia (novamente) os dias do tipo deslocamento temporario que são hora extra do usuário
-                        diasHoraExtra = new ArrayList<Integer>();
                         diasHoraExtra = banco.consultaDiasDeslocadosHoraExtra(cod_funcionario, dataInicio, dataFim);
 
                         //Mapeia todos os abonos do usuário dentro do periodo pesquisado
-                        pontosAdicionados = new ArrayList<RegistroAdicionado>();
                         pontosAdicionados = banco.consultaRegistrosAdicionados(cod_funcionario, dataInicio, dataFim);
 
                         //Retorna em lista todas as gratificações do funcionário
@@ -244,7 +239,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                         //Consulta solicitações de abonos pendentes no periodo selecionado
                         diasPendentesList = banco.consultaDiasPendentes(cod_funcionario, dataInicio, dataFim);
 
-                        pontos = new ArrayList<Ponto>();
+                        pontos = new ArrayList<>();
                         pontos.addAll(getRegistros(pontosAdicionados));
 
                         //Mapeia periodo de contrato do funcionário
@@ -269,7 +264,8 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
 
                         for (PeriodoJornada periodoJornada : dataPeriodoJornadaList) {
 
-                            inicializarAtributosConsultaDias2();
+                            //inicializarAtributosConsultaDias2();
+                            jornadaList = new ArrayList<Jornada>();
                             //Date startDate = banco.consultaStartDate(num_jornada, periodoJornada.getInicioJornada(), dataInicio);
                             Date startDate = periodoJornada.getInicioJornada();
 
@@ -1707,11 +1703,11 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     private HashMap<Integer, String> mapearDiaEraDataStr(Date dataInicio, Date dataFim) {
 
         SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
-        HashMap<Integer, String> mapaDiaEraDataStr = new HashMap<Integer, String>();
+        HashMap<Integer, String> mapaDiaEraDataStr = new HashMap<>();
 
         GregorianCalendar diaHorainicio = new GregorianCalendar();
         diaHorainicio.setTime(dataInicio);
-        Integer diaInicio = diaHorainicio.get(Calendar.DAY_OF_YEAR) + diaHorainicio.get(Calendar.YEAR) * 365;
+        int diaInicio = diaHorainicio.get(Calendar.DAY_OF_YEAR) + diaHorainicio.get(Calendar.YEAR) * 365;
 
         GregorianCalendar diaHoraFim = new GregorianCalendar();
         diaHoraFim.setTime(dataFim);
@@ -1728,7 +1724,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         return mapaDiaEraDataStr;
     }
 
-    private boolean containsIntervaloAbono(Integer dia) {
+   /* private boolean containsIntervaloAbono(Integer dia) {
         for (Iterator<Abono> it = abonoList.iterator(); it.hasNext();) {
             Abono abono = it.next();
             if (dia.equals(abono.getDiaAbono())) {
@@ -1736,7 +1732,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
             }
         }
         return false;
-    }
+    }*/
 
     private List<Integer> addDiasDeslocados(List<Integer> diasTrabalhoList, List<Integer> diasDeslocadosAdicionais) {
 
@@ -2688,7 +2684,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     public boolean geraRelatorioPorDepartamento() {
 
         RelatorioPortaria1510 relatorioPortaria;
-        List<RelatorioPortaria1510> relatorioPortariaList = new ArrayList<RelatorioPortaria1510>();
+        List<RelatorioPortaria1510> relatorioPortariaList = new ArrayList<>();
         List<HorarioContratual> horarioContratualList = new ArrayList();
         Integer i = 1;
         for (Iterator<DiaComEscala> it = diasList.iterator(); it.hasNext();) {
@@ -2701,7 +2697,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
             relatorioPortaria.setDia(dia);
             relatorioPortaria.setData(data);
             if (diaComEscala.getIsFeriado() || diaComEscala.getIsAfastado()) {
-                List<PontoIrreal> pontoIrrealList = new ArrayList<PontoIrreal>();
+                List<PontoIrreal> pontoIrrealList = new ArrayList<>();
                 pontoIrrealList.add(new PontoIrreal("", "", diaComEscala.getJustificativa()));
                 relatorioPortaria.setPontoIrrealList(pontoIrrealList);
                 relatorioPortariaList.add(relatorioPortaria);
@@ -4170,7 +4166,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
     }
 
     private void iniciarOpcoesFiltro() {
-        System.out.println("teste de filtro");
+        //System.out.println("teste de filtro");
         gestorFiltroFuncionarioList = getOpcaoFiltroGestor();
         Banco b = new Banco();
         regimeOpcaoFiltroFuncionarioList = b.getRegimeSelectItem();

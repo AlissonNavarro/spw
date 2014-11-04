@@ -258,29 +258,22 @@ public class Banco {
                     + " from USERINFO u,DEPARTMENTS d "
                     + " where u.ssn = '" + login + "' and "
                     + " u.defaultdeptid = d.deptid";
+            if (c == null) {
+                Conectar();
+            }
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
             Boolean flag = false;
             while (rs.next()) {
-                Integer userid = rs.getInt("userid");
-                String name = rs.getString("name");
-                String ssn = rs.getString("ssn");
-                String senha = rs.getString("senha");
-                String permissao = rs.getString("permissao");
-                Integer departamento = rs.getInt("deptid");
-                Integer perfil = rs.getInt("perfil");
-                Date dataContratacao = rs.getDate("hiredday");
-                String adname = rs.getString("adusername");
-
-                usuario.setLogin(userid);
-                usuario.setNome(name);
-                usuario.setSsn(ssn);
-                usuario.setSenha(senha);
-                usuario.setPermissao(permissao);
-                usuario.setDepartamento(departamento);
-                usuario.setCodPerfil(perfil);
-                usuario.setDataContratacao(dataContratacao);
-                usuario.setUserAD(adname);
+                usuario.setLogin(rs.getInt("userid"));
+                usuario.setNome(rs.getString("name"));
+                usuario.setSsn(rs.getString("ssn"));
+                usuario.setSenha(rs.getString("senha"));
+                usuario.setPermissao(rs.getString("permissao"));
+                usuario.setDepartamento(rs.getInt("deptid"));
+                usuario.setCodPerfil(rs.getInt("perfil"));
+                usuario.setDataContratacao(rs.getDate("hiredday"));
+                usuario.setUserAD(rs.getString("adusername"));
                 flag = true;
             }
             rs.close();

@@ -205,24 +205,31 @@ public class Jornada implements Serializable {
 
         SimpleDateFormat sdfSemana = new SimpleDateFormat("HH:mm");
 
-        String entrada = sdfSemana.format(inicioJornadaL.getTime());
-        String saida = sdfSemana.format(terminioJornadaL.getTime());
-        String legenda;
-
-        legenda = "(" + schClassIDStr + " - " + entrada + " as " + saida + ")";
+        String entrada = "";
+        if (inicioJornadaL != null) {
+            entrada = sdfSemana.format(inicioJornadaL.getTime());
+        }
+        String saida = "";
+        if (terminioJornadaL != null) {
+            saida = sdfSemana.format(terminioJornadaL.getTime());
+        }
+        
+        String legenda = "(" + schClassIDStr + " - " + entrada + " as " + saida + ")";
 
         return legenda;
     }
 
     public String getLegendaSigla() {
 
-        if (inicioJornadaL == null || terminioJornadaL == null) {
-            System.out.print("dd");
-        }
-
         SimpleDateFormat sdfSemana = new SimpleDateFormat("HH:mm");
-        String entrada = sdfSemana.format(inicioJornadaL.getTime());
-        String saida = sdfSemana.format(terminioJornadaL.getTime());
+        String entrada = "";
+        if (inicioJornadaL != null) {
+            entrada = sdfSemana.format(inicioJornadaL.getTime());
+        }
+        String saida = "";
+        if (terminioJornadaL != null) {
+            saida = sdfSemana.format(terminioJornadaL.getTime());
+        }
         String legenda = "";
         if (legend != null && !legend.equals("")) {
             legenda = "(" + legend + " - " + entrada + " as " + saida + ")";
