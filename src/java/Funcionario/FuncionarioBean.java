@@ -284,6 +284,7 @@ public class FuncionarioBean implements Serializable {
     private void inicializarAtributos() {
         regimeSelecionadoOpcaoFiltroFuncionario = -1;
         cargoSelecionadoOpcaoFiltroFuncionario = -1;
+        cargoOpcaoFiltroFuncionarioList = new ArrayList<>();
         tipoGestorSelecionadoOpcaoFiltroFuncionario = -1;
         cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
         cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
@@ -527,4 +528,22 @@ public class FuncionarioBean implements Serializable {
     public void setNewFuncionario(Funcionario newFuncionario) {
         this.newFuncionario = newFuncionario;
     }
+
+    public List<SelectItem> getCargoOpcaoFiltroFuncionarioList() {
+        return cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public void setCargoOpcaoFiltroFuncionarioList(List<SelectItem> cargoOpcaoFiltroFuncionarioList) {
+        this.cargoOpcaoFiltroFuncionarioList = cargoOpcaoFiltroFuncionarioList;
+    }
+
+    public Integer getCargoSelecionadoOpcaoFiltroFuncionario() {
+        return cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+
+    public void setCargoSelecionadoOpcaoFiltroFuncionario(Integer cargoSelecionadoOpcaoFiltroFuncionario) {
+        this.cargoSelecionadoOpcaoFiltroFuncionario = cargoSelecionadoOpcaoFiltroFuncionario;
+    }
+    
+    
 }
