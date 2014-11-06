@@ -12,7 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.InetAddress;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -27,7 +28,7 @@ public class FileUploadBean implements Serializable {
     private boolean useFlash = false;
     private boolean logoExiste = false;
 
-    public FileUploadBean() {  
+    public FileUploadBean() {
         Metodos.setServidorAtivo();
         if (Metodos.getServidorAtivo()) {
             Banco banco = new Banco();
@@ -53,8 +54,16 @@ public class FileUploadBean implements Serializable {
         logoExiste = true;
         UploadItem item = event.getUploadItem();
         file.setData(getBytesFromFile(item.getFile()));
-        Banco banco = new Banco();
-        banco.insertImage(file.getData());
+        //tamanho em bytes
+        int tamanho = file.getData().length;
+        //arquivo nao pode ser maior que 350kb
+        if (tamanho > 358400) {
+            FacesMessage msgErro = new FacesMessage("O arquivo não pode ser maior que 350kb");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+        } else {
+            Banco banco = new Banco();
+            banco.insertImage(file.getData());
+        }
     }
 
     public void atualizarFileUpload(ActionListener l) {
