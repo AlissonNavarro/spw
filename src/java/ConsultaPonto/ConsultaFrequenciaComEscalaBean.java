@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -2446,8 +2447,9 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                         horasTrabalhadas, saldo, observacao);
                 relatorioList.add(relatorio);
             }
+            Collection<Relatorio> colRelatorio = new ArrayList<Relatorio>(relatorioList);
             Banco banco = new Banco();
-            banco.insertRelatorio(relatorioList);
+            //banco.insertRelatorio(relatorioList);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             banco = new Banco();
             List<String> userInfoList = new ArrayList<String>();
@@ -2464,7 +2466,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
                     Integer.parseInt(userInfoList.get(0)), userInfoList.get(1), userInfoList.get(2),
                     userInfoList.get(3), userInfoList.get(4), userInfoList.get(5), horasASeremTrabalhadasTotal, horasTotal,
                     saldo2/*saldoTotal*/, contDiasATrabalhar.toString(), contDiasTrabalhados.toString(),
-                    getPrimeiroNome(usuarioBean.getUsuario().getNome()), faltas, adicionalNoturnoStr, horaExtra, gratificacaoStr);
+                    getPrimeiroNome(usuarioBean.getUsuario().getNome()), faltas, adicionalNoturnoStr, horaExtra, gratificacaoStr, colRelatorio);
         } else {
             FacesMessage msgErro = new FacesMessage("Não há informações a serem impressas!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -2475,6 +2477,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         if (isEntradaValida()) {
             Banco banco = new Banco();
             int tipoRelatorio = banco.consultaTipoRelatorio();
+            System.out.println("relatorio: "+tipoRelatorio);
             switch (tipoRelatorio) {
                 case 1:
                     geraRelatorio();

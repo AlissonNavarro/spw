@@ -27,6 +27,7 @@ public class TipoRelatorioBean {
     }
 
     public void alterarTipoRelatorio(){
+        System.out.println("tpo relatorio padrão: "+tipoRelatorio);
         Banco banco = new Banco();
         banco.alterarTipoRelatorio(tipoRelatorio);
     }

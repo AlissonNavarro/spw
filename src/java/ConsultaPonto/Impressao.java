@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  *
@@ -49,13 +51,10 @@ public class Impressao {
     public static String geraRelatorio(String inicio, String fim, Integer matricula, String nome, String cpf,
             String lotacao, String cargo, String regime, String horasPrevistas, String horasTrabalhadas, String saldoHoras,
             String diasContratados, String diasComparecidos, String administradorNome, Integer faltas, String adicionalNoturno,
-            String horaExtra, String gratificacao) throws JRException, Exception {
+            String horaExtra, String gratificacao, Collection<Relatorio> colRelatorio) throws JRException, Exception {
         Connection con = getConnection();
-        Statement stm = con.createStatement();
-        String query = "select * from relatorio";
-        ResultSet rs = stm.executeQuery(query);
         /* implementação da interface JRDataSource para DataSource ResultSet */
-        JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
+        JRBeanCollectionDataSource jrb = new JRBeanCollectionDataSource(colRelatorio);
         /* HashMap de parametros utilizados no relatório. Sempre instanciados */
         Map parameters = new HashMap();
 
@@ -84,7 +83,7 @@ public class Impressao {
         }
         parameters.put("gratificacao", gratificacao);
 
-        JasperRunManager.runReportToPdfFile(Metodos.getPath() + "RelatorioPonto.jasper", parameters, jrRS);
+        JasperRunManager.runReportToPdfFile(Metodos.getPath() + "RelatorioPonto.jasper", parameters, jrb);
 
         File file = new File(Metodos.getPath() + "RelatorioPonto.pdf");
         byte[] teste = getBytesFromFile(file);

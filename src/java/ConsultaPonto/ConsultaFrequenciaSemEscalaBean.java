@@ -510,6 +510,7 @@ public class ConsultaFrequenciaSemEscalaBean {
     }
 
     public void imprimir() throws JRException, Exception {
+       System.out.println("relatorio: Sem escala");
         if (!diasList.isEmpty()) {
             List<DiaSemEscala> pontoAcessoTotalList = new ArrayList<>();
             for (Iterator<DiaSemEscala> it = diasList.iterator(); it.hasNext();) {
