@@ -472,11 +472,16 @@ public class UsuarioBean implements Serializable {
         Banco b = new Banco();
         String tmp = b.consultarSerial();
         //tirar a criptografia do serial
-        String aux = Base64Crypt.decrypt(tmp);
+        String aux = null;
+        if (tmp != null) {
+            aux = Base64Crypt.decrypt(tmp);
+        }
+        
         String cnpj = "";
         String endDate = "";
         zerg = false;
-        if (!tmp.equals("")) {
+        //if (!tmp.equals("")) {
+        if (aux != null) {
             //dividir string do serial
             cnpj = aux.substring(17);
             endDate = aux.substring(9, 17);

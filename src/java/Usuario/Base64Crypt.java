@@ -19,8 +19,8 @@ public class Base64Crypt {
     private static String myEncryptionKey;
     private static String myEncryptionScheme;
     private static SecretKey key;
-    
-    private static void crypt(){
+
+    private static void crypt() {
         try {
             myEncryptionKey = CRYPT_KEY;
             myEncryptionScheme = DESEDE_ENCRYPTION_SCHEME;
@@ -29,7 +29,7 @@ public class Base64Crypt {
             skf = SecretKeyFactory.getInstance(myEncryptionScheme);
             cipher = Cipher.getInstance(myEncryptionScheme);
             key = skf.generateSecret(ks);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

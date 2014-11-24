@@ -271,7 +271,7 @@
                                                     </rich:column>
                                                     <rich:column sortBy="#{linha.nome}" style="text-align:center">
                                                         <f:facet name="header">
-                                                            <h:outputText value="NOME"/>a
+                                                            <h:outputText value="NOME"/>
                                                         </f:facet>
                                                         <h:outputText value="#{linha.nome}" />
                                                     </rich:column>
@@ -1688,6 +1688,57 @@
                                             </h:panelGroup>
                                         </center>
                                     </rich:panel>
+                                </center>
+                            </h:form>
+                        </rich:tab>
+                        <rich:tab id="tabValidar" label="Validar">
+                            <a4j:support event="ontabenter" action="#{explorerBean.setAba}" reRender="f_messagens">
+                                <a4j:actionparam name="tab" value="tabValidar"/>
+                            </a4j:support>
+                            <h:form id="formMain">
+                                <br/>
+                                <center>                        
+                                    <h:panelGrid columnClasses="gridContent">
+                                        <br><br><br>
+                                        <rich:panel style="text-align: center; width: 400">
+                                            <center>
+                                                <f:facet name="header">
+                                                    <h:panelGroup>
+                                                        <h:outputText value="REGISTRAR PONTO WEB"/>
+                                                    </h:panelGroup>
+                                                </f:facet>
+                                                <h:panelGrid columns="3" style="text-align:center;float:center;">
+                                                    <h:outputText value="Serial: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:inputText id="itSerial" value="#{usuarioBean.serial}" size="50"/>
+                                                </h:panelGrid>
+                                            </center>
+                                            <center>
+                                                <h:panelGrid columns="1">
+                                                    <center>
+                                                        <h:commandLink type="submit" action="#{usuarioBean.verificarSerial()}">
+                                                            <h:graphicImage  value="../images/ok.png" style="border:0"/>
+                                                        </h:commandLink>
+                                                        <h:outputLabel value="Validar" styleClass="labelRight"/>
+                                                    </center>
+                                                </h:panelGrid>
+                                            </center>
+                                            <center>
+                                                <h:panelGrid columns="1">
+                                                    <center>
+                                                        <h:outputText value="Valido até: #{usuarioBean.validade}" styleClass="label" style="float:right"/>            
+                                                    </center>    
+                                                </h:panelGrid>
+                                            </center>    
+                                        </rich:panel>
+                                    </h:panelGrid>
+                                    <h:panelGroup>
+                                        <center>
+                                            <h:commandLink action="login">
+                                                <h:graphicImage  value="../images/voltar.png" style="border:0"/>
+                                            </h:commandLink>
+                                        </center>
+                                    </h:panelGroup>
                                 </center>
                             </h:form>
                         </rich:tab>
