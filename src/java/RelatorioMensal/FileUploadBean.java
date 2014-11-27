@@ -5,17 +5,26 @@
 package RelatorioMensal;
 
 import Metodos.Metodos;
+import java.awt.Graphics2D;
+
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.Image;
+import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
+import sun.awt.image.ByteArrayImageSource;
 
 /**
  *
@@ -38,6 +47,7 @@ public class FileUploadBean implements Serializable {
                     byte[] imageByte = banco.getImageLogo();
                     if (imageByte != null) {
                         file.setData(imageByte);
+                        file = alterarTamanhoImagem(file);
                         logoExiste = true;
                     } else {
                         logoExiste = false;
@@ -54,16 +64,41 @@ public class FileUploadBean implements Serializable {
         logoExiste = true;
         UploadItem item = event.getUploadItem();
         file.setData(getBytesFromFile(item.getFile()));
-        //tamanho em bytes
-        int tamanho = file.getData().length;
-        //arquivo nao pode ser maior que 350kb
-        if (tamanho > 358400) {
-            FacesMessage msgErro = new FacesMessage("O arquivo não pode ser maior que 350kb");
-            FacesContext.getCurrentInstance().addMessage(null, msgErro);
-        } else {
-            Banco banco = new Banco();
-            banco.insertImage(file.getData());
+        file = alterarTamanhoImagem(file);
+        Banco banco = new Banco();
+        banco.insertImage(file.getData());
+    }
+
+    public UploadFile alterarTamanhoImagem(UploadFile file) throws Exception {
+        FileOutputStream fileOuputStream = new FileOutputStream("temp.png");
+        fileOuputStream.write(file.getData());
+        fileOuputStream.close();
+
+        File image = new File("temp.png");
+        BufferedImage imagem = ImageIO.read(image);
+        int largura = imagem.getWidth();
+        int altura = imagem.getHeight();
+        if (largura > 180 || altura > 100) {
+            if (largura > 180) {
+                altura = (altura * 180) / largura;
+                largura = 180;                
+            }
+            if (altura > 100) {
+                altura = 100;
+            }
+            Image img = imagem.getScaledInstance(largura, altura, Image.SCALE_AREA_AVERAGING + Image.SCALE_SMOOTH);
+            imagem = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = imagem.createGraphics();
+            g.drawImage(img, 0, 0, largura, altura, null);
+            g.dispose();
+            ImageIO.write(imagem, "png", image);
+            file.setData(getBytesFromFile(image));
         }
+        if (image.exists()) {
+            image.delete();
+        }
+        return file;
+
     }
 
     public void atualizarFileUpload(ActionListener l) {

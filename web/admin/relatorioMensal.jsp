@@ -1186,6 +1186,9 @@ Author     : Alexandre
                                                         <h:outputText value="Adicione uma logomarca"/>
                                                     </h:panelGroup>
                                                 </f:facet>
+                                                <h:outputText  value="O limite da resolução da imagem é de 180 de largura por 100 de altura" />
+                                                <br>
+                                                <h:outputText  value="Caso seja maior a imagem será redimensioda." />
                                                 <h:panelGrid columns="3" id="uploadGrid">
                                                     <rich:fileUpload fileUploadListener="#{fileUploadBean.listener}"
                                                                      maxFilesQuantity="1"
@@ -1197,11 +1200,10 @@ Author     : Alexandre
                                                                      cancelEntryControlLabel="Cancelar"
                                                                      clearAllControlLabel="Limpar"
                                                                      listHeight="59" listWidth="250">
-                                                        <a4j:support event="onuploadcomplete" reRender="uploadGrid"
-                                                                     />
+                                                        <a4j:support event="onuploadcomplete" reRender="uploadGrid" />
                                                     </rich:fileUpload>
                                                     <rich:spacer width="50"/>
-                                                    <h:panelGroup  rendered="#{fileUploadBean.logoExiste}">
+                                                    <h:panelGroup id="pgLogoMarca" rendered="#{fileUploadBean.logoExiste}"> 
                                                         <rich:panel bodyClass="info_">
                                                             <f:facet name="header">
                                                                 <h:outputText value="Logomarca" />
@@ -1211,7 +1213,7 @@ Author     : Alexandre
                                                                 <h:panelGrid columns="2">
                                                                     <a4j:mediaOutput element="img" mimeType="#{file.mime}"
                                                                                      createContent="#{fileUploadBean.paint}" value="1"
-                                                                                     style="width:180px; height:100px;" cacheable="false">
+                                                                                      cacheable="false">
                                                                         <f:param value="#{fileUploadBean.timeStamp}" name="time"/>
                                                                     </a4j:mediaOutput>
                                                                 </h:panelGrid>

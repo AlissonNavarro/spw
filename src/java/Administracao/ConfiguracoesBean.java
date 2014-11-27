@@ -31,7 +31,7 @@ public class ConfiguracoesBean implements Serializable {
         checkWithPIN = b.CheckWithPIN();
         b = null;
         //abaCorrente = "tabUsuarios1";
-        System.out.println("aba: "+abaCorrente);
+        //System.out.println("aba: "+abaCorrente);
         
     }
 
@@ -130,6 +130,6 @@ public class ConfiguracoesBean implements Serializable {
     public void setAba() {
         String tab = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("tab");
         abaCorrente = tab;
-        System.out.println("aba: "+abaCorrente);
+        //System.out.println("aba: "+abaCorrente);
     }
 }

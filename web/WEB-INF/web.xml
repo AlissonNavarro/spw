@@ -51,7 +51,7 @@
     <filter-mapping>
         <filter-name>Filtro Seguranca</filter-name>
         <url-pattern>/faces/admin/*</url-pattern>
-    </filter-mapping>       
+    </filter-mapping>
     <filter>
         <filter-name>SessionTimeoutFilter</filter-name>
         <filter-class>Filtro.SessionTimeoutFilter</filter-class>
@@ -66,8 +66,7 @@
     <welcome-file-list>
         <welcome-file>faces/login.jsp</welcome-file>
     </welcome-file-list>
-   
-   <error-page>
+    <error-page>
         <error-code>500</error-code>
         <location>/erro.jsp</location>
     </error-page>
@@ -103,8 +102,7 @@
         <error-code>503</error-code>
         <location>/faces/login.jsp</location>
     </error-page>
-
- <!--     <security-constraint>
+    <!--     <security-constraint>
         <web-resource-collection>
             <web-resource-name>
                 Entire Application
@@ -120,11 +118,10 @@
         <auth-method>BASIC</auth-method>
         <realm-name>Modulo apenas para administradores</realm-name>
     </login-config>-->
-    
     <!-- 
         HTTPS abaixo
     -->
-<!--
+    <!--
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>securedapp</web-resource-name>
@@ -135,4 +132,4 @@
         </user-data-constraint>
     </security-constraint>
 -->
-    </web-app>
+</web-app>
