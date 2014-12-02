@@ -10,8 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
-import java.awt.image.RenderedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,17 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
-import sun.awt.image.ByteArrayImageSource;
 
-/**
- *
- * @author amsgama
- */
 public class FileUploadBean implements Serializable {
 
     private UploadFile file;
@@ -47,7 +38,7 @@ public class FileUploadBean implements Serializable {
                     byte[] imageByte = banco.getImageLogo();
                     if (imageByte != null) {
                         file.setData(imageByte);
-                        file = alterarTamanhoImagem(file);
+                        //file = alterarTamanhoImagem(file);
                         logoExiste = true;
                     } else {
                         logoExiste = false;

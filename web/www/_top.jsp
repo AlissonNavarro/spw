@@ -143,7 +143,8 @@
                         <br><h:outputText value="#{usuarioBean.versao}" /> 
                         <a4j:mediaOutput element="img" mimeType="#{file.mime}" rendered="#{fileUploadBean.logoExiste}"
                                          createContent="#{fileUploadBean.paint}" value="1"
-                                         style="width:180px; height:100px;" cacheable="false">
+                                         cacheable="false">
+                                       <!--  style="width:180px; height:100px;" cacheable="false">-->
                             <f:param value="#{fileUploadBean.timeStamp}" name="time"/>
                         </a4j:mediaOutput>
                     </h:panelGrid> </b>

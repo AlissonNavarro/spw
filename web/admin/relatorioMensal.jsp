@@ -1213,7 +1213,7 @@ Author     : Alexandre
                                                                 <h:panelGrid columns="2">
                                                                     <a4j:mediaOutput element="img" mimeType="#{file.mime}"
                                                                                      createContent="#{fileUploadBean.paint}" value="1"
-                                                                                      cacheable="false">
+                                                                                      cacheable="false" >
                                                                         <f:param value="#{fileUploadBean.timeStamp}" name="time"/>
                                                                     </a4j:mediaOutput>
                                                                 </h:panelGrid>
