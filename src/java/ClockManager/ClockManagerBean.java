@@ -83,10 +83,10 @@ public class ClockManagerBean implements Serializable {
          } catch (Exception ex) {
          webServup = false;
          System.out.println("webservice off");
-         }*/
+         }
         if (((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean")).getPerfil().getListaRelogios()) {
             verifyClocks();
-        }
+        }*/
     }
 
     //Guarda no Bean a última aba aberta
