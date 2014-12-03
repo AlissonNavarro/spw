@@ -59,7 +59,7 @@ public class Metodos {
     static Document doc = null;
     static String driver = "jdbc:jtds:sqlserver://";
     static boolean servidorAtivo = false;
-    private static String version = "1.9";
+    private static String version = "1.9.0";
 
     public static void setServidorAtivo() {
         try {
