@@ -135,7 +135,7 @@
                                                              listHeight="60" listWidth="250" 
                                                              cancelEntryControlLabel="Cancelar"
                                                              clearAllControlLabel="Limpar"
-                                                             addControlLabel="Adicionar" >
+                                                             addControlLabel="Adicionar">
                                                 <a4j:support event="onuploadcomplete" reRender="formAFD"/>
                                             </rich:fileUpload>
 

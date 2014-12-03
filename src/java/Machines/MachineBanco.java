@@ -363,12 +363,16 @@ public class MachineBanco implements Serializable {
             pstmt.setString(8, null);
             pstmt.setString(9, null);
             pstmt.setString(10, null);
-            pstmt.setInt(11, rep);
+            if (rep != 0) {
+                pstmt.setInt(11, rep);
+            } else {
+                pstmt.setString(11, null);
+            }
 
             pstmt.executeUpdate();
 
         } catch (Exception e) {
-            System.out.println("Erro:" + e);
+           // System.out.println("Erro:" + e);
         } finally {
             try {
                 if (c != null) {

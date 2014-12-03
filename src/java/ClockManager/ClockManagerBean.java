@@ -365,17 +365,20 @@ public class ClockManagerBean implements Serializable {
                     rep = linha.substring(187, 204);
                     repid = banco.consultaRelogioIdByNFR(rep);
                 }
-                if (repid != 0) {
+               // if (repid != 0) {
                     if (Character.toString(linha.charAt(9)).equals("3")) {
                         lastNSR = saveLog3(repid, linha);
                         qtdLog3++;
                     }
                     qtdLines++;
-                    banco.updateLastNSR(repid, lastNSR);
-                } else {
+                    //banco.updateLastNSR(repid, lastNSR);
+                /*} else {
                     FacesMessage msgErro = new FacesMessage("REP do AFD não está cadastrado no sistema de ponto!");
                     FacesContext.getCurrentInstance().addMessage(null, msgErro);
-                }
+                }*/
+            }
+            if (lastNSR != 0 && repid != 0) {
+                banco.updateLastNSR(repid, lastNSR);
             }
             //System.out.println("Documento possui: " + qtdLines + " linhas, " + qtdLog3 + " do tipo Log3");
             FacesMessage msgErro = new FacesMessage("Finalizado! Foram processadas: " + qtdLines + " linhas, sendo destas " + qtdLog3 + " marcações");
