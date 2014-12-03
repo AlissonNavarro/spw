@@ -113,7 +113,7 @@
                                 </a4j:outputPanel>
                             </center>
                         </rich:tab>
-                        <rich:tab id="tab2" label="Download de AFD" rendered="#{usuarioBean.perfil.downloadAfd == true}">
+                        <rich:tab id="tab2" label="Coleta pelo AFD" rendered="#{usuarioBean.perfil.downloadAfd == true}">
                             <a4j:support event="ontabenter" action="#{clockManagerBean.setAba()}" >
                                 <a4j:actionparam name="tab" value="tab2"/>
                             </a4j:support>
@@ -122,10 +122,11 @@
                                     <rich:panel style="text-align: center;">
                                         <f:facet name="header">
                                             <h:panelGroup>
-                                                <h:outputText value="Fazer download de AFD"/>
+                                                <h:outputText value="Anexar o arquivo AFD"/>
                                             </h:panelGroup>
                                         </f:facet>
                                         <h:form id="formAFD">
+                                            <center>
                                             <%--
                                             <h:outputLabel value="Data mínima das marcações"/>
                                             <rich:calendar inputSize="8" locale="pt/BR" value="#{clockManagerBean.dataLimite}" />
@@ -138,7 +139,10 @@
                                                              addControlLabel="Adicionar">
                                                 <a4j:support event="onuploadcomplete" reRender="formAFD"/>
                                             </rich:fileUpload>
-
+                                            <h:outputText style="font-color:red; font-size:9px" value="OBS: Anexar o arquivo .txt gerado pelo relógio na porta USB fiscal"/>
+                                            <br>
+                                            <h:outputText style="font-color:red; font-size:9px" value="Exemplo: AFD00022000760001483.txt"/>
+                                            </center>
                                             <%--
                                             <h:panelGrid columns="5">
                                                 <h:panelGrid columns="1">
@@ -220,6 +224,197 @@
                                     </h:panelGrid>
                                 </h:form>
                             </center>
+                        </rich:tab>
+                        <rich:tab id="tabRelogios" label="Relógios de Ponto">
+                            <a4j:support event="ontabenter" action="#{explorerBean.setAba}" reRender="f_messagens">
+                                <a4j:actionparam name="tab" value="tabRelogios"/>
+                            </a4j:support>                            
+                            <h:form id="formRelogios">
+                                <center>
+
+                                    <rich:panel id="panelRelogios" style="text-align: center;">
+                                        <center>
+                                            <f:facet name="header">
+                                                <h:panelGroup>
+                                                    <h:outputText value="Gerenciar Relógios de Ponto"/>
+                                                </h:panelGroup>
+                                            </f:facet>
+                                            <center>
+                                                <h:panelGrid id="macGrid" columns="3" style="text-align:center;float:center;">
+                                                    <h:outputText value="Alias: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:inputText id="machineAlias"  value="#{machineBean.machine.repAlias}" size="20"/>
+
+                                                    <h:outputText value="Ip: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:inputText id="machineIp"  value="#{machineBean.machine.repIp}" size="20"/>
+
+                                                    <h:outputText value="Porta: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:inputText id="machinepPort"  value="#{machineBean.machine.repPort}" size="20"/>
+
+                                                    <h:outputText value="Marca: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:selectOneMenu id="machineMarkBox" value="#{machineBean.machine.repType}">
+                                                        <f:selectItems value="#{machineBean.machineTypeList}"/>
+                                                    </h:selectOneMenu>
+
+                                                    <h:outputText value="NFR: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.nfrOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.nfrOn}"/>
+                                                    <h:inputText id="machinenfr"  value="#{machineBean.machine.nfr}" size="20" rendered="#{machineBean.machine.type.nfrOn}"/>
+
+                                                    <h:outputText value="Modelo: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.modelOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.modelOn}"/>
+                                                    <h:inputText id="machinemodel"  value="#{machineBean.machine.model}" size="20" rendered="#{machineBean.machine.type.modelOn}"/>
+
+                                                    <h:outputText value="Local: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.localOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.localOn}"/>
+                                                    <h:inputText id="machinelocal"  value="#{machineBean.machine.local}" size="20" rendered="#{machineBean.machine.type.localOn}"/>
+
+                                                    <h:outputText value="Compania: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.idCompanyOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.idCompanyOn}"/>
+                                                    <h:inputText id="machinecompany"  value="#{machineBean.machine.idCompany}" size="20" rendered="#{machineBean.machine.type.idCompanyOn}"/>
+
+                                                    <h:outputText value="Tipo de Conexão: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.commTypeOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.commTypeOn}"/>
+                                                    <h:inputText id="machinecommtype"  value="#{machineBean.machine.commType}" size="20" rendered="#{machineBean.machine.type.commTypeOn}"/>
+
+                                                    <h:outputText value="Módulo Biométrico: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.biometricModuleOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.biometricModuleOn}"/>
+                                                    <h:inputText id="machinebiomodule"  value="#{machineBean.machine.biometricModule}" size="20" rendered="#{machineBean.machine.type.biometricModuleOn}"/>
+
+                                                    <h:outputText value="Hora da última busca: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.dateLastNSROn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.dateLastNSROn}"/>
+                                                    <h:inputText id="machinedatelastnsr"  value="#{machineBean.machine.dateLastNSR}" size="20" rendered="#{machineBean.machine.type.dateLastNSROn}"/>
+
+                                                    <h:outputText value="Último dado: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.lastNSROn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.lastNSROn}"/>
+                                                    <h:inputText id="machinelastnsr"  value="#{machineBean.machine.lastNSR}" size="20" rendered="#{machineBean.machine.type.lastNSROn}"/>
+
+                                                    <h:outputText value="Caminho do arquivo de coleta: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.pathCollectFileOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.pathCollectFileOn}"/>
+                                                    <h:inputText id="machinepathfile"  value="#{machineBean.machine.pathCollectFile}" size="20" rendered="#{machineBean.machine.type.pathCollectFileOn}"/>
+
+                                                    <h:outputText value="NSR: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.nsrOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.nsrOn}"/>
+                                                    <h:inputText id="machinensr"  value="#{machineBean.machine.nsr}" size="20" rendered="#{machineBean.machine.type.nsrOn}"/>
+
+                                                    <h:outputText value="Ip do Roteador: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.ipRoaterOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.ipRoaterOn}"/>
+                                                    <h:inputText id="machineiproater"  value="#{machineBean.machine.ipRoater}" size="20" rendered="#{machineBean.machine.type.ipRoaterOn}"/>
+
+                                                    <h:outputText value="Mascara: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.maskOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.maskOn}"/>
+                                                    <h:inputText id="machinemask"  value="#{machineBean.machine.mask}" size="20" rendered="#{machineBean.machine.type.maskOn}"/>
+
+                                                    <h:outputText value="Senha: " styleClass="label" style="float:right" rendered="#{machineBean.machine.type.senhaOn}"/>
+                                                    <rich:spacer width="10" rendered="#{machineBean.machine.type.senhaOn}"/>
+                                                    <h:inputText id="machinesenha"  value="#{machineBean.machine.senha}" size="20" rendered="#{machineBean.machine.type.senhaOn}"/>
+
+                                                    <h:outputText value="Ativo: " styleClass="label" style="float:right"/>
+                                                    <rich:spacer width="10"/>
+                                                    <h:selectBooleanCheckbox id="machineEnable" value="#{machineBean.machine.repAtivo}"/>
+                                                </h:panelGrid>
+                                            </center>
+
+                                            <center>
+                                                <h:panelGrid columns="5">
+
+                                                    <h:panelGrid columns="1">
+                                                        <center>
+                                                            <h:commandLink type="submit" action="#{machineBean.adicionar}">
+                                                                <h:graphicImage  value="../images/add2.png" style="border:0"/>
+                                                                <a4j:support event="onClick" reRender="panelRelogios"/>
+                                                            </h:commandLink>
+                                                            <h:outputLabel value="Novo" styleClass="labelRight"/>
+                                                        </center>
+                                                    </h:panelGrid>
+
+                                                    <rich:spacer width="10"/>
+                                                    <h:panelGrid columns="1">
+                                                        <center>
+                                                            <h:commandLink type="submit" action="#{machineBean.editar}">
+                                                                <h:graphicImage  value="../images/edit.gif" style="border:0"/>
+                                                                <a4j:support event="onClick" reRender="panelRelogios"/>
+                                                            </h:commandLink>
+                                                            <h:outputLabel value="Editar" styleClass="labelRight"/>
+                                                        </center>
+                                                    </h:panelGrid>
+
+                                                    <rich:spacer width="10"/>
+                                                    <h:panelGrid columns="1">
+                                                        <center>
+                                                            <h:commandLink type="submit" action="#{machineBean.excluir}">
+                                                                <h:graphicImage  value="../images/delete_24.png" style="border:0"/>
+                                                                <a4j:support event="onClick" reRender="panelRelogios"/>
+                                                            </h:commandLink>
+                                                            <h:outputLabel value="Excluir" styleClass="labelRight"/>
+                                                        </center>
+                                                    </h:panelGrid>
+
+                                                </h:panelGrid>
+                                            </center>
+
+                                            <rich:extendedDataTable id="relogioList"
+                                                                    selection="#{machineBean.selectMac}" enableContextMenu="false"
+                                                                    value="#{machineBean.machineList}" var="machineRow"
+                                                                    rowClasses="zebra1,zebra2"
+                                                                    rows="19" width="54%">
+                                                <f:facet name="header">
+                                                    <h:outputText value="Lista de Relógios"/>
+                                                </f:facet>
+                                                <a4j:support event="onRowClick" action="#{machineBean.showEditarRelogio}"
+                                                             reRender="panelRelogios">
+                                                    <f:param name="idMac" value="#{machineRow.repId}"/>
+                                                </a4j:support>
+
+                                                <rich:column sortBy="#{machineRow.repAlias}" filterBy="#{machineRow.repAlias}" style="text-align:center">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Nome"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{machineRow.repAlias}" />
+                                                </rich:column>
+
+                                                <rich:column sortBy="#{machineRow.repIp}" filterBy="#{machineRow.repIp}" style="text-align:center">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="IP"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{machineRow.repIp}" />
+                                                </rich:column>
+
+                                                <rich:column sortBy="#{machineRow.repPort}" style="text-align:center">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Porta Serial"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{machineRow.repPort}" />
+                                                </rich:column>
+
+                                                <rich:column sortBy="#{machineRow.type.repMarca}" style="text-align:center">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Marca"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{machineRow.type.repMarca}" />
+                                                </rich:column>
+
+                                                <rich:column sortBy="#{machineRow.repAtivo}" style="text-align:center">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="ativo"/>
+                                                    </f:facet>
+                                                    <h:outputText value="Ativo" rendered="#{machineRow.repAtivo}" />
+                                                    <h:outputText value="Inativo" rendered="#{not machineRow.repAtivo}" />
+                                                </rich:column>
+
+                                            </rich:extendedDataTable>
+                                            <rich:datascroller  id="datascrollers1"
+                                                                for="relogioList"
+                                                                page="#{machineBean.page}"
+                                                                ajaxSingle="true"
+                                                                renderIfSinglePage="false">
+                                            </rich:datascroller>
+                                        </center>
+                                    </rich:panel>
+                                </center>
+                            </h:form>
                         </rich:tab>                        
                     </rich:tabPanel>
 
