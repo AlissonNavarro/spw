@@ -225,11 +225,9 @@
                                 </h:form>
                             </center>
                         </rich:tab>
-                        <%--
-                        
-                        <rich:tab id="tabRelogios" label="Relógios de Ponto">
+                        <rich:tab id="tab4" label="Relógios de Ponto" rendered="#{usuarioBean.perfil.relogioPonto == true}">
                             <a4j:support event="ontabenter" action="#{explorerBean.setAba}" reRender="f_messagens">
-                                <a4j:actionparam name="tab" value="tabRelogios"/>
+                                <a4j:actionparam name="tab" value="tab4"/>
                             </a4j:support>                            
                             <h:form id="formRelogios">
                                 <center>

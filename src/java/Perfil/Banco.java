@@ -219,10 +219,11 @@ public class Banco implements Serializable {
                 Boolean listaRelogios = rs.getBoolean("listaRelogios");
                 Boolean downloadAfd = rs.getBoolean("downloadAfd");
                 Boolean scanIps = rs.getBoolean("scanIps");
+                Boolean relogioPonto = rs.getBoolean("relogioPonto");
                 Boolean empresas = rs.getBoolean("empresas");
                 Boolean verbas = rs.getBoolean("verbas");
                 Boolean relatorioCatracas = rs.getBoolean("relatorioCatracas");
-                boolean autenticaSerial = rs.getBoolean("autenticaSerial");
+                Boolean autenticaSerial = rs.getBoolean("autenticaSerial");
                 //Boolean pagamento = rs.getBoolean("pagamento");
 
                 perfil.setCod_perfil(cod_perfil);
@@ -275,6 +276,7 @@ public class Banco implements Serializable {
                 perfil.setScanIP(scanIps);
                 perfil.setDownloadAfd(downloadAfd);
                 perfil.setListaRelogios(listaRelogios);
+                perfil.setRelogioPonto(relogioPonto);
                 perfil.setEmpresas(empresas);
                 perfil.setVerbas(verbas);
                 perfil.setRelatorioCatracas(relatorioCatracas);
@@ -311,7 +313,7 @@ public class Banco implements Serializable {
                     + "afdt = ?, acjef = ?, espelhoDePonto = ?, bancoDeDados = ?, logs = ?,"
                     + " relatorioConfiguracao = ?, categoriaAfastamento = ?, afastamento = ?, manutencao = ?, "
                     + "empresas = ?, verbas = ?, showresumo = ?, relatorioCatracas = ?, pesquisarData = ?, "
-                    + "listaRelogios = ?, downloadAfd = ?, scanIps = ?, presenca = ?, consultaIrregulares = ?, consultaHoraExtra = ?, autenticaSerial = ? "
+                    + "listaRelogios = ?, downloadAfd = ?, scanIps = ?, relogioPonto = ?, presenca = ?, consultaIrregulares = ?, consultaHoraExtra = ?, autenticaSerial = ? "
                     + "WHERE cod_perfil = ?";
 
             pstmt = c.prepareStatement(query);
@@ -370,14 +372,15 @@ public class Banco implements Serializable {
             pstmt.setBoolean(46, perfilEdit.getListaRelogios());
             pstmt.setBoolean(47, perfilEdit.getDownloadAfd());
             pstmt.setBoolean(48, perfilEdit.getScanIP());
+            pstmt.setBoolean(49, perfilEdit.getRelogioPonto());
             
-            pstmt.setBoolean(49, perfilEdit.getPresenca());
-            pstmt.setBoolean(50, perfilEdit.getConsultaIrregulares());
-            pstmt.setBoolean(51, perfilEdit.getConsultaHoraExtra());
+            pstmt.setBoolean(50, perfilEdit.getPresenca());
+            pstmt.setBoolean(51, perfilEdit.getConsultaIrregulares());
+            pstmt.setBoolean(52, perfilEdit.getConsultaHoraExtra());
             
-            pstmt.setBoolean(52, perfilEdit.getAutenticaSerial());
+            pstmt.setBoolean(53, perfilEdit.getAutenticaSerial());
 
-            pstmt.setInt(53, perfilEdit.getCod_perfil());
+            pstmt.setInt(54, perfilEdit.getCod_perfil());
             
 
             pstmt.executeUpdate();

@@ -84,9 +84,11 @@ public class ClockManagerBean implements Serializable {
          webServup = false;
          System.out.println("webservice off");
          }
-        if (((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean")).getPerfil().getListaRelogios()) {
-            verifyClocks();
-        }*/
+         if (((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean")).getPerfil().getListaRelogios()) {
+         verifyClocks();
+         }*/
+        MachineBanco mb = new MachineBanco();
+        allClocks = mb.consultaRelogios();
     }
 
     //Guarda no Bean a última aba aberta
@@ -365,17 +367,17 @@ public class ClockManagerBean implements Serializable {
                     rep = linha.substring(187, 204);
                     repid = banco.consultaRelogioIdByNFR(rep);
                 }
-               // if (repid != 0) {
-                    if (Character.toString(linha.charAt(9)).equals("3")) {
-                        lastNSR = saveLog3(repid, linha);
-                        qtdLog3++;
-                    }
-                    qtdLines++;
+                // if (repid != 0) {
+                if (Character.toString(linha.charAt(9)).equals("3")) {
+                    lastNSR = saveLog3(repid, linha);
+                    qtdLog3++;
+                }
+                qtdLines++;
                     //banco.updateLastNSR(repid, lastNSR);
                 /*} else {
-                    FacesMessage msgErro = new FacesMessage("REP do AFD não está cadastrado no sistema de ponto!");
-                    FacesContext.getCurrentInstance().addMessage(null, msgErro);
-                }*/
+                 FacesMessage msgErro = new FacesMessage("REP do AFD não está cadastrado no sistema de ponto!");
+                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
+                 }*/
             }
             if (lastNSR != 0 && repid != 0) {
                 banco.updateLastNSR(repid, lastNSR);

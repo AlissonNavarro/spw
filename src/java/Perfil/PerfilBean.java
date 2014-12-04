@@ -126,7 +126,8 @@ public class PerfilBean implements Serializable {
         
         perfilEdit.setManutencao(perfilEdit.getScanIP()
                 || perfilEdit.getDownloadAfd()
-                || perfilEdit.getListaRelogios());
+                || perfilEdit.getListaRelogios()
+                || perfilEdit.getRelogioPonto());
 
     }
 

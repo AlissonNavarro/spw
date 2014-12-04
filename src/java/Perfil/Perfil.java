@@ -72,10 +72,11 @@ public class Perfil implements Serializable {
     private Boolean listaRelogios;
     private Boolean downloadAfd;
     private Boolean scanIP;
+    private Boolean relogioPonto;
 
     private Boolean empresas;
     private Boolean verbas;
-    
+
     private Boolean autenticaSerial;
 
     public Perfil() {
@@ -538,6 +539,14 @@ public class Perfil implements Serializable {
         this.autenticaSerial = autenticaSerial;
     }
 
+    public Boolean getRelogioPonto() {
+        return relogioPonto;
+    }
+
+    public void setRelogioPonto(Boolean relogioPonto) {
+        this.relogioPonto = relogioPonto;
+    }
+
     void setaTudoFalso() {
 
         this.consInd = false;
@@ -590,11 +599,11 @@ public class Perfil implements Serializable {
         this.empresas = false;
         this.verbas = false;
         this.presenca = false;
+        this.relogioPonto = false;
         this.consultaIrregulares = false;
         this.consultaHoraExtra = false;
         this.autenticaSerial = false;
     }
-
 
    // public boolean get() {
     //      throw new UnsupportedOperationException("Not yet implemented");
