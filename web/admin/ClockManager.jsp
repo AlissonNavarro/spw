@@ -225,6 +225,8 @@
                                 </h:form>
                             </center>
                         </rich:tab>
+                        <%--
+                        
                         <rich:tab id="tabRelogios" label="Relógios de Ponto">
                             <a4j:support event="ontabenter" action="#{explorerBean.setAba}" reRender="f_messagens">
                                 <a4j:actionparam name="tab" value="tabRelogios"/>
@@ -415,7 +417,7 @@
                                     </rich:panel>
                                 </center>
                             </h:form>
-                        </rich:tab>                        
+                        </rich:tab>    --%>                    
                     </rich:tabPanel>
 
                     <rich:modalPanel id="clockDetails" width="550" autosized="true" styleClass="center" >

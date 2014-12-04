@@ -61,7 +61,6 @@ public class MachineBanco implements Serializable {
             pstmt.setInt(4, mac.getRepType());
             pstmt.setBoolean(5, mac.getRepAtivo());
 
-
             pstmt.executeUpdate();
 
         } catch (Exception e) {
@@ -154,7 +153,6 @@ public class MachineBanco implements Serializable {
             Statement stmt;
 
             String sql;
-
 
             sql = "select * from rep where repId = " + mac_id;
             stmt = c.createStatement();
@@ -340,39 +338,44 @@ public class MachineBanco implements Serializable {
             if (c.isClosed()) {
                 Conectar();
             }
+
+            //armengo pra ajustar mais tarde
+            if (userPis.length() == 12) {
+                userPis = userPis.substring(1);
+            }
+
             String sql = "select userid from USERINFO where pis = '" + userPis + "'";
 
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
             int id = 0;
 
-            while (rs.next()) {
+            if (rs.next()) {
                 id = rs.getInt("userid");
+                sql = "INSERT INTO CHECKINOUT values(?,?,?,?,?,?,?,?,?,?,?)";
+
+                pstmt = c.prepareStatement(sql);
+                pstmt.setInt(1, id);
+                pstmt.setTimestamp(2, dateStr);
+                pstmt.setString(3, "I");
+                pstmt.setInt(4, 0);
+                pstmt.setInt(5, 1);
+                pstmt.setInt(6, 0);
+                pstmt.setString(7, null);
+                pstmt.setString(8, null);
+                pstmt.setString(9, null);
+                pstmt.setString(10, null);
+                if (rep != 0) {
+                    pstmt.setInt(11, rep);
+                } else {
+                    pstmt.setString(11, null);
+                }
+
+                pstmt.executeUpdate();
             }
-
-            sql = "INSERT INTO CHECKINOUT values(?,?,?,?,?,?,?,?,?,?,?)";
-
-            pstmt = c.prepareStatement(sql);
-            pstmt.setInt(1, id);
-            pstmt.setTimestamp(2, dateStr);
-            pstmt.setString(3, "I");
-            pstmt.setInt(4, 0);
-            pstmt.setInt(5, 1);
-            pstmt.setInt(6, 0);
-            pstmt.setString(7, null);
-            pstmt.setString(8, null);
-            pstmt.setString(9, null);
-            pstmt.setString(10, null);
-            if (rep != 0) {
-                pstmt.setInt(11, rep);
-            } else {
-                pstmt.setString(11, null);
-            }
-
-            pstmt.executeUpdate();
 
         } catch (Exception e) {
-           // System.out.println("Erro:" + e);
+            // System.out.println("Erro:" + e);
         } finally {
             try {
                 if (c != null) {
@@ -398,7 +401,6 @@ public class MachineBanco implements Serializable {
             /*if (c.isClosed()) {
              Conectar();
              }*/
-
             pstmt = c.prepareStatement(query);
             pstmt.setInt(1, lastNSR);
             pstmt.setInt(2, repId);
