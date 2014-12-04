@@ -748,6 +748,7 @@ public class Banco {
                 Boolean listaRelogios = rs.getBoolean("listaRelogios");
                 Boolean downloadAfd = rs.getBoolean("downloadAfd");
                 Boolean scanIps = rs.getBoolean("scanIps");
+                Boolean relogioPonto = rs.getBoolean("relogioPonto");
                 Boolean empresas = rs.getBoolean("empresas");
                 Boolean verbas = rs.getBoolean("verbas");
                 Boolean relatorioCatracas = rs.getBoolean("relatorioCatracas");
@@ -803,6 +804,7 @@ public class Banco {
                 perfil.setDownloadAfd(downloadAfd);
                 perfil.setScanIP(scanIps);
                 perfil.setListaRelogios(listaRelogios);
+                perfil.setRelogioPonto(relogioPonto);
                 perfil.setEmpresas(empresas);
                 perfil.setVerbas(verbas);
                 perfil.setRelatorioCatracas(relatorioCatracas);

@@ -921,7 +921,7 @@
                                                             <rich:spacer width="20"/>
                                                             <h:panelGroup>
                                                                 <rich:spacer width="10"/>
-                                                                <h:outputText value="Download de AFD"/>
+                                                                <h:outputText value="Coleta pelo AFD"/>
                                                             </h:panelGroup>
                                                             <rich:spacer width="20"/>
                                                             <h:selectBooleanCheckbox id="afdCheck" value="#{perfilBean.perfilEdit.downloadAfd}"/>
@@ -934,6 +934,16 @@
                                                             </h:panelGroup>
                                                             <rich:spacer width="20"/>
                                                             <h:selectBooleanCheckbox id="scanIpCheck" value="#{perfilBean.perfilEdit.scanIP}"/>
+                                                            
+                                                            <rich:spacer width="20"/>
+                                                            <rich:spacer width="20"/>
+                                                            <h:panelGroup>
+                                                                <rich:spacer width="10"/>
+                                                                <h:outputText value="Relogios de Ponto"/>
+                                                            </h:panelGroup>
+                                                            <rich:spacer width="20"/>
+                                                            <h:selectBooleanCheckbox id="relogioPontoCheck" value="#{perfilBean.perfilEdit.relogioPonto}"/>
+
                                                         </h:panelGrid>
                                                     </rich:panel>
                                                     <br>
