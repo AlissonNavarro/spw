@@ -338,7 +338,6 @@ public class MachineBanco implements Serializable {
             if (c.isClosed()) {
                 Conectar();
             }
-
             //armengo pra ajustar mais tarde
             if (userPis.length() == 12) {
                 userPis = userPis.substring(1);
