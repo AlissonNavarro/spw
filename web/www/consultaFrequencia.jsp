@@ -69,8 +69,8 @@
                                                 <rich:spacer width="1"/>
                                             </h:panelGrid>
                                         </center>
-                                            
-                                            <h:panelGroup id="resumo">
+
+                                        <h:panelGroup id="resumo">
                                             <center>
                                                 <rich:spacer height="8"/>
                                                 <rich:dataTable id="resumoList"
@@ -136,8 +136,8 @@
 
                                             </center>
                                         </h:panelGroup>
-                                        
-                                        
+
+
                                         <a4j:status id="progressoEmAberto"  for="region1" onstart="Richfaces.showModalPanel('panelStatus');" onstop="#{rich:component('panelStatus')}.hide()"/>
                                         <rich:modalPanel id="panelStatus" autosized="true" >
                                             <h:panelGrid columns="3">
@@ -257,81 +257,81 @@
                                         </h:panelGroup>
                                     </a4j:region>
                                 </rich:tab>
-                                <%--           <rich:tab id="tab2" label="Frequência sem escala">
-                                                          <br/>
-                                                          <center>
-                                                              <a4j:region id="region2">
-                                                                  <h:panelGrid columns="8" >
-                                                                      <h:outputText value="Departamento: " styleClass="label"/>
-                                                                      <rich:spacer width="30"/>
-                                                                      <h:outputText value="Funcionário: " styleClass="label"/>
-                                                                      <rich:spacer width="30"/>
-                                                                      <h:outputText value="Data Inicial: " styleClass="label"/>
-                                                                      <rich:spacer width="30"/>
-                                                                      <h:outputText value="Data Final:" styleClass="label"/>
-                                                                      <rich:spacer width="30"/>
-                                                                      <h:outputText value="#{consultaFrequenciaSemEscalaBean.departamentoSrt}" />
-                                                                      <rich:spacer width="30"/>
-                                                                      <h:outputText value="#{consultaFrequenciaSemEscalaBean.nome}" />
-                                                                      <rich:spacer width="30"/>
-                                                                      <rich:calendar inputSize="8" locale="#{consultaFrequenciaSemEscalaBean.objLocale}" value="#{consultaFrequenciaSemEscalaBean.dataInicio}">
-                                                                          <a4j:support event="onchanged" ajaxSingle="true"  action="#{consultaFrequenciaSemEscalaBean.consultaDias}"
-                                                                                       reRender="diasT,f_messagens"/>
-                                                                      </rich:calendar>
-                                                                      <rich:spacer width="30"/>
-                                                                      <rich:calendar inputSize="8" locale="#{consultaFrequenciaSemEscalaBean.objLocale}" value="#{consultaFrequenciaSemEscalaBean.dataFim}">
-                                                                          <a4j:support event="onchanged" ajaxSingle="true"  action="#{consultaFrequenciaSemEscalaBean.consultaDias}"
-                                                                                       reRender="diasT,f_messagens"/>
-                                                                      </rich:calendar>
-                                                                      <rich:spacer width="1"/>
-                                                                  </h:panelGrid>
-                                                              </a4j:region>
-                                                              <a4j:status id="progressoEmAberto2"  for="region2" onstart="Richfaces.showModalPanel('panelStatus');" onstop="#{rich:component('panelStatus')}.hide()"/>
-                                                              <rich:modalPanel id="panelStatus2" autosized="true" >
-                                                                  <h:panelGrid columns="3">
-                                                                      <h:graphicImage url="../images/load.gif" />
-                                                                      <rich:spacer width="8"/>
-                                                                      <h:outputText value="  Carregando…" styleClass="label" />
-                                                                  </h:panelGrid>
-                                                              </rich:modalPanel>
-                                                          </center>
-                                                          <br/>
-                                                          <h:panelGroup id="diasT" >
-                                                              <center>
-                                                                  <h:panelGrid columns="1" columnClasses="gridContent" rendered="#{not empty consultaFrequenciaSemEscalaBean.diasList}">
-                                                                      <rich:panel id="panelT">
-                                                                          <f:facet name="header">
-                                                                              <h:panelGroup>
-                                                                                  <center>
-                                                                                      <h:column>
-                                                                                          <h:outputText  value="#{consultaFrequenciaSemEscalaBean.nome}"/>
-                                                                                      </h:column>
-                                                                                  </center>
-                                                                              </h:panelGroup>
-                                                                          </f:facet>
-                                                                          <rich:dataGrid id="datagridT"
-                                                                                         value="#{consultaFrequenciaSemEscalaBean.diasList}"
-                                                                                         var="pontoAcessoT"
-                                                                                         columns="5"
-                                                                                         columnClasses="cellTop, cellTop, cellTop, cellTop, cellTop"
-                                                                                         >
-                                                                              <rich:panel>
-                                                                                  <f:facet name="header" >
-                                                                                      <h:panelGroup>
-                                                                                          <center>
-                                                                                              <h:outputText value="#{pontoAcessoT.data}">
-                                                                                                  <f:convertDateTime pattern="EE dd/MM/yyyy"/>
-                                                                                              </h:outputText>
-                                                                                          </center>
-                                                                                      </h:panelGroup>
-                                                                                  </f:facet>
-                                                                                  <rich:dataTable
-                                                                                      value="#{pontoAcessoT.horasList}"
-                                                                                      var="horasList"
-                                                                                      rendered="#{not empty pontoAcessoT.horasList}"
-                                                                                      styleClass="datatableTop"
-                                                                                      width="100px">
-                                                                                      <f:facet name="header">
+                                <rich:tab id="tab2" label="Frequência sem escala">
+                                    <br/>
+                                    <center>
+                                        <a4j:region id="region2">
+                                            <h:panelGrid columns="8" >
+                                                <h:outputText value="Departamento: " styleClass="label"/>
+                                                <rich:spacer width="30"/>
+                                                <h:outputText value="Funcionário: " styleClass="label"/>
+                                                <rich:spacer width="30"/>
+                                                <h:outputText value="Data Inicial: " styleClass="label"/>
+                                                <rich:spacer width="30"/>
+                                                <h:outputText value="Data Final:" styleClass="label"/>
+                                                <rich:spacer width="30"/>
+                                                <h:outputText value="#{consultaFrequenciaSemEscalaBean.departamentoSrt}" />
+                                                <rich:spacer width="30"/>
+                                                <h:outputText value="#{consultaFrequenciaSemEscalaBean.nome}" />
+                                                <rich:spacer width="30"/>
+                                                <rich:calendar inputSize="8" locale="#{consultaFrequenciaSemEscalaBean.objLocale}" value="#{consultaFrequenciaSemEscalaBean.dataInicio}">
+                                                    <a4j:support event="onchanged" ajaxSingle="true"  action="#{consultaFrequenciaSemEscalaBean.consultaDias}"
+                                                                 reRender="diasT,f_messagens"/>
+                                                </rich:calendar>
+                                                <rich:spacer width="30"/>
+                                                <rich:calendar inputSize="8" locale="#{consultaFrequenciaSemEscalaBean.objLocale}" value="#{consultaFrequenciaSemEscalaBean.dataFim}">
+                                                    <a4j:support event="onchanged" ajaxSingle="true"  action="#{consultaFrequenciaSemEscalaBean.consultaDias}"
+                                                                 reRender="diasT,f_messagens"/>
+                                                </rich:calendar>
+                                                <rich:spacer width="1"/>
+                                            </h:panelGrid>
+                                        </a4j:region>
+                                        <a4j:status id="progressoEmAberto2"  for="region2" onstart="Richfaces.showModalPanel('panelStatus');" onstop="#{rich:component('panelStatus')}.hide()"/>
+                                        <rich:modalPanel id="panelStatus2" autosized="true" >
+                                            <h:panelGrid columns="3">
+                                                <h:graphicImage url="../images/load.gif" />
+                                                <rich:spacer width="8"/>
+                                                <h:outputText value="  Carregando…" styleClass="label" />
+                                            </h:panelGrid>
+                                        </rich:modalPanel>
+                                    </center>
+                                    <br/>
+                                    <h:panelGroup id="diasT" >
+                                        <center>
+                                            <h:panelGrid columns="1" columnClasses="gridContent" rendered="#{not empty consultaFrequenciaSemEscalaBean.diasList}">
+                                                <rich:panel id="panelT">
+                                                    <f:facet name="header">
+                                                        <h:panelGroup>
+                                                            <center>
+                                                                <h:column>
+                                                                    <h:outputText  value="#{consultaFrequenciaSemEscalaBean.nome}"/>
+                                                                </h:column>
+                                                            </center>
+                                                        </h:panelGroup>
+                                                    </f:facet>
+                                                    <rich:dataGrid id="datagridT"
+                                                                   value="#{consultaFrequenciaSemEscalaBean.diasList}"
+                                                                   var="pontoAcessoT"
+                                                                   columns="5"
+                                                                   columnClasses="cellTop, cellTop, cellTop, cellTop, cellTop"
+                                                                   >
+                                                        <rich:panel>
+                                                            <f:facet name="header" >
+                                                                <h:panelGroup>
+                                                                    <center>
+                                                                        <h:outputText value="#{pontoAcessoT.data}">
+                                                                            <f:convertDateTime pattern="EE dd/MM/yyyy"/>
+                                                                        </h:outputText>
+                                                                    </center>
+                                                                </h:panelGroup>
+                                                            </f:facet>
+                                                            <rich:dataTable
+                                                                value="#{pontoAcessoT.horasList}"
+                                                                var="horasList"
+                                                                rendered="#{not empty pontoAcessoT.horasList}"
+                                                                styleClass="datatableTop"
+                                                                width="100px">
+                                                                <f:facet name="header">
 
                                                                 </f:facet>
                                                                 <center>
@@ -350,7 +350,7 @@
                                             </h:panelGrid>
                                         </h:panelGroup>
                                     </center>
-                                </rich:tab>--%>
+                                </rich:tab>
                             </rich:tabPanel>
                         </center>
                     </h:panelGrid>
