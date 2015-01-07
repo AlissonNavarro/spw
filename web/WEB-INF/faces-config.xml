@@ -301,6 +301,14 @@
             <redirect/>
         </navigation-case>
     </navigation-rule>
+    
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>navegarFuncionarios</from-outcome>
+            <to-view-id>/admin/funcionarios.jsp</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>    
 
     <navigation-rule>
         <navigation-case>

@@ -1,8 +1,3 @@
-<%-- 
-    Document   : consultaFrequenciaAdmin
-    Created on : 21/12/2009, 17:08:40
-    Author     : amsgama
---%>
 <%
             response.setHeader("Cache-Control", "no-cache");
             response.setHeader("Cache-Control", "no-store");
@@ -71,7 +66,7 @@
             </h:form>
             <center>
                 <h:form id="form">
-                    <h:panelGrid columns="1" >
+                    <h:panelGrid columns="1">
                         <center>
                             <rich:tabPanel switchType="client"  width="965" selectedTab="#{consultaFrequenciaComEscalaBean.abaCorrente}">
                                 <rich:tab id="tab1" name="tab1" label="Frequência com escala"

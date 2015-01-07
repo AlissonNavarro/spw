@@ -1,9 +1,3 @@
-                                                     
-<%-- 
-    Document   : ClockManager
-    Created on : 21/12/2009, 17:08:40
-    Author     : Pedro Cardoso
---%>
 <%
     response.setHeader("Cache-Control", "no-cache");
     response.setHeader("Cache-Control", "no-store");
@@ -415,7 +409,7 @@
                                     </rich:panel>
                                 </center>
                             </h:form>
-                        </rich:tab>    --%>                    
+                        </rich:tab>                    
                     </rich:tabPanel>
 
                     <rich:modalPanel id="clockDetails" width="550" autosized="true" styleClass="center" >

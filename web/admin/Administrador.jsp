@@ -218,7 +218,7 @@
                         </h:commandLink>
                     </center>
                 </h:form>
-                <h:panelGrid columns="1" columnClasses="gridContent">
+                <h:panelGrid columns="1" columnClasses="gridContent" >
                     <rich:tabPanel id="tabPanelMain" switchType="client" width="965" selectedTab="#{explorerBean.abaCorrente}">
                         <br>
                         <rich:tab id="tabPadroes" label="Padrões" rendered="#{usuarioBean.isAtivo}" >

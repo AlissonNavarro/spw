@@ -7,7 +7,6 @@
     font-size: 36px;
 }
 
-
 #bg_body {
     background-image: url("../images/fundo.png");
     background-repeat: repeat-x;
@@ -401,4 +400,8 @@
     background:url("../images/aceito.png") no-repeat center center !important;
     border:none !important;
     cursor:pointer;
+}
+
+.fundoPanel {
+    background-color: #DDEFFF;
 }

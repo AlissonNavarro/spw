@@ -22,7 +22,7 @@
         <h:form> 
             <center>
                 <h:panelGrid columns="1" rendered="#{not empty usuarioBean.usuario.nome}" >
-                    <h:panelGrid columns="15" rendered="#{usuarioBean.ehAdministrador}" >
+                    <h:panelGrid columns="17" rendered="#{usuarioBean.ehAdministrador}" >
                         <h:panelGroup rendered="#{usuarioBean.perfil.consInd==true}">
                             <center>
                                 <h:commandLink  action="navegarInicio" rendered="#{usuarioBean.ehAdministrador}" styleClass="link">
@@ -32,7 +32,17 @@
                                 <h:outputLabel value="Frequência" styleClass="labelRight"/>
                             </center>
                         </h:panelGroup>
-                        <rich:spacer width="50" rendered="#{usuarioBean.perfil.consInd==true}"/>
+                        <rich:spacer width="50" rendered="#{usuarioBean.perfil.consInd==true}"/>                        
+                        <h:panelGroup rendered="#{usuarioBean.perfil.cadastrosEConfiguracoes==true}">
+                            <center>
+                                <h:commandLink  action="navegarFuncionarios" rendered="#{usuarioBean.ehAdministrador}" styleClass="link">
+                                    <h:graphicImage  value="../images/funcionarios-icon.png" style="border:0" width="48" height="48" />
+                                </h:commandLink>
+                                <br/>
+                                <h:outputLabel value="Funcionários" styleClass="labelRight"/>
+                            </center>
+                        </h:panelGroup>                           
+                        <rich:spacer width="50" rendered="#{usuarioBean.perfil.cadastrosEConfiguracoes==true}"/>
                         <h:panelGroup rendered="#{usuarioBean.perfil.horCronoJorn==true}">
                             <center>
                                 <h:commandLink action="navegarEscala" rendered="#{usuarioBean.ehAdministrador}" styleClass="link">

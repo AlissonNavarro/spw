@@ -1,10 +1,3 @@
-                                                    
-<%-- 
-    Document   : consultaFrequenciaAdmin
-    Created on : 21/12/2009, 17:08:40
-    Author     : amsgama
---%>
-
 <%@ page import="javax.faces.context.FacesContext" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
