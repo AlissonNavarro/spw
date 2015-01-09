@@ -4,32 +4,6 @@
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
 %>
-<%@ page import="ConsultaPonto.ConsultaFrequenciaComEscalaBean" %>
-<%@ page import="ConsultaPonto.ConsultaFrequenciaSemEscalaBean" %>
-<%@ page import="ConsultaPonto.ConsultaFrequenciaHoraExtraBean" %>
-<%@ page import="javax.faces.context.FacesContext" %>
-<%
-            String param = request.getParameter("param");
-            if (param != null) {
-                ConsultaFrequenciaComEscalaBean consultaFrequenciaComEscalaBean = (ConsultaFrequenciaComEscalaBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("consultaFrequenciaComEscalaBean");
-                ConsultaFrequenciaSemEscalaBean consultaFrequenciaSemEscalaBean = (ConsultaFrequenciaSemEscalaBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("consultaFrequenciaSemEscalaBean");
-                ConsultaFrequenciaHoraExtraBean consultaFrequenciaHoraExtraBean = (ConsultaFrequenciaHoraExtraBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("consultaFrequenciaHoraExtraBean");
-                if (param.equals("clear")) {
-                    if (consultaFrequenciaComEscalaBean.getAbaCorrente().equals("tab1")) {
-                        consultaFrequenciaComEscalaBean.construtor();
-                        consultaFrequenciaComEscalaBean.consultaDias();
-                    }
-                    if (consultaFrequenciaComEscalaBean.getAbaCorrente().equals("tab2")) {
-                        consultaFrequenciaSemEscalaBean.construtor();
-                        consultaFrequenciaSemEscalaBean.consultaDias();
-                    }
-                    if (consultaFrequenciaComEscalaBean.getAbaCorrente().equals("tab3")) {
-                        consultaFrequenciaHoraExtraBean.construtor();
-                        consultaFrequenciaHoraExtraBean.consultaDias();
-                    }
-                }
-            }
-%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
 <%@taglib prefix="h" uri="http://java.sun.com/jsf/html"%>

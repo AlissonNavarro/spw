@@ -33,7 +33,7 @@
                             </center>
                         </h:panelGroup>
                         <rich:spacer width="50" rendered="#{usuarioBean.perfil.consInd==true}"/>                        
-                        <h:panelGroup rendered="#{usuarioBean.perfil.cadastrosEConfiguracoes==true}">
+                        <h:panelGroup rendered="#{false}">
                             <center>
                                 <h:commandLink  action="navegarFuncionarios" rendered="#{usuarioBean.ehAdministrador}" styleClass="link">
                                     <h:graphicImage  value="../images/funcionarios-icon.png" style="border:0" width="48" height="48" />
@@ -42,7 +42,7 @@
                                 <h:outputLabel value="Funcionários" styleClass="labelRight"/>
                             </center>
                         </h:panelGroup>                           
-                        <rich:spacer width="50" rendered="#{usuarioBean.perfil.cadastrosEConfiguracoes==true}"/>
+                        <rich:spacer width="50" rendered="#{false}"/>
                         <h:panelGroup rendered="#{usuarioBean.perfil.horCronoJorn==true}">
                             <center>
                                 <h:commandLink action="navegarEscala" rendered="#{usuarioBean.ehAdministrador}" styleClass="link">

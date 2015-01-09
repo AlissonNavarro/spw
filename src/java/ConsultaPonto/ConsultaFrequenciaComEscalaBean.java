@@ -35,10 +35,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import net.sf.jasperreports.engine.JRException;
 
-/**
- *
- * @author amsgama
- */
 public class ConsultaFrequenciaComEscalaBean implements Serializable {
 
     private String nome;
