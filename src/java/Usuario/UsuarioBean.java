@@ -6,12 +6,8 @@ package Usuario;
 
 import Metodos.Metodos;
 import Perfil.Perfil;
-import com.sun.faces.vendor.Tomcat6InjectionProvider;
 import java.awt.Desktop;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.URI;
@@ -27,12 +23,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.servlet.http.HttpSession;
-import javax.swing.JOptionPane;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 /**
  *
@@ -54,7 +47,6 @@ public class UsuarioBean implements Serializable {
     private Perfil perfil;
     private String cpfAD;
     private InetAddress addr;
-    private String IpAD;
     private Boolean existsADServer;
     private String versao;
     private String serial;
@@ -476,7 +468,7 @@ public class UsuarioBean implements Serializable {
         if (tmp != null) {
             aux = Base64Crypt.decrypt(tmp);
         }
-        
+
         String cnpj = "";
         String endDate = "";
         zerg = false;

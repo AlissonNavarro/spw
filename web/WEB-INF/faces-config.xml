@@ -290,7 +290,6 @@
         <navigation-case>
             <from-outcome>consultaFrequenciaAdmin</from-outcome>
             <to-view-id>/admin/consultaFrequenciaAdmin.jsp</to-view-id>
-
         </navigation-case>
     </navigation-rule>
 

@@ -1,26 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Usuario;
 
-/**
- *
- * @author amsgama
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- *
- * @author dfmasouza
- */
 public class Usuario implements Serializable {
 
     private BigDecimal nrId = null;
@@ -68,6 +52,7 @@ public class Usuario implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+        geraPrimeiroNome();
     }
 
     public String getSenha() {
@@ -103,15 +88,7 @@ public class Usuario implements Serializable {
     }
 
     public String getPrimeiroNome() {
-        String[] nomeCompleto = nome.split(" ");
-
-        String[] primeiroNome_ = nomeCompleto[0].split("");
-
-        String calda = "";
-        for (int i = 2; i < primeiroNome_.length; i++) {
-            calda += primeiroNome_[i].toLowerCase();
-        }
-        return primeiroNome_[1].toUpperCase() + calda;
+        return primeiroNome;
     }
 
     public void setPrimeiroNome(String primeiroNome) {
@@ -164,20 +141,14 @@ public class Usuario implements Serializable {
         return saida;
     }
 
-    public static void main(String[] a) {
-
-        Usuario cf = new Usuario();
-        cf.setNome("9");
-        String[] nomeCompleto = cf.nome.split(" ");
-
-        String[] primeiroNome = nomeCompleto[0].split("");
-
+    public void geraPrimeiroNome() {
+        String[] nomeCompleto = getNome().split(" ");
+        String[] primeiroNome_ = nomeCompleto[0].split("");
         String calda = "";
-        for (int i = 2; i < primeiroNome.length; i++) {
-            calda += primeiroNome[i].toLowerCase();
+        for (int i = 2; i < primeiroNome_.length; i++) {
+            calda += primeiroNome_[i].toLowerCase();
         }
-
-        System.out.print(" " + primeiroNome[1].toUpperCase() + calda);
-
+        setPrimeiroNome(primeiroNome_[1].toUpperCase() + calda);
     }
+
 }
