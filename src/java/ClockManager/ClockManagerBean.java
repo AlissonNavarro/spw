@@ -362,6 +362,7 @@ public class ClockManagerBean implements Serializable {
             int qtdLines = 0;
             int qtdLog3 = 0;
             int lastNSR = 0;
+            banco.criaDepartments();
             while ((linha = bf.readLine()) != null) {
                 if (Character.toString(linha.charAt(9)).equals("1")) {
                     rep = linha.substring(187, 204);
@@ -372,6 +373,11 @@ public class ClockManagerBean implements Serializable {
                     lastNSR = saveLog3(repid, linha);
                     qtdLog3++;
                 }
+                if (Character.toString(linha.charAt(9)).equals("5")) {
+                    lastNSR = saveLog5(repid, linha);
+                    qtdLog3++;
+                }                
+                
                 qtdLines++;
                     //banco.updateLastNSR(repid, lastNSR);
                 /*} else {
@@ -415,6 +421,29 @@ public class ClockManagerBean implements Serializable {
         return Integer.valueOf(NSR);
     }
 
+    private int saveLog5(int rep, String linha) {
+        String NSR = linha.substring(0, 9);
+        //String reg = linha.substring(9, 10);
+        /*String dia = linha.substring(10, 12);
+        String mes = linha.substring(12, 14);
+        String ano = linha.substring(14, 18);
+        String hora = linha.substring(18, 20);
+        String minuto = linha.substring(20, 22);*/
+        String status = linha.substring(22, 23);
+        String pis = linha.substring(23, 35);
+        String nome = linha.substring(35);
+        //System.out.println("NSR: " + NSR + " - Reg: " + reg + " - Data: " + dia + "/" + mes + "/" + ano + " - Hora: " + hora + ":" + minuto + " - PIS: " + pis);
+
+        //String dateStr = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
+        //System.out.println("data: "+dateStr);
+        //Timestamp time = Timestamp.valueOf(dateStr);
+        //if (dataLimite == null || time.after(dataLimite)) {
+            MachineBanco banco = new MachineBanco();
+            banco.cadastraUserRepToBanco(status, pis, nome, rep);
+        //}
+        return Integer.valueOf(NSR);
+    }
+    
     private Future<Rep> ipsAtivos(final ExecutorService es, final String ip, final int timeout, final int indice) {
         return es.submit(new Callable<Rep>() {
             @Override

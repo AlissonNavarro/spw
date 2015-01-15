@@ -306,7 +306,6 @@ public class MachineBanco implements Serializable {
 
     //Verifica se o NFR existe
     public int consultaRelogioIdByNFR(String nfr) {
-        Machine mac = new Machine();
         Integer id = 0;
         try {
             if (c.isClosed()) {
@@ -338,9 +337,11 @@ public class MachineBanco implements Serializable {
             if (c.isClosed()) {
                 Conectar();
             }
-            //armengo pra ajustar mais tarde
+
             if (userPis.length() == 12) {
-                userPis = userPis.substring(1);
+                if (userPis.substring(0, 1).equals("0")) {
+                    userPis = userPis.substring(1);
+                }
             }
 
             String sql = "select userid from USERINFO where pis = '" + userPis + "'";
@@ -352,7 +353,6 @@ public class MachineBanco implements Serializable {
             if (rs.next()) {
                 id = rs.getInt("userid");
                 sql = "INSERT INTO CHECKINOUT values(?,?,?,?,?,?,?,?,?,?,?)";
-
                 pstmt = c.prepareStatement(sql);
                 pstmt.setInt(1, id);
                 pstmt.setTimestamp(2, dateStr);
@@ -372,9 +372,8 @@ public class MachineBanco implements Serializable {
 
                 pstmt.executeUpdate();
             }
-
         } catch (Exception e) {
-            // System.out.println("Erro:" + e);
+            //System.out.println("Erro:" + e);
         } finally {
             try {
                 if (c != null) {
@@ -382,7 +381,84 @@ public class MachineBanco implements Serializable {
                     c.close();
                 }
             } catch (Exception e) {
-                System.out.println("Erro:" + e);
+            }
+        }
+    }
+    
+    public void criaDepartments() {
+        PreparedStatement pstmt = null;
+        Statement stmt = null;
+        ResultSet rs = null;        
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+
+            String sql = "select deptid from departments where deptname = 'Coletado via AFD'" ;
+                stmt = c.createStatement();
+                rs = stmt.executeQuery(sql);
+                if (!rs.next()) {
+                    sql = "insert into departments (deptname, supdeptid) values ('Coletado via AFD', 1)";
+                    pstmt = c.prepareStatement(sql);
+                    pstmt.executeUpdate();
+                }
+        } catch (Exception e) {
+            System.out.println("Erro:" + e);
+        } finally {
+            try {
+                if (c != null) {
+                    pstmt.close();
+                    c.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        
+    }
+
+    public void cadastraUserRepToBanco(String status, String pis, String nome, int rep) {
+        PreparedStatement pstmt = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+
+            if (pis.length() == 12) {
+                if (pis.substring(0, 1).equals("0")) {
+                    pis = pis.substring(1);
+                }
+            }
+
+            String sql = "";
+
+            if (status.toUpperCase().equals("I")) {
+                sql = "select userid from USERINFO where pis = '" + pis + "'";
+                stmt = c.createStatement();
+                //System.out.print(pis+"       "+ nome);
+                rs = stmt.executeQuery(sql);
+                if (!rs.next()) {
+                    sql = "insert into userinfo (pis, name, badgenumber, cod_regime, perfil, ativo, livreacesso, defaultdeptid) values "
+                            + "(?,?,?,0,(select cod_perfil from perfil where nome_perfil = 'PADRÃO'),0,0,(select deptid from departments where deptname = 'Coletado via AFD'))";
+                    pstmt = c.prepareStatement(sql);
+                    pstmt.setString(1, pis);
+                    pstmt.setString(2, nome);
+                    pstmt.setString(3, pis);
+                    pstmt.executeUpdate();
+                    //System.out.print(" nao cadastrado");
+                }
+                //System.out.println();
+            }
+        } catch (Exception e) {
+            System.out.println("Erro:" + e);
+        } finally {
+            try {
+                if (c != null) {
+                    pstmt.close();
+                    c.close();
+                }
+            } catch (Exception e) {
             }
         }
     }
