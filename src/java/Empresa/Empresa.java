@@ -1,25 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Empresa;
 
 import java.io.Serializable;
 
-/**
- *
- * @author prccardoso
- */
 public class Empresa implements Serializable{
    
-    private String razaoSocial;
-    private String cnpj;
-    private String address;
-    private Integer cei;
     private Integer id;
+    private String cnpj;
+    private Integer cei;
+    private String razaoSocial;
+    private String address;
     
-    public Empresa(){
-        
+    public Empresa(){      
     }
     
     public Empresa(String cnpj, String razaoSocial, String address, Integer cei, Integer id) {
@@ -46,7 +37,6 @@ public class Empresa implements Serializable{
         this.address = address;
     }
     
-
     public Integer getCei() {
         return cei;
     }
@@ -71,5 +61,4 @@ public class Empresa implements Serializable{
         this.razaoSocial = razaoSocial;
     }
 
-    
 }

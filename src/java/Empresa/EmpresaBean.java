@@ -1,23 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Empresa;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import org.ibex.nestedvm.UsermodeConstants;
 
-/**
- *
- * @author prccardoso
- */
 public class EmpresaBean implements Serializable {
 
     private List<SelectItem> empresaList;
