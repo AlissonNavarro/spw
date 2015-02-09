@@ -10,8 +10,10 @@ import javax.faces.model.SelectItem;
 public class EmpresaBean implements Serializable {
 
     private List<SelectItem> empresaList;
-    private String empresaSelecionada = "-1";
+    private Integer empresaSelecionada;
     private Empresa empresa;
+    private Empresa empresaNova;
+    private Empresa empresaEdit;
     private String IpAD;
     private String cnpj;
     private String IpDigitCatcher;
@@ -23,6 +25,7 @@ public class EmpresaBean implements Serializable {
 
         empresa = new Empresa();
         consultaEmpresa();
+        empresaSelecionada = -1;
         EmpresaMB empresaMB = new EmpresaMB();
         IpAD = empresaMB.getServidorAD();
         IpDigitSender = empresaMB.getServidorDigitSender();
@@ -39,9 +42,21 @@ public class EmpresaBean implements Serializable {
         }
     }
 
-    public void salvar(){
+    public void showAdicionar() {
+        empresaNova = new Empresa();
+    }
+
+    public void showEditar() {
+        empresaEdit = new Empresa();
+        empresaEdit.setId(empresaSelecionada);
+        System.out.println(empresaList.get(empresaSelecionada).getValue());
+        System.out.println(empresaList.get(empresaSelecionada).getLabel());
+        
+    }
+
+    public void salvar() {
         EmpresaMB empresaMB = new EmpresaMB();
-        boolean sucesso = empresaMB.updateEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getId() );
+        boolean sucesso = empresaMB.updateEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getId());
         if (sucesso) {
             FacesMessage msgErro = new FacesMessage("Empresa atualizada com sucesso!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -51,7 +66,7 @@ public class EmpresaBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
     }
-    
+
     public void consultaEmpresa() {
         EmpresaMB empresaMB = new EmpresaMB();
         empresaList = new ArrayList<SelectItem>();
@@ -62,6 +77,31 @@ public class EmpresaBean implements Serializable {
         EmpresaMB empresaMB = new EmpresaMB();
         empresa = empresaMB.consultaDetalhesEmpresa(empresaSelecionada);
     }
+    
+    public void excluirEmpresa() {
+        boolean flag = false;
+        EmpresaMB empresaMB = new EmpresaMB();
+
+        if (empresaSelecionada != -1) {
+            flag = empresaMB.excluirEmpresa(empresaSelecionada);
+
+            if (flag == true) {
+                FacesMessage msgErro = new FacesMessage("Empresa excluida com sucesso!");
+                //Metodos.setLogInfo("Excuir Cargo - Cargo: "+cargoASerExcluido);
+                FacesContext.getCurrentInstance().addMessage(null, msgErro);
+            }
+
+            if (flag == false) {
+                FacesMessage msgErro = new FacesMessage("A empresa não pode ser excluida!");
+                FacesContext.getCurrentInstance().addMessage(null, msgErro);
+            }
+            empresaList = empresaMB.consultaEmpresaOrdernado();
+        } else {
+            FacesMessage msgErro = new FacesMessage("Selecione uma empresa válida!");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+        }
+
+    }    
 
     public void salvarIpAD() {
         EmpresaMB empresaMB = new EmpresaMB();
@@ -143,11 +183,11 @@ public class EmpresaBean implements Serializable {
         this.empresaList = empresaList;
     }
 
-    public String getEmpresaSelecionada() {
+    public Integer getEmpresaSelecionada() {
         return empresaSelecionada;
     }
 
-    public void setEmpresaSelecionada(String empresaSelecionada) {
+    public void setEmpresaSelecionada(Integer empresaSelecionada) {
         this.empresaSelecionada = empresaSelecionada;
     }
 
@@ -166,4 +206,13 @@ public class EmpresaBean implements Serializable {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
+
+    public Empresa getEmpresaNova() {
+        return empresaNova;
+    }
+
+    public void setEmpresaNova(Empresa empresaNova) {
+        this.empresaNova = empresaNova;
+    }
+
 }

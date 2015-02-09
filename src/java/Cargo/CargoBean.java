@@ -43,7 +43,6 @@ public class CargoBean implements Serializable {
             String label = cargolist.get(i).getLabel();
             cargoEdit.setNomeCargo(label);
         }
-
     }
 
     public void salvarNovoCargo() {

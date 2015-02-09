@@ -57,7 +57,7 @@ public class EmpresaMB implements Serializable {
         return saida;
     }
 
-    public Empresa consultaDetalhesEmpresa(String item) {
+    public Empresa consultaDetalhesEmpresa(int item) {
         Empresa emp = new Empresa();
         try {
             String sql = "SELECT * FROM  EMPREGADOR  WHERE (CNPJ = '" + item + "')";
@@ -168,6 +168,13 @@ public class EmpresaMB implements Serializable {
             con.Desconectar();
         }
         return "";
+    }
+
+    public boolean excluirEmpresa(int empresaSelecionada) {
+        con.prepareStatement("delete from empregador where id = " + empresaSelecionada);
+        int r = con.executeUpdate();
+        con.Desconectar();
+        return (r > 0);
     }
 
 }

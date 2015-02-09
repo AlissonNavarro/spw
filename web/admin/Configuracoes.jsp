@@ -851,7 +851,7 @@
                                                     <h:selectOneMenu id="listEmpresas" value="#{empresaBean.empresaSelecionada}">
                                                         <f:selectItems value="#{empresaBean.empresaList}"/>
                                                         <a4j:support event="onchange" action="#{empresaBean.consultaDetalhesEmpresa}"
-                                                                     reRender="showEmpresasPanel"/>
+                                                                     reRender="showEmpresasPanel,editEmpresaOutputPanel"/>
                                                     </h:selectOneMenu>
 
                                                     <a4j:status id="progressoEmAberto4"  for="empresasRegion" onstart="Richfaces.showModalPanel('empresasRegionPanelStatus');"
@@ -864,6 +864,108 @@
                                                         </h:panelGrid>
                                                     </rich:modalPanel>
                                                 </h:panelGrid>
+                                                <h:panelGrid id="BotoesEmpresa" columns="5">
+                                                    <h:panelGrid id="BotaoAddEmpresa" style="text-align:center;float:center" width="50">
+                                                        <center>
+                                                            <h:panelGrid columns="1" style="text-align:center;float:center"
+                                                                         >
+                                                                <center>
+                                                                    <h:outputLink  value="#" id="linkAddEmpresa" style="float:center">
+                                                                        <h:graphicImage value="../images/add_verde_24.png" style="border:0"/>
+                                                                        <rich:componentControl for="addEmpresaPanel" attachTo="linkAddEmpresa" operation="show" event="onclick"/>
+                                                                        <a4j:support event="onclick" reRender="addEmpresaGrid"
+                                                                                     action="#{empresaBean.showAdicionar}"/>
+                                                                    </h:outputLink>
+                                                                    <h:outputText value="Empresa" styleClass="label"/>
+                                                                </center>
+                                                            </h:panelGrid>
+                                                        </center>
+                                                    </h:panelGrid>
+                                                    <rich:spacer width="8"/>
+                                                    <h:panelGrid id="BotaoEditarEmpresa" style="text-align:center;float:center" width="50">
+                                                        <center>
+                                                            <h:panelGrid columns="1" style="text-align:center;float:center">
+                                                                <a4j:outputPanel id="editEmpresaOutputPanel">
+                                                                    <h:panelGrid columns="1" style="text-align:center;float:center"
+                                                                                 rendered="#{empresaBean.empresaSelecionada != -1 && empresaBean.empresaSelecionada != null}">
+                                                                        <center>
+                                                                            <h:outputLink  value="#" id="linkEditarEmpresa" style="float:center">
+                                                                                <h:graphicImage value="../images/edit_dent.png" style="border:0"/>
+                                                                                <rich:componentControl for="editarEmpresaPanel" attachTo="linkEditarEmpresa" operation="show" event="onclick"/>
+                                                                                <a4j:support event="onclick" action = "#{empresaBean.showEditar}" reRender="editEmpresaGrid"/>
+                                                                            </h:outputLink>
+                                                                            <h:outputText value="Editar" styleClass="label"/>
+                                                                        </center>
+                                                                    </h:panelGrid>
+                                                                    <h:panelGrid columns="1" style="text-align:center;float:center"
+                                                                                 rendered="#{empresaBean.empresaSelecionada == -1 || empresaBean.empresaSelecionada == null}">
+                                                                        <center>
+                                                                            <h:graphicImage value="../images/edit_dent_fosco.png" style="border:0"/>
+                                                                            <h:outputText value="Editar" styleClass="label"/>
+                                                                        </center>
+                                                                    </h:panelGrid>
+                                                                </a4j:outputPanel>
+
+                                                            </h:panelGrid>
+                                                        </center>
+                                                    </h:panelGrid>
+                                                    <rich:spacer width="8"/>
+                                                    <h:panelGrid id="BotaoExcluirEmpresa" style="text-align:center;float:center" width="50">
+                                                        <a4j:outputPanel id="deleteEmpresaOutputPanel">
+                                                            <center>
+                                                                <h:panelGrid columns="1" style="text-align:center;float:center" 
+                                                                             rendered="#{empresaBean.empresaSelecionada != -1 && empresaBean.empresaSelecionada != null}">
+                                                                    <center>
+                                                                        <h:commandButton  value="Excluir" id="excluirEmpresa" image="../images/delete_24.png"
+                                                                                          onclick="javascript:if (!confirm('Realmente deseja excluir?')) return false;"
+                                                                                          action="#{empresaBean.excluirEmpresa}"/>
+                                                                        <h:outputText value="Excluir" styleClass="label"/>
+                                                                    </center>
+                                                                </h:panelGrid>
+
+                                                                <h:panelGrid columns="1" style="text-align:center;float:center"
+                                                                             rendered="#{empresaBean.empresaSelecionada == -1 || empresaBean.empresaSelecionada == null}">
+                                                                    <center>
+                                                                        <h:graphicImage value="../images/delete_transp_24.png" style="border:0"/>
+                                                                        <h:outputText value="Excluir" styleClass="label"/>
+                                                                    </center>
+                                                                </h:panelGrid>
+                                                            </center>
+                                                        </a4j:outputPanel>
+                                                    </h:panelGrid>
+                                                </h:panelGrid>
+                                                <rich:modalPanel id="addCargoPanel" width="300" height="150" autosized="true" styleClass="center">
+
+                                                    <f:facet name="header">
+                                                        <h:panelGroup>
+                                                            <h:outputText value="Novo Cargo"></h:outputText>
+                                                        </h:panelGroup>
+                                                    </f:facet>
+                                                    <f:facet name="controls">
+                                                        <h:panelGroup>
+                                                            <h:graphicImage value="/images/close.gif" styleClass="hidelink" id="hidelinkc9"/>
+                                                            <rich:componentControl for="addCargoPanel" attachTo="hidelinkc9" operation="hide" event="onclick"/>
+                                                        </h:panelGroup>
+                                                    </f:facet>
+                                                    <center>
+                                                        <h:panelGrid id = "addCargoGrid">
+                                                            <center>
+                                                                <br>
+                                                                <h:outputText value="Nome do cargo: " styleClass="label"/>
+                                                                <h:inputText id="novoCargoID" value="#{cargoBean.cargoNovo.nomeCargo}"/>
+                                                                <br>
+                                                            </center>
+                                                        </h:panelGrid>
+                                                        <br>
+                                                        <h:commandButton  value="Salvar" id="salvarNovoCargo"
+                                                                          action="#{cargoBean.salvarNovoCargo}"                                                                         >
+
+                                                            <rich:componentControl for="addCargoPanel"  attachTo="salvarNovoCargo"
+                                                                                   operation="hide" event="onclick"/>
+                                                        </h:commandButton>
+                                                    </center>
+
+                                                </rich:modalPanel>
                                                 <h:panelGrid id="showEmpresasPanel">
                                                     <rich:panel rendered="#{empresaBean.empresaSelecionada != '-1'}">
                                                         <h:panelGrid>
