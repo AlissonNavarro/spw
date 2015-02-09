@@ -1,6 +1,6 @@
 package Cargo;
 
-import Comunicacao.AcessoBD;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
-class Banco implements Serializable {
+public class CargoMB implements Serializable {
 
-    AcessoBD con;
+    private AcessoBD con;
     // Cargo Hieraquico
     List<Integer> deptList = new ArrayList<Integer>();
 
-    public Banco() {
+    public CargoMB() {
         con = new AcessoBD();
     }
 
@@ -22,7 +22,6 @@ class Banco implements Serializable {
         List<SelectItem> saida = new ArrayList<SelectItem>();
         try {
             String sql = "select cod_cargo,nome from Cargo ORDER BY nome ";
-
             ResultSet rs = con.executeQuery(sql);
             saida.add(new SelectItem(-1, "Selecione o cargo"));
 
@@ -33,20 +32,19 @@ class Banco implements Serializable {
             }
             rs.close();
         } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+            System.out.println("Cargo Banco consultaCargoOrdernado " + ex.getMessage());
         } finally {
             con.Desconectar();
         }
         return saida;
     }
 
-    public int salvarNovoCargo(String novoCargoNome) {
+    public Integer salvarNovoCargo(String novoCargoNome) {
         int flag = 0;
         try {
-            String sql = "select nome from Cargo "
-                    + " where nome = '" + novoCargoNome + "'";
+            String sql = "select nome from Cargo where nome = '" + novoCargoNome + "'";
             ResultSet rs = con.executeQuery(sql);
-            while (rs.next()) {
+            if (rs.next()) {
                 flag = 1;
             }
             rs.close();
@@ -58,8 +56,8 @@ class Banco implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Cargo Banco salvarNovoCargo " + ex.getMessage());
             flag = 2;
         } finally {
             con.Desconectar();
@@ -69,17 +67,14 @@ class Banco implements Serializable {
 
     public Integer salvarEditCargo(Cargo cargo) {
         int flag = 0;
-
         try {
             String sql = "select nome from Cargo "
-                    + " WHERE (cod_cargo <> " + cargo.getId() + ") AND (nome = '" + cargo.getNomeCargo() + "') ";
-
+                    + " WHERE     (cod_cargo <> " + cargo.getId() + ") AND (nome = '" + cargo.getNomeCargo() + "') ";
             ResultSet rs = con.executeQuery(sql);
-            while (rs.next()) {
+            if (rs.next()) {
                 flag = 1;
             }
             rs.close();
-
             if (flag == 0) {
                 String query = "UPDATE Cargo SET nome = ? WHERE cod_cargo = ?";
                 if (con.prepareStatement(query)) {
@@ -88,8 +83,8 @@ class Banco implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Cargo Banco salvarEditCargo " + ex.getMessage());
             flag = 2;
         } finally {
             con.Desconectar();
@@ -97,8 +92,10 @@ class Banco implements Serializable {
         return flag;
     }
 
-    public Boolean excluirCargo(Integer cargoSelecionado) {
-        String queryDelete = "delete from Cargo where cod_cargo = " + cargoSelecionado;
-        return con.executeUpdate(queryDelete) == 1;
+    public boolean excluirCargo(Integer cargoSelecionado) {
+            con.prepareStatement("delete from Cargo where cod_cargo = " + cargoSelecionado);
+            int r = con.executeUpdate();
+            con.Desconectar();
+            return (r > 0);
     }
 }

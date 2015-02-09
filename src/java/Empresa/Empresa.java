@@ -10,7 +10,7 @@ public class Empresa implements Serializable{
     private String razaoSocial;
     private String address;
     
-    public Empresa(){      
+    public Empresa() {        
     }
     
     public Empresa(String cnpj, String razaoSocial, String address, Integer cei, Integer id) {

@@ -23,9 +23,9 @@ public class CargoBean implements Serializable {
     }
 
     public void consultaCargo() {
-        Banco bancoCargo = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargolist = new ArrayList<SelectItem>();
-        cargolist = bancoCargo.consultaCargoOrdernado();
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public void showAdicionar() {
@@ -47,9 +47,9 @@ public class CargoBean implements Serializable {
     }
 
     public void salvarNovoCargo() {
-        Banco bancoCargo = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargoNovo.setNomeCargo(cargoNovo.getNomeCargo().toUpperCase());
-        int flag = bancoCargo.salvarNovoCargo(cargoNovo.getNomeCargo());
+        int flag = cargoMB.salvarNovoCargo(cargoNovo.getNomeCargo());
 
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Cargo adicionado com sucesso!");
@@ -66,15 +66,16 @@ public class CargoBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        cargolist = bancoCargo.consultaCargoOrdernado();
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public void excluirCargo() {
-        Boolean flag = false;
-        Banco bancoCargo = new Banco();
+        boolean flag = false;
+        CargoMB cargoMB = new CargoMB();
+
         if (cargoSelecionado != -1) {
             String cargoASerExcluido = Metodos.buscaRotulo(cargoSelecionado.toString(), cargolist);
-            flag = bancoCargo.excluirCargo(cargoSelecionado);
+            flag = cargoMB.excluirCargo(cargoSelecionado);
 
             if (flag == true) {
                 FacesMessage msgErro = new FacesMessage("Cargo excluido com sucesso!");
@@ -86,7 +87,7 @@ public class CargoBean implements Serializable {
                 FacesMessage msgErro = new FacesMessage("O cargo não pode ser excluido!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            cargolist = bancoCargo.consultaCargoOrdernado();
+            cargolist = cargoMB.consultaCargoOrdernado();
         } else {
             FacesMessage msgErro = new FacesMessage("Selecione um cargo válido!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -95,9 +96,9 @@ public class CargoBean implements Serializable {
     }
 
     public void salvarEditCargo() {
-        Banco bancoCargo = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargoEdit.setNomeCargo(cargoEdit.getNomeCargo().toUpperCase());
-        int flag = bancoCargo.salvarEditCargo(cargoEdit);
+        int flag = cargoMB.salvarEditCargo(cargoEdit);
 
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Cargo atualizado com sucesso!");
@@ -115,7 +116,7 @@ public class CargoBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
         cargoNovo = new Cargo();
-        cargolist = bancoCargo.consultaCargoOrdernado();
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public Cargo getCargoEdit() {

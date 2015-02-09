@@ -11,7 +11,7 @@ public class Cargo implements Serializable{
         id=0;
         nomeCargo="";
     }
-
+   
     public Integer getId() {
         return id;
     }
