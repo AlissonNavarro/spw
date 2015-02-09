@@ -1,23 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Empresa;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import org.ibex.nestedvm.UsermodeConstants;
 
-/**
- *
- * @author prccardoso
- */
 public class EmpresaBean implements Serializable {
 
     private List<SelectItem> empresaList;
@@ -33,21 +22,16 @@ public class EmpresaBean implements Serializable {
     public EmpresaBean() {
 
         empresa = new Empresa();
-        empresaList = new ArrayList<SelectItem>();
         consultaEmpresa();
-
-        Banco banco = new Banco();
-        IpAD = banco.getServidorAD();
-        if (IpAD == null || IpAD.equals("")) {
-            IpAD = "";
-        }
-        IpDigitSender = banco.getServidorDigitSender();
+        EmpresaMB empresaMB = new EmpresaMB();
+        IpAD = empresaMB.getServidorAD();
+        IpDigitSender = empresaMB.getServidorDigitSender();
         if (IpDigitSender == null || IpDigitSender.equals("")) {
             IpDigitSender = "";
         } else {
             FullNameIpSender = "http://" + IpDigitSender + "/sgnclockmanager/SendUsers.aspx";
         }
-        IpDigitCatcher = banco.getServidorDigitCatcher();
+        IpDigitCatcher = empresaMB.getServidorDigitCatcher();
         if (IpDigitCatcher == null || IpDigitCatcher.equals("")) {
             IpDigitCatcher = "";
         } else {
@@ -56,10 +40,8 @@ public class EmpresaBean implements Serializable {
     }
 
     public void salvar(){
-        Banco b = new Banco();
-        System.out.println("salvou yay");
-        
-        Boolean sucesso = b.updateEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getId() );
+        EmpresaMB empresaMB = new EmpresaMB();
+        boolean sucesso = empresaMB.updateEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getId() );
         if (sucesso) {
             FacesMessage msgErro = new FacesMessage("Empresa atualizada com sucesso!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -71,19 +53,19 @@ public class EmpresaBean implements Serializable {
     }
     
     public void consultaEmpresa() {
-        Banco banco = new Banco();
+        EmpresaMB empresaMB = new EmpresaMB();
         empresaList = new ArrayList<SelectItem>();
-        empresaList = banco.consultaEmpresaOrdernado();
+        empresaList = empresaMB.consultaEmpresaOrdernado();
     }
 
     public void consultaDetalhesEmpresa() {
-        Banco banco = new Banco();
-        empresa = banco.consultaDetalhesEmpresa(empresaSelecionada);
+        EmpresaMB empresaMB = new EmpresaMB();
+        empresa = empresaMB.consultaDetalhesEmpresa(empresaSelecionada);
     }
 
     public void salvarIpAD() {
-        Banco banco = new Banco();
-        Boolean flag = banco.insertADIP(IpAD);
+        EmpresaMB empresaMB = new EmpresaMB();
+        boolean flag = empresaMB.insertADIP(IpAD);
 
         if (flag && verificarADServer()) {
             FacesMessage msgErro = new FacesMessage("Ip Cadastrado com sucesso!");
@@ -95,8 +77,8 @@ public class EmpresaBean implements Serializable {
     }
 
     public void salvarIpDigitSenderCatcher() {
-        Banco banco = new Banco();
-        Boolean flag = banco.insertDigitIP(IpDigitSender, IpDigitCatcher);
+        EmpresaMB empresaMB = new EmpresaMB();
+        boolean flag = empresaMB.insertDigitIP(IpDigitSender, IpDigitCatcher);
 
         if (flag) {
             FacesMessage msgErro = new FacesMessage("Ips Cadastrados com sucesso!");
@@ -107,14 +89,10 @@ public class EmpresaBean implements Serializable {
         }
     }
 
-    public Boolean verificarADServer() {
-
-        Banco banco = new Banco();
-        String ip = banco.getServidorAD();
-        if (ip == null || ip.equals("") || ip.equals("000.000.000.000")) {
-            return false;
-        }
-        return true;
+    public boolean verificarADServer() {
+        EmpresaMB empresaMB = new EmpresaMB();
+        String ip = empresaMB.getServidorAD();
+        return ip != null && !ip.equals("") && !ip.equals("000.000.000.000");
     }
 
     public String getIpAD() {

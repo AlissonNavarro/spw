@@ -854,7 +854,7 @@
                                                                      reRender="showEmpresasPanel"/>
                                                     </h:selectOneMenu>
 
-                                                    <a4j:status id="progressoEmAberto3"  for="empresasRegion" onstart="Richfaces.showModalPanel('empresasRegionPanelStatus');"
+                                                    <a4j:status id="progressoEmAberto4"  for="empresasRegion" onstart="Richfaces.showModalPanel('empresasRegionPanelStatus');"
                                                                 onstop="#{rich:component('empresasRegionPanelStatus')}.hide()"/>
                                                     <rich:modalPanel id="empresasRegionPanelStatus" autosized="true" >
                                                         <h:panelGrid columns="3">
@@ -926,7 +926,7 @@
                                                                  reRender="BotaoAddcargo,editCargoOutputPanel,deleteCargoOutputPanel"/>
                                                 </h:selectOneMenu>
 
-                                                <a4j:status id="progressoEmAberto3"  for="cargosRegion" onstart="Richfaces.showModalPanel('cargosRegionPanelStatus');"
+                                                <a4j:status id="progressoEmAberto5"  for="cargosRegion" onstart="Richfaces.showModalPanel('cargosRegionPanelStatus');"
                                                             onstop="#{rich:component('cargosRegionPanelStatus')}.hide()"/>
                                                 <rich:modalPanel id="cargosRegionPanelStatus" autosized="true" >
                                                     <h:panelGrid columns="3">

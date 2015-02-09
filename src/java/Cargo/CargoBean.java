@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Cargo;
 
 import Metodos.Metodos;
@@ -12,10 +8,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
 public class CargoBean implements Serializable {
 
     private List<SelectItem> cargolist;
@@ -24,19 +16,16 @@ public class CargoBean implements Serializable {
     private Cargo cargoNovo;
 
     public CargoBean() {
-        
         cargoEdit = new Cargo();
         cargoNovo = new Cargo();
         cargolist = new ArrayList<SelectItem>();
-        
-        
         consultaCargo();
     }
 
     public void consultaCargo() {
-        Banco banco = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargolist = new ArrayList<SelectItem>();
-        cargolist = banco.consultaCargoOrdernado();
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public void showAdicionar() {
@@ -58,9 +47,9 @@ public class CargoBean implements Serializable {
     }
 
     public void salvarNovoCargo() {
-        Banco banco = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargoNovo.setNomeCargo(cargoNovo.getNomeCargo().toUpperCase());
-        int flag = banco.salvarNovoCargo(cargoNovo.getNomeCargo());
+        int flag = cargoMB.salvarNovoCargo(cargoNovo.getNomeCargo());
 
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Cargo adicionado com sucesso!");
@@ -77,35 +66,28 @@ public class CargoBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco = new Banco();
-        cargolist = banco.consultaCargoOrdernado();
-        banco = new Banco();
-
-
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public void excluirCargo() {
-        Banco banco = new Banco();
-
-        Boolean flag = false;
+        boolean flag = false;
+        CargoMB cargoMB = new CargoMB();
 
         if (cargoSelecionado != -1) {
             String cargoASerExcluido = Metodos.buscaRotulo(cargoSelecionado.toString(), cargolist);
-            flag = banco.excluirCargo(cargoSelecionado);
+            flag = cargoMB.excluirCargo(cargoSelecionado);
 
-            if (flag == false) {
+            if (flag == true) {
                 FacesMessage msgErro = new FacesMessage("Cargo excluido com sucesso!");
                 //Metodos.setLogInfo("Excuir Cargo - Cargo: "+cargoASerExcluido);
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
 
-            if (flag == true) {
+            if (flag == false) {
                 FacesMessage msgErro = new FacesMessage("O cargo não pode ser excluido!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco = new Banco();
-            cargolist = banco.consultaCargoOrdernado();
-            banco = new Banco();
+            cargolist = cargoMB.consultaCargoOrdernado();
         } else {
             FacesMessage msgErro = new FacesMessage("Selecione um cargo válido!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -114,9 +96,9 @@ public class CargoBean implements Serializable {
     }
 
     public void salvarEditCargo() {
-        Banco banco = new Banco();
+        CargoMB cargoMB = new CargoMB();
         cargoEdit.setNomeCargo(cargoEdit.getNomeCargo().toUpperCase());
-        int flag = banco.salvarEditCargo(cargoEdit);
+        int flag = cargoMB.salvarEditCargo(cargoEdit);
 
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Cargo atualizado com sucesso!");
@@ -133,11 +115,8 @@ public class CargoBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco = new Banco();
         cargoNovo = new Cargo();
-        cargolist = banco.consultaCargoOrdernado();
-        banco = new Banco();
-
+        cargolist = cargoMB.consultaCargoOrdernado();
     }
 
     public Cargo getCargoEdit() {
