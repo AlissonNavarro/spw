@@ -51,10 +51,23 @@ public class EmpresaBean implements Serializable {
         empresaEdit.setId(empresaSelecionada);
         System.out.println(empresaList.get(empresaSelecionada).getValue());
         System.out.println(empresaList.get(empresaSelecionada).getLabel());
-        
+
     }
 
     public void salvar() {
+        EmpresaMB empresaMB = new EmpresaMB();
+        boolean sucesso = empresaMB.salvarEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getCei());
+        if (sucesso) {
+            FacesMessage msgErro = new FacesMessage("Empresa cadastrada com sucesso!");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+            consultaEmpresa();
+        } else {
+            FacesMessage msgErro = new FacesMessage("Erro inesperado! Favor tentar novamente ou contactar o administrador");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+        }
+    }
+
+    public void atualizar() {
         EmpresaMB empresaMB = new EmpresaMB();
         boolean sucesso = empresaMB.updateEmpresa(empresa.getRazaoSocial(), empresa.getCnpj(), empresa.getAddress(), empresa.getId());
         if (sucesso) {
@@ -77,7 +90,7 @@ public class EmpresaBean implements Serializable {
         EmpresaMB empresaMB = new EmpresaMB();
         empresa = empresaMB.consultaDetalhesEmpresa(empresaSelecionada);
     }
-    
+
     public void excluirEmpresa() {
         boolean flag = false;
         EmpresaMB empresaMB = new EmpresaMB();
@@ -101,7 +114,7 @@ public class EmpresaBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
 
-    }    
+    }
 
     public void salvarIpAD() {
         EmpresaMB empresaMB = new EmpresaMB();

@@ -33,10 +33,8 @@
                 }
             }
         </script>
-        <script type="text/javascript" src="../../resources/jquery.maskedinput-1.2.2.js">
-        </script>
-        <script type="text/javascript" src="../resources/jquery.maskedinput-1.2.2.js">
-        </script>
+        <script type="text/javascript" src="../../resources/jquery.maskedinput-1.2.2.js"></script>
+        <script type="text/javascript" src="../resources/jquery.maskedinput-1.2.2.js"></script>
     </head>
     <body>
         <center>
@@ -934,33 +932,46 @@
                                                         </a4j:outputPanel>
                                                     </h:panelGrid>
                                                 </h:panelGrid>
-                                                <rich:modalPanel id="addCargoPanel" width="300" height="150" autosized="true" styleClass="center">
+                                                <rich:modalPanel id="addEmpresaPanel" width="400" height="150" autosized="true" styleClass="center">
 
                                                     <f:facet name="header">
                                                         <h:panelGroup>
-                                                            <h:outputText value="Novo Cargo"></h:outputText>
+                                                            <h:outputText value="Nova Empresa"></h:outputText>
                                                         </h:panelGroup>
                                                     </f:facet>
                                                     <f:facet name="controls">
                                                         <h:panelGroup>
-                                                            <h:graphicImage value="/images/close.gif" styleClass="hidelink" id="hidelinkc9"/>
-                                                            <rich:componentControl for="addCargoPanel" attachTo="hidelinkc9" operation="hide" event="onclick"/>
+                                                            <h:graphicImage value="/images/close.gif" styleClass="hidelink" id="hidelinkEmpresa"/>
+                                                            <rich:componentControl for="addEmpresaPanel" attachTo="hidelinkEmpresa" operation="hide" event="onclick"/>
                                                         </h:panelGroup>
                                                     </f:facet>
                                                     <center>
-                                                        <h:panelGrid id = "addCargoGrid">
-                                                            <center>
-                                                                <br>
-                                                                <h:outputText value="Nome do cargo: " styleClass="label"/>
-                                                                <h:inputText id="novoCargoID" value="#{cargoBean.cargoNovo.nomeCargo}"/>
-                                                                <br>
-                                                            </center>
+                                                        <h:panelGrid id = "addEmpresaGrid" columns="3" style="text-align:center;float:center">
+
+                                                            <h:outputText value="CNPJ: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEmpresaCnpj" size="40" value="#{empresaBean.empresa.cnpj}">
+                                                                <rich:jQuery selector="#itEmpresaCnpj" query="mask('99.999.999/9999-99')" timing="onload"/>
+                                                            </h:inputText>
+
+                                                            <h:outputText value="Razão Social: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEmpresaRazaoSocial" size="40" value="#{empresaBean.empresa.razaoSocial}"/>
+
+                                                            <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEmpresaAddress" size="40" value="#{empresaBean.empresa.address}"/>
+
+                                                            <h:outputText value="Cei: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEmpresCei" maxlength="14" value="#{empresaBean.empresa.cei}" style="float:left"/>
+
                                                         </h:panelGrid>
                                                         <br>
-                                                        <h:commandButton  value="Salvar" id="salvarNovoCargo"
-                                                                          action="#{cargoBean.salvarNovoCargo}"                                                                         >
+                                                        <h:commandButton  value="Salvar" id="salvarNovaEmpresa"
+                                                                          action="#{empresaBean.salvar}"                                                                         >
 
-                                                            <rich:componentControl for="addCargoPanel"  attachTo="salvarNovoCargo"
+                                                            <rich:componentControl for="addEmpresaPanel"  attachTo="salvarNovaEmpresa"
                                                                                    operation="hide" event="onclick"/>
                                                         </h:commandButton>
                                                     </center>

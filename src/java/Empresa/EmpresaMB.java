@@ -16,6 +16,25 @@ public class EmpresaMB implements Serializable {
         con = new AcessoBD();
     }
 
+    public boolean salvarEmpresa(String razaoSocial, String cnpj, String endereco, Integer cei) {
+        String query = "insert into empregador (CNPJ,RAZAO_SOCIAL, LOCAL, CEI) values (?,?,?,?)";
+        try {
+            if (con.prepareStatement(query)) {
+                con.pstmt.setString(1, cnpj);
+                con.pstmt.setString(2, razaoSocial);
+                con.pstmt.setString(3, endereco);
+                con.pstmt.setInt(4, cei);
+                con.executeUpdate();
+                return true;
+            }
+        } catch (SQLException ex) {
+            System.out.println("EmpresaMB updateEmpresa " + ex);
+        } finally {
+            con.Desconectar();;
+        }
+        return false;
+    }
+
     public boolean updateEmpresa(String razaoSocial, String cnpj, String endereco, Integer id) {
         String query = "update empregador set CNPJ=?, RAZAO_SOCIAL=?, LOCAL=? WHERE ID=?";
         try {
