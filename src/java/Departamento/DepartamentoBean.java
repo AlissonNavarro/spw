@@ -12,7 +12,7 @@ public class DepartamentoBean implements Serializable {
 
     private List<SelectItem> departamentolist;
     private List<SelectItem> superDepartamentolist;
-    private Integer departamentoSelecionado;
+    private int departamentoSelecionado;
     private Departamento deptoEdit;
     private Departamento deptoNovo;
 
@@ -67,7 +67,7 @@ public class DepartamentoBean implements Serializable {
             }
             deptoEdit.setNome(label);
             DepartamentoMB banco = new DepartamentoMB();
-            Integer deptoPai = banco.consultaDeptoPai(departamentoSelecionado);
+            int deptoPai = banco.consultaDeptoPai(departamentoSelecionado);
             deptoEdit.setSuperDeptoId(deptoPai);
         }
 
@@ -84,7 +84,7 @@ public class DepartamentoBean implements Serializable {
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Departamento adicionado com sucesso!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
-            Metodos.setLogInfo("Adicionar Departamento - Departamento: "+deptoNovo.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoNovo.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
+            //Metodos.setLogInfo("Adicionar Departamento - Departamento: "+deptoNovo.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoNovo.getSuperDeptoId(), departamentolist ).replace("&nbsp;",""));
             deptoNovo = new Departamento();
         }
 
@@ -108,13 +108,13 @@ public class DepartamentoBean implements Serializable {
 
         Boolean flag = false;
         if (departamentoSelecionado != 1 && (!banco.temFilhos(departamentoSelecionado) && !banco.temFuncionariosAlocados(departamentoSelecionado))) {
-            String departamentoASerExcluido = Metodos.buscaRotulo(departamentoSelecionado.toString(), departamentolist);
+            //String departamentoASerExcluido = Metodos.buscaRotulo(departamentoSelecionado.toString(), departamentolist);
             flag = banco.excluirDepartamento(departamentoSelecionado);
 
             if (flag == true) {
                 FacesMessage msgErro = new FacesMessage("Departamento excluido com sucesso!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
-                Metodos.setLogInfo("Excluir departamento - Departamento: "+departamentoASerExcluido.replace("&nbsp;",""));
+//                Metodos.setLogInfo("Excluir departamento - Departamento: "+departamentoASerExcluido.replace("&nbsp;",""));
             }
 
             if (flag == false) {
@@ -147,7 +147,7 @@ public class DepartamentoBean implements Serializable {
             int flag = banco.salvarEditDepartamento(deptoEdit);
 
             if (flag == 0) {
-                Metodos.setLogInfo("Editar Departamento - Departamento: "+deptoEdit.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoEdit.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
+//                Metodos.setLogInfo("Editar Departamento - Departamento: "+deptoEdit.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoEdit.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
                 FacesMessage msgErro = new FacesMessage("Departamento atualizado com sucesso!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
@@ -169,11 +169,11 @@ public class DepartamentoBean implements Serializable {
         }       
     }  
 
-    public Integer getDepartamentoSelecionado() {
+    public int getDepartamentoSelecionado() {
         return departamentoSelecionado;
     }
 
-    public void setDepartamentoSelecionado(Integer departamentoSelecionado) {
+    public void setDepartamentoSelecionado(int departamentoSelecionado) {
         this.departamentoSelecionado = departamentoSelecionado;
     }
 
