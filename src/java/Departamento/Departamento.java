@@ -1,27 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Departamento;
 
 import java.io.Serializable;
 
-/**
- *
- * @author amvboas
- */
-public class Departamento implements Serializable{
+public class Departamento implements Serializable {
 
-    private String nomeDepartamento;
     private Integer id;
+    private String nome;
     private Integer superDeptoId;
 
     public Departamento() {
-        id=0;
+        id = 0;
+        nome = "";
     }
 
-    
     public Integer getId() {
         return id;
     }
@@ -30,12 +21,12 @@ public class Departamento implements Serializable{
         this.id = id;
     }
 
-    public String getNomeDepartamento() {
-        return nomeDepartamento;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeDepartamento(String nomeDepartamento) {
-        this.nomeDepartamento = nomeDepartamento;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Integer getSuperDeptoId() {
@@ -45,8 +36,5 @@ public class Departamento implements Serializable{
     public void setSuperDeptoId(Integer superDeptoId) {
         this.superDeptoId = superDeptoId;
     }
-
-    
-
 
 }

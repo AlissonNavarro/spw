@@ -1,50 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Departamento;
 
-import Metodos.Metodos;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
-class Banco implements Serializable {
+public class DepartamentoMB implements Serializable {
 
-    Driver d;
-    Connection c;
     // Departamento Hieraquico
     List<Integer> deptList = new ArrayList<Integer>();
+    AcessoBD con;
 
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe);
-        }
-    }
-
-    public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-        }
+    public DepartamentoMB() {
+        con = new AcessoBD();
     }
 
     public List<SelectItem> consultaDepartamentoOrdernado() {
@@ -56,17 +29,10 @@ class Banco implements Serializable {
         HashMap<Integer, String> idToNomeHash = new HashMap<Integer, String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
+            String sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-//            saida.add(new SelectItem(0, "Selecione o departamento"));
+            ResultSet rs = con.executeQuery(sql);
+            //saida.add(new SelectItem(-1, "Selecione o departamento"));
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -79,7 +45,6 @@ class Banco implements Serializable {
                 idToNomeHash.put(deptID, nome);
             }
             rs.close();
-            stmt.close();
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -88,16 +53,10 @@ class Banco implements Serializable {
                 Integer espaces = getEspace(id_dept, idList, idToSuperHash);
                 saida.add(new SelectItem(id_dept, espaces(espaces) + idToNomeHash.get(id_dept), "", false, false));
             }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println("DepartamentoMB consultaDepartamentoOrdernado " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -111,16 +70,10 @@ class Banco implements Serializable {
         HashMap<Integer, String> idToNomeHash = new HashMap<Integer, String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
+            String sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             saida.add(new SelectItem(0, "NENHUM"));
 
             while (rs.next()) {
@@ -134,7 +87,6 @@ class Banco implements Serializable {
                 idToNomeHash.put(deptID, nome);
             }
             rs.close();
-            stmt.close();
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -144,15 +96,10 @@ class Banco implements Serializable {
                 saida.add(new SelectItem(id_dept, espaces(espaces) + idToNomeHash.get(id_dept), "", false, false));
             }
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println("DepartamentoMB consultaDepartamentoDestinoOrdernado " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -258,208 +205,123 @@ class Banco implements Serializable {
 
     public Integer salvarNovoDepartamento(String novoDepartamentoNome, Integer departamentoDestino) {
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select deptName from Departments "
+            String sql = "select deptName from Departments "
                     + " where deptName = '" + novoDepartamentoNome + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-                flag = 1;
+            try (ResultSet rs = con.executeQuery(sql)) {
+                if (rs.next()) {
+                    flag = 1;
+                }
             }
-            rs.close();
-            stmt.close();
 
             if (flag == 0) {
                 String query = "insert into Departments(DEPTNAME, SUPDEPTID, igroup, InheritParentSch, InheritDeptSch, InheritDeptSchClass, AutoSchPlan, InLate, OutEarly, InheritDeptRule, "
                         + "MinAutoSchInterval, RegisterOT, DefaultSchId, ATT, Holiday, OverTime) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, novoDepartamentoNome);
-                pstmt.setInt(2, departamentoDestino);
-                pstmt.setInt(3, 0);
-                pstmt.setInt(4, 1);
-                pstmt.setInt(5, 1);
-                pstmt.setInt(6, 1);
-                pstmt.setInt(7, 1);
-                pstmt.setInt(8, 1);
-                pstmt.setInt(9, 1);
-                pstmt.setInt(10, 1);
-                pstmt.setInt(11, 24);
-                pstmt.setInt(12, 1);
-                pstmt.setInt(13, 1);
-                pstmt.setInt(14, 1);
-                pstmt.setInt(15, 1);
-                pstmt.setInt(16, 1);
-
-                pstmt.executeUpdate();
+                if (con.prepareStatement(query)) {
+                    con.pstmt.setString(1, novoDepartamentoNome);
+                    con.pstmt.setInt(2, departamentoDestino);
+                    con.pstmt.setInt(3, 0);
+                    con.pstmt.setInt(4, 1);
+                    con.pstmt.setInt(5, 1);
+                    con.pstmt.setInt(6, 1);
+                    con.pstmt.setInt(7, 1);
+                    con.pstmt.setInt(8, 1);
+                    con.pstmt.setInt(9, 1);
+                    con.pstmt.setInt(10, 1);
+                    con.pstmt.setInt(11, 24);
+                    con.pstmt.setInt(12, 1);
+                    con.pstmt.setInt(13, 1);
+                    con.pstmt.setInt(14, 1);
+                    con.pstmt.setInt(15, 1);
+                    con.pstmt.setInt(16, 1);
+                    con.executeUpdate();
+                }
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("DepartamentoMB salvarNovoDepartamento " + ex);
             flag = 2;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
     public Integer salvarEditDepartamento(Departamento depto) {
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select deptName from Departments "
-                    + " WHERE     (DEPTID <> " + depto.getId() + ") AND (DEPTNAME = '" + depto.getNomeDepartamento() + "') ";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-                flag = 1;
+            String sql = "select deptName from Departments "
+                    + " WHERE     (DEPTID <> " + depto.getId() + ") AND (DEPTNAME = '" + depto.getNome() + "') ";
+            try (ResultSet rs = con.executeQuery(sql)) {
+                while (rs.next()) {
+                    flag = 1;
+                }
             }
-            rs.close();
-            stmt.close();
 
             if (flag == 0) {
                 String query = "UPDATE DEPARTMENTS SET DEPTNAME = ?, SUPDEPTID = ? WHERE DEPTID = ?";
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, depto.getNomeDepartamento());
-                pstmt.setInt(2, depto.getSuperDeptoId());
-                pstmt.setInt(3, depto.getId());
-
-                pstmt.executeUpdate();
-                pstmt.executeUpdate();
+                if (con.prepareStatement(query)) {
+                    con.pstmt.setString(1, depto.getNome());
+                    con.pstmt.setInt(2, depto.getSuperDeptoId());
+                    con.pstmt.setInt(3, depto.getId());
+                    con.executeUpdate();
+                }
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Departamento salvarEditDepartamento " + ex);
             flag = 2;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
-    Boolean temFilhos(Integer departamentoSelecionado) {
+    public Boolean temFilhos(Integer departamentoSelecionado) {
         Boolean temFilhos = false;
         try {
-            ResultSet rs;
-            Statement stmt;
-
-
-            String sql;
-
-            sql = "SELECT     DEPTID, SUPDEPTID"
-                    + " FROM         DEPARTMENTS"
-                    + " WHERE     (SUPDEPTID = " + departamentoSelecionado + ")";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            if (rs.next()) {
-                temFilhos = true;
+            String sql = "SELECT DEPTID, SUPDEPTID FROM DEPARTMENTS"
+                    + " WHERE (SUPDEPTID = " + departamentoSelecionado + ")";
+            try (ResultSet rs = con.executeQuery(sql)) {
+                if (rs.next()) {
+                    temFilhos = true;
+                }
             }
-            rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Departamento temFilhos " + ex);
         }
         return temFilhos;
     }
 
-    Boolean temFuncionariosAlocados(Integer departamentoSelecionado) {
+    public Boolean temFuncionariosAlocados(Integer departamentoSelecionado) {
         Boolean temFuncionariosAlocados = false;
         try {
-            ResultSet rs;
-            Statement stmt;
-
-
-            String sql;
-
-            sql = "SELECT     defaultdeptid"
-                    + " FROM         Userinfo"
-                    + " WHERE     (defaultdeptid = " + departamentoSelecionado + ")";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            if (rs.next()) {
-                temFuncionariosAlocados = true;
+            String sql = "SELECT defaultdeptid FROM Userinfo"
+                    + " WHERE (defaultdeptid = " + departamentoSelecionado + ")";
+            try (ResultSet rs = con.executeQuery(sql)) {
+                if (rs.next()) {
+                    temFuncionariosAlocados = true;
+                }
             }
-            rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Departamento temFuncionariosAlocados " + ex);
         }
         return temFuncionariosAlocados;
     }
 
-    Integer consultaDeptoPai(Integer departamentoSelecionado) {
+    public Integer consultaDeptoPai(Integer departamentoSelecionado) {
         Integer supdeptid = -1;
         try {
-            ResultSet rs;
-            Statement stmt;
-
-
-            String sql;
-
-            sql = "SELECT     DEPTID, SUPDEPTID"
-                    + " FROM         DEPARTMENTS"
-                    + " WHERE     (DEPTID = " + departamentoSelecionado + ")";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            String sql = "SELECT DEPTID, SUPDEPTID FROM DEPARTMENTS"
+                    + " WHERE (DEPTID = " + departamentoSelecionado + ")";
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 supdeptid = rs.getInt("SUPDEPTID");
-
             }
             rs.close();
-            stmt.close();
-
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Departamento consultaDeptoPai " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return supdeptid;
     }
@@ -467,86 +329,41 @@ class Banco implements Serializable {
     public ArrayList<Integer> getTodosOsDescendentes(Integer departamentoSelecionado) {
         ArrayList<Integer> filhos = new ArrayList<Integer>();
         try {
-            ResultSet rs;
-            Statement stmt;
-
-
-            String sql;
-
-            sql = "SELECT     DEPTID, SUPDEPTID"
-                    + " FROM         DEPARTMENTS"
-                    + " WHERE     (SUPDEPTID = " + departamentoSelecionado + ")";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "SELECT DEPTID, SUPDEPTID FROM DEPARTMENTS"
+                    + " WHERE (SUPDEPTID = " + departamentoSelecionado + ")";
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptid = rs.getInt("DEPTID");
                 filhos.add(deptid);
-                Banco b = new Banco();
+                DepartamentoMB b = new DepartamentoMB();
                 filhos.addAll(b.getTodosOsDescendentes(deptid));
             }
             rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("Departamento getTodosOsDescendentes " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return filhos;
     }
 
-    public Boolean excluirDepartamento(Integer departamentoSelecionado) {
-        Boolean flag = false;
-        PreparedStatement pstmt = null;
-
-        String querySelect = "select * from userinfo where defaultdeptid = "+departamentoSelecionado;
-
+    public boolean excluirDepartamento(Integer departamentoSelecionado) {
+        String sql = "select * from userinfo where defaultdeptid = " + departamentoSelecionado;
         try {
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery(querySelect);
-
-            while (rs.next()) {
-                flag = true;
-                return flag;
+            ResultSet rs = con.executeQuery(sql);
+            if (rs.next()) {
+                return false;
             }
             rs.close();
-            stmt.close();
-            if (!flag) {
-                
-                String queryDelete = "delete from DEPARTMENTS "
-                        + " where DEPTID = " + departamentoSelecionado;
-                try {
-                    pstmt = c.prepareStatement(queryDelete);
-                    pstmt.executeUpdate();
-                } catch (SQLException e) {
-                    flag = true;
-                } finally {
-                    try {
-                        if (c != null) {
-                            c.close();
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            flag = true;
+            sql = "delete from DEPARTMENTS where DEPTID = " + departamentoSelecionado;
+            con.executeUpdate(sql);
+            return true;
+        } catch (SQLException ex) {
+            System.out.println("DeparamentoMB excluirDepartamento " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
-
-        return flag;
+        return false;
     }
 }

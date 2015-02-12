@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Departamento;
 
-import Administracao.PermissaoBean;
 import Metodos.Metodos;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,10 +8,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
 public class DepartamentoBean implements Serializable {
 
     private List<SelectItem> departamentolist;
@@ -35,16 +26,17 @@ public class DepartamentoBean implements Serializable {
     }
 
     public void consultaDepartamento() {
-        Banco banco = new Banco();
+        DepartamentoMB banco = new DepartamentoMB();
         departamentolist = new ArrayList<SelectItem>();
         departamentolist = banco.consultaDepartamentoOrdernado();
     }
+    
     @SuppressWarnings("element-type-mismatch")
     public void consultaSuperDepartamentoList() {
-        Banco banco = new Banco();
+        DepartamentoMB banco = new DepartamentoMB();
         superDepartamentolist = new ArrayList<SelectItem>();
         superDepartamentolist.addAll(banco.consultaDepartamentoOrdernado());
-        banco = new Banco();
+        banco = new DepartamentoMB();
         ArrayList<Integer> filhos = banco.getTodosOsDescendentes(departamentoSelecionado);
         filhos.add(departamentoSelecionado);
         for (int i = 0; i < superDepartamentolist.size(); i++) {
@@ -73,8 +65,8 @@ public class DepartamentoBean implements Serializable {
             while (label.startsWith("&nbsp;")) {
                 label = label.substring(6);
             }
-            deptoEdit.setNomeDepartamento(label);
-            Banco banco = new Banco();
+            deptoEdit.setNome(label);
+            DepartamentoMB banco = new DepartamentoMB();
             Integer deptoPai = banco.consultaDeptoPai(departamentoSelecionado);
             deptoEdit.setSuperDeptoId(deptoPai);
         }
@@ -85,14 +77,14 @@ public class DepartamentoBean implements Serializable {
         if(departamentolist.size()==0){
             deptoNovo.setSuperDeptoId(0);
         }
-        Banco banco = new Banco();
-        deptoNovo.setNomeDepartamento(deptoNovo.getNomeDepartamento().toUpperCase());
-        int flag = banco.salvarNovoDepartamento(deptoNovo.getNomeDepartamento(), deptoNovo.getSuperDeptoId());
+        DepartamentoMB banco = new DepartamentoMB();
+        deptoNovo.setNome(deptoNovo.getNome().toUpperCase());
+        int flag = banco.salvarNovoDepartamento(deptoNovo.getNome(), deptoNovo.getSuperDeptoId());
 
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Departamento adicionado com sucesso!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
-            Metodos.setLogInfo("Adicionar Departamento - Departamento: "+deptoNovo.getNomeDepartamento()+" Alocado em: "+Metodos.buscaRotulo(deptoNovo.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
+            Metodos.setLogInfo("Adicionar Departamento - Departamento: "+deptoNovo.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoNovo.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
             deptoNovo = new Departamento();
         }
 
@@ -105,33 +97,33 @@ public class DepartamentoBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco = new Banco();
+        banco = new DepartamentoMB();
         departamentolist = banco.consultaDepartamentoOrdernado();
-        banco = new Banco();      
+        banco = new DepartamentoMB();      
 
     }
 
     public void excluirDepartamento() {
-        Banco banco = new Banco();
+        DepartamentoMB banco = new DepartamentoMB();
 
         Boolean flag = false;
         if (departamentoSelecionado != 1 && (!banco.temFilhos(departamentoSelecionado) && !banco.temFuncionariosAlocados(departamentoSelecionado))) {
             String departamentoASerExcluido = Metodos.buscaRotulo(departamentoSelecionado.toString(), departamentolist);
             flag = banco.excluirDepartamento(departamentoSelecionado);
 
-            if (flag == false) {
+            if (flag == true) {
                 FacesMessage msgErro = new FacesMessage("Departamento excluido com sucesso!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
                 Metodos.setLogInfo("Excluir departamento - Departamento: "+departamentoASerExcluido.replace("&nbsp;",""));
             }
 
-            if (flag == true) {
+            if (flag == false) {
                 FacesMessage msgErro = new FacesMessage("O departamento não pode ser excluido!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco = new Banco();
+            banco = new DepartamentoMB();
             departamentolist = banco.consultaDepartamentoOrdernado();
-            banco = new Banco();
+            banco = new DepartamentoMB();
         } else {
             FacesMessage msgErro = new FacesMessage("O departamento não pode ser excluido!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -140,9 +132,9 @@ public class DepartamentoBean implements Serializable {
     }
 
     public void salvarEditDepartamento() {
-        Banco banco = new Banco();
+        DepartamentoMB banco = new DepartamentoMB();
         ArrayList<Integer> filhos = banco.getTodosOsDescendentes(departamentoSelecionado);
-        banco = new Banco();
+        banco = new DepartamentoMB();
         if (filhos.contains(deptoEdit.getSuperDeptoId())) {
             FacesMessage msgErro = new FacesMessage("Não é possível fazer essa alocação");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -151,11 +143,11 @@ public class DepartamentoBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
 
         } else {
-            deptoEdit.setNomeDepartamento(deptoEdit.getNomeDepartamento().toUpperCase());
+            deptoEdit.setNome(deptoEdit.getNome().toUpperCase());
             int flag = banco.salvarEditDepartamento(deptoEdit);
 
             if (flag == 0) {
-                Metodos.setLogInfo("Editar Departamento - Departamento: "+deptoEdit.getNomeDepartamento()+" Alocado em: "+Metodos.buscaRotulo(deptoEdit.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
+                Metodos.setLogInfo("Editar Departamento - Departamento: "+deptoEdit.getNome()+" Alocado em: "+Metodos.buscaRotulo(deptoEdit.getSuperDeptoId().toString(), departamentolist ).replace("&nbsp;",""));
                 FacesMessage msgErro = new FacesMessage("Departamento atualizado com sucesso!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
@@ -169,10 +161,10 @@ public class DepartamentoBean implements Serializable {
                 FacesMessage msgErro = new FacesMessage("Dados Inválidos");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco = new Banco();
+            banco = new DepartamentoMB();
             deptoNovo = new Departamento();
             departamentolist = banco.consultaDepartamentoOrdernado();
-            banco = new Banco();
+            banco = new DepartamentoMB();
 
         }       
     }  

@@ -777,7 +777,7 @@
                                                         <center>
                                                             <br>
                                                             <h:outputText value="Nome do departamento: " styleClass="label"/>
-                                                            <h:inputText id="novoDeptID" value="#{departamentoBean.deptoNovo.nomeDepartamento}" size="50" maxlength="30"/>
+                                                            <h:inputText id="novoDeptID" value="#{departamentoBean.deptoNovo.nome}" size="50" maxlength="30"/>
                                                             <br>
                                                             <h:panelGrid id = "addSuperDepartamentoGrid" rendered="#{not empty departamentoBean.departamentolist}">
                                                                 <h:outputText value="Departamento a ser alocado: " styleClass="label"/>
@@ -814,7 +814,7 @@
                                                         <center>
                                                             <br>
                                                             <h:outputText value="Nome do departamento: " styleClass="label"/>
-                                                            <h:inputText id="editDeptID" value="#{departamentoBean.deptoEdit.nomeDepartamento}" size="50" maxlength="30"/>
+                                                            <h:inputText id="editDeptID" value="#{departamentoBean.deptoEdit.nome}" size="50" maxlength="30"/>
                                                             <br>
                                                             <h:panelGrid id = "editSuperDepartamentoGrid" rendered="#{not empty departamentoBean.superDepartamentolist}">
                                                                 <h:outputText value="Departamento a ser alocado: " styleClass="label"/>
@@ -849,7 +849,7 @@
                                                     <h:selectOneMenu id="listEmpresas" value="#{empresaBean.empresaSelecionada}">
                                                         <f:selectItems value="#{empresaBean.empresaList}"/>
                                                         <a4j:support event="onchange" action="#{empresaBean.consultaDetalhesEmpresa}"
-                                                                     reRender="showEmpresasPanel,editEmpresaOutputPanel"/>
+                                                                     reRender="showEmpresasPanel,editEmpresaOutputPanel,BotaoExcluirEmpresa"/>
                                                     </h:selectOneMenu>
 
                                                     <a4j:status id="progressoEmAberto4"  for="empresasRegion" onstart="Richfaces.showModalPanel('empresasRegionPanelStatus');"
@@ -890,7 +890,7 @@
                                                                             <h:outputLink  value="#" id="linkEditarEmpresa" style="float:center">
                                                                                 <h:graphicImage value="../images/edit_dent.png" style="border:0"/>
                                                                                 <rich:componentControl for="editarEmpresaPanel" attachTo="linkEditarEmpresa" operation="show" event="onclick"/>
-                                                                                <a4j:support event="onclick" action = "#{empresaBean.showEditar}" reRender="editEmpresaGrid"/>
+                                                                                <a4j:support event="onclick" action = "#{empresaBean.showEditar}" reRender="editarEmpresaGrid"/>
                                                                             </h:outputLink>
                                                                             <h:outputText value="Editar" styleClass="label"/>
                                                                         </center>
@@ -977,42 +977,71 @@
                                                     </center>
 
                                                 </rich:modalPanel>
+                                                <rich:modalPanel id="editarEmpresaPanel" width="400" height="150" autosized="true" styleClass="center">
+
+                                                    <f:facet name="header">
+                                                        <h:panelGroup>
+                                                            <h:outputText value="Editar Empresa"></h:outputText>
+                                                        </h:panelGroup>
+                                                    </f:facet>
+                                                    <f:facet name="controls">
+                                                        <h:panelGroup>
+                                                            <h:graphicImage value="/images/close.gif" styleClass="hidelink" id="hidelinkEmpresaEditar"/>
+                                                            <rich:componentControl for="editarEmpresaPanel" attachTo="hidelinkEmpresaEditar" operation="hide" event="onclick"/>
+                                                        </h:panelGroup>
+                                                    </f:facet>
+                                                    <center>
+                                                        <h:panelGrid id = "editarEmpresaGrid" columns="3" style="text-align:center;float:center">
+
+                                                            <h:outputText value="CNPJ: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEditEmpresaCnpj" size="40" value="#{empresaBean.empresaEdit.cnpj}">
+                                                                <rich:jQuery selector="#itEmpresaCnpj" query="mask('99.999.999/9999-99')" timing="onload"/>
+                                                            </h:inputText>
+
+                                                            <h:outputText value="Razão Social: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEditEmpresaRazaoSocial" size="40" value="#{empresaBean.empresaEdit.razaoSocial}"/>
+
+                                                            <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEditEmpresaAddress" size="40" value="#{empresaBean.empresaEdit.address}"/>
+
+                                                            <h:outputText value="Cei: " styleClass="label" style="float:left"/>
+                                                            <rich:spacer width="3"/>
+                                                            <h:inputText id="itEditEmpresCei" maxlength="14" value="#{empresaBean.empresaEdit.cei}" style="float:left"/>
+
+                                                        </h:panelGrid>
+                                                        <br>
+                                                        <h:commandButton  value="Salvar" id="editarEmpresa"
+                                                                          action="#{empresaBean.atualizar}"                                                                         >
+
+                                                            <rich:componentControl for="editarEmpresaPanel"  attachTo="editarEmpresa"
+                                                                                   operation="hide" event="onclick"/>
+                                                        </h:commandButton>
+                                                    </center>
+
+                                                </rich:modalPanel>
                                                 <h:panelGrid id="showEmpresasPanel">
                                                     <rich:panel rendered="#{empresaBean.empresaSelecionada != '-1'}">
                                                         <h:panelGrid>
                                                             <h:panelGrid id="dadosEmpresaRazaoSocial" columns="3" style="text-align:center;float:center" >
                                                                 <h:outputText value="Razão Social: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
-                                                                <h:inputText size="40" value="#{empresaBean.empresa.razaoSocial}"/>
-
+                                                                <h:outputText value="#{empresaBean.empresa.razaoSocial}" style="text-align:left;float:left"/>
 
                                                                 <h:outputText value="CNPJ: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
-                                                                <h:inputText size="40" value="#{empresaBean.empresa.cnpj}"/>
-
+                                                                <h:outputText value="#{empresaBean.empresa.cnpj}" style="text-align:left;float:left"/>
 
                                                                 <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
-                                                                <h:inputText size="40" value="#{empresaBean.empresa.address}"/>
+                                                                <h:outputText value="#{empresaBean.empresa.address}" style="text-align:left;float:left"/>
 
                                                                 <h:outputText value="Cei: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
                                                                 <h:outputText value="#{empresaBean.empresa.cei}" style="text-align:left;float:left"/>
-
-
-
-
-
                                                             </h:panelGrid>
-
-
-
-                                                            <br/>
-                                                            <h:panelGrid columns="1">
-                                                                <a4j:commandButton value="Salvar" action="#{empresaBean.salvar}" reRender="painelEmpresas"/> 
-                                                            </h:panelGrid>
-
-
 
                                                             <rich:spacer width="25"/>
                                                         </h:panelGrid>
@@ -2528,113 +2557,113 @@
 </html>
 <SCRIPT language="JavaScript" type="text/javascript">
 
-    function returnNumber(e) {
-        var tecla = (window.event) ? event.keyCode : e.which;
-        if ((tecla > 47 && tecla < 58))
-            return true;
-        else {
-            if ((tecla != 0) && (tecla != 8))
-                return false;
-            else
+            function returnNumber(e) {
+                var tecla = (window.event) ? event.keyCode : e.which;
+                if ((tecla > 47 && tecla < 58))
+                    return true;
+                else {
+                    if ((tecla != 0) && (tecla != 8))
+                        return false;
+                    else
+                        return true;
+                }
+            }
+
+
+            function mascaraInteiro() {
+                if (event.keyCode < 48 || event.keyCode > 57) {
+                    event.returnValue = false;
+                    return false;
+                }
                 return true;
-        }
-    }
+            }
 
-
-    function mascaraInteiro() {
-        if (event.keyCode < 48 || event.keyCode > 57) {
-            event.returnValue = false;
-            return false;
-        }
-        return true;
-    }
-
-    function mascara_data(obj, e)
-    {
-        var whichCode = (window.Event) ? e.which : e.keyCode;
-        if (whichCode != 8)
-        {
-            var date = obj.value;
-            if (date.length == 2)
+            function mascara_data(obj, e)
             {
-                obj.value += '/';
-            }
+                var whichCode = (window.Event) ? e.which : e.keyCode;
+                if (whichCode != 8)
+                {
+                    var date = obj.value;
+                    if (date.length == 2)
+                    {
+                        obj.value += '/';
+                    }
 
-            if (date.length == 5)
-            {
-                obj.value += '/';
-            }
-            if (date.length == 10)
-            {
-                verifica_data(obj);
-            }
-        }
-    }
-    function verifica_data(obj)
-    {
-        dia = (obj.value.substring(0, 2));
-        mes = (obj.value.substring(3, 5));
-        ano = (obj.value.substring(6, 10));
-
-        //alert("t"+dia+" "+mes+" "+ano+"t");
-
-        situacao = "";
-        // verifica data e hora
-        if ((mes > 12) || (mes < 1)) {
-            alert("Data inválida!");
-            obj.value = "";
-        } else if ((mes == 1) || (mes == 3) || (mes == 5) || (mes == 7) || (mes == 8) || (mes == 10) || (mes == 12)) {
-            if ((dia > 30) || (dia < 1)) {
-                alert("Data inválida!");
-                obj.value = "";
-            }
-        } else if ((mes == 2)) {
-            if ((ano % 4) != 0) {
-                if ((dia > 28) || (dia < 1)) {
-                    alert("Data inválida!");
-                    obj.value = "";
-                } else if ((dia > 29) || (dia < 1)) {
-                    alert("Data inválida!");
-                    obj.value = "";
-                }
-            } else if (((ano % 100) == 0) && ((ano % 400) != 0)) {
-                if ((dia > 28) || (dia < 1)) {
-                    alert("Data inválida!");
-                    obj.value = "";
-                } else if ((dia > 29) || (dia < 1)) {
-                    alert("Data inválida!");
-                    obj.value = "";
+                    if (date.length == 5)
+                    {
+                        obj.value += '/';
+                    }
+                    if (date.length == 10)
+                    {
+                        verifica_data(obj);
+                    }
                 }
             }
-        }
-        else if ((mes == 4) || (mes == 6) || (mes == 9) || (mes == 11)) {
-            if ((dia > 30) || (dia < 1)) {
-                alert("Data inválida!");
-                obj.value = "";
+            function verifica_data(obj)
+            {
+                dia = (obj.value.substring(0, 2));
+                mes = (obj.value.substring(3, 5));
+                ano = (obj.value.substring(6, 10));
+
+                //alert("t"+dia+" "+mes+" "+ano+"t");
+
+                situacao = "";
+                // verifica data e hora
+                if ((mes > 12) || (mes < 1)) {
+                    alert("Data inválida!");
+                    obj.value = "";
+                } else if ((mes == 1) || (mes == 3) || (mes == 5) || (mes == 7) || (mes == 8) || (mes == 10) || (mes == 12)) {
+                    if ((dia > 30) || (dia < 1)) {
+                        alert("Data inválida!");
+                        obj.value = "";
+                    }
+                } else if ((mes == 2)) {
+                    if ((ano % 4) != 0) {
+                        if ((dia > 28) || (dia < 1)) {
+                            alert("Data inválida!");
+                            obj.value = "";
+                        } else if ((dia > 29) || (dia < 1)) {
+                            alert("Data inválida!");
+                            obj.value = "";
+                        }
+                    } else if (((ano % 100) == 0) && ((ano % 400) != 0)) {
+                        if ((dia > 28) || (dia < 1)) {
+                            alert("Data inválida!");
+                            obj.value = "";
+                        } else if ((dia > 29) || (dia < 1)) {
+                            alert("Data inválida!");
+                            obj.value = "";
+                        }
+                    }
+                }
+                else if ((mes == 4) || (mes == 6) || (mes == 9) || (mes == 11)) {
+                    if ((dia > 30) || (dia < 1)) {
+                        alert("Data inválida!");
+                        obj.value = "";
+                    }
+                }
             }
-        }
-    }
-    function ValidarNumero(objeto, e)
-    {
-        var arrayNumero = '0123456789';
-        var date = objeto.value;
-        var result = false;
+            function ValidarNumero(objeto, e)
+            {
+                var arrayNumero = '0123456789';
+                var date = objeto.value;
+                var result = false;
 
 
-        var whichCode = (window.Event) ? e.which : e.keyCode;
-        // 13=enter, 8=backspace as demais retornam 0(zero)
-        // whichCode==0 faz com que seja possivel usar todas as teclas como del, setas, etc
-        //alert(whichCode);
-        if ((whichCode == 13) || (whichCode == 0) || (whichCode == 8))
-            return true;
+                var whichCode = (window.Event) ? e.which : e.keyCode;
+                // 13=enter, 8=backspace as demais retornam 0(zero)
+                // whichCode==0 faz com que seja possivel usar todas as teclas como del, setas, etc
+                //alert(whichCode);
+                if ((whichCode == 13) || (whichCode == 0) || (whichCode == 8))
+                    return true;
 
-        key = String.fromCharCode(whichCode); // Valor para o código da Chave
+                key = String.fromCharCode(whichCode); // Valor para o código da Chave
 
-        if ((arrayNumero.indexOf(key) != -1) && (date.length < 10))
-        {
-            result = true; // Chave valida
-        }
+                if ((arrayNumero.indexOf(key) != -1) && (date.length < 10))
+                {
+                    result = true; // Chave valida
+                }
 
-        return result;
-    }
+                return result;
+            }
 </SCRIPT>

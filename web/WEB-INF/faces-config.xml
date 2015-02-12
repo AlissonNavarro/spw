@@ -558,15 +558,13 @@
 
     <managed-bean>
         <managed-bean-name>empresaBean</managed-bean-name>
-        <managed-bean-class>Empresa.EmpresaBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>empresa.EmpresaBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>cargoBean</managed-bean-name>
-        <managed-bean-class>Cargo.CargoBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>cargo.CargoBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>perfilBean</managed-bean-name>
