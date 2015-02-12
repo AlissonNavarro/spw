@@ -552,9 +552,9 @@
 
     <managed-bean>
         <managed-bean-name>departamentoBean</managed-bean-name>
-        <managed-bean-class>Departamento.DepartamentoBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>departamento2.DepartamentoBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>empresaBean</managed-bean-name>
@@ -568,9 +568,9 @@
 
     <managed-bean>
         <managed-bean-name>perfilBean</managed-bean-name>
-        <managed-bean-class>Perfil.PerfilBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>perfil2.PerfilBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>backupBean</managed-bean-name>

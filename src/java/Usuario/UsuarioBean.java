@@ -5,7 +5,7 @@
 package Usuario;
 
 import Metodos.Metodos;
-import Perfil.Perfil;
+import perfil2.Perfil;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.io.Serializable;

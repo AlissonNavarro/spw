@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Perfil;
+package perfil2;
 
 import Usuario.UsuarioBean;
 import java.io.Serializable;
@@ -12,10 +8,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
 public class PerfilBean implements Serializable {
 
     private List<SelectItem> perfisList;
@@ -30,19 +22,17 @@ public class PerfilBean implements Serializable {
         if (usuarioBean.getIsAtivo()) {
             perfisList = new ArrayList<SelectItem>();
             perfilEdit = new Perfil();
-            perfilEdit.setaTudoFalso();
             consultaPerfis();
         }
     }
 
     public void consultaPermissoesPerfil() {
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
         perfilEdit = banco.consultaPermissoesPerfil(perfilSelecionado);
-        //      setaSuperAbas();
     }
 
     public void consultaPerfis() {
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
         perfisList = new ArrayList<SelectItem>();
         perfisList = banco.consultaPerfis();
     }
@@ -56,7 +46,7 @@ public class PerfilBean implements Serializable {
     }
 
     public void salvarEditPerfil() {
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
         perfilEdit.setNome_perfil(nomeEditPerfil.toUpperCase());
         int flag = banco.salvarEditPerfil(perfilEdit);
 
@@ -74,9 +64,9 @@ public class PerfilBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco = new Banco();
+        banco = new PerfilMB();
         perfisList = banco.consultaPerfis();
-        banco = new Banco();
+        banco = new PerfilMB();
 
     }
 
@@ -134,7 +124,7 @@ public class PerfilBean implements Serializable {
     public void salvarAlteracoesPerfil() {
 
         setaSuperAbas();
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
         Integer flag = banco.salvarAlteracoesPerfil(perfilEdit);
 
         if (flag == 0) {
@@ -150,7 +140,7 @@ public class PerfilBean implements Serializable {
 
     public void salvarNovoPerfil() {
 
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
         Integer flag = banco.adicionarPerfil(novoPerfil.toUpperCase());
 
         if (flag == 0) {
@@ -167,9 +157,9 @@ public class PerfilBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("Dados Inválidos");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco = new Banco();
+        banco = new PerfilMB();
         perfisList = banco.consultaPerfis();
-        banco = new Banco();
+        banco = new PerfilMB();
 
         /*
          * banco.consultaPerfil(perfilSelecionado);
@@ -178,7 +168,7 @@ public class PerfilBean implements Serializable {
     }
 
     public void excluirPerfil() {
-        Banco banco = new Banco();
+        PerfilMB banco = new PerfilMB();
 
         Boolean flag = false;
         if (perfilSelecionado != -1) {
@@ -193,9 +183,9 @@ public class PerfilBean implements Serializable {
                 FacesMessage msgErro = new FacesMessage("O perfil não pode ser excluido!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco = new Banco();
+            banco = new PerfilMB();
             perfisList = banco.consultaPerfis();
-            banco = new Banco();
+            banco = new PerfilMB();
         } else {
             FacesMessage msgErro = new FacesMessage("Selecione um perfil válido!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);

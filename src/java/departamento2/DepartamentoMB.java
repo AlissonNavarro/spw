@@ -1,4 +1,4 @@
-package Departamento;
+package departamento2;
 
 import comunicacao.AcessoBD;
 import java.io.Serializable;
@@ -13,10 +13,11 @@ import javax.faces.model.SelectItem;
 public class DepartamentoMB implements Serializable {
 
     // Departamento Hieraquico
-    List<Integer> deptList = new ArrayList<Integer>();
-    AcessoBD con;
+    public List<Integer> deptList;
+    private AcessoBD con;
 
     public DepartamentoMB() {
+        deptList = new ArrayList<Integer>();
         con = new AcessoBD();
     }
 
@@ -29,8 +30,7 @@ public class DepartamentoMB implements Serializable {
         HashMap<Integer, String> idToNomeHash = new HashMap<Integer, String>();
 
         try {
-            String sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
-                    + " ORDER BY SUPDEPTID asc,DEPTNAME";
+            String sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS ORDER BY SUPDEPTID asc,DEPTNAME";
             ResultSet rs = con.executeQuery(sql);
             //saida.add(new SelectItem(-1, "Selecione o departamento"));
 
@@ -107,13 +107,10 @@ public class DepartamentoMB implements Serializable {
     private List<Integer> ordenarDepts(Integer raiz, List<SelectItem> list) {
 
         while (!list.isEmpty()) {
-
             if (!deptList.contains(raiz)) {
                 deptList.add(raiz);
             }
-
             Integer depFilho = getFilho(raiz, list);
-
             if (depFilho != null) {
                 List<SelectItem> filhosList = getTodosFilhosList(depFilho, list);
 

@@ -1,7 +1,7 @@
 package Usuario;
 
 import Metodos.Metodos;
-import Perfil.Perfil;
+import perfil2.Perfil;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;

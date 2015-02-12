@@ -1,4 +1,4 @@
-package Departamento;
+package departamento2;
 
 import java.io.Serializable;
 
@@ -11,6 +11,7 @@ public class Departamento implements Serializable {
     public Departamento() {
         id = 0;
         nome = "";
+        superDeptoId = 0;
     }
 
     public int getId() {

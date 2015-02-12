@@ -1,4 +1,4 @@
-package Departamento;
+package departamento2;
 
 import Metodos.Metodos;
 import java.io.Serializable;

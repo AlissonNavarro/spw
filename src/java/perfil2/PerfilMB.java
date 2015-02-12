@@ -1,133 +1,51 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package Perfil;
+package perfil2;
 
-/**
- *
- * @author Alexandre
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-import Metodos.Metodos;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-
 import java.util.List;
-//import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amsgama
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Alexandre
- */
-public class Banco implements Serializable {
+public class PerfilMB implements Serializable {
 
-    Driver d;
-    Connection c;
+    private AcessoBD con;
 
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println("Perfil: Conectar: "+cnfe);
-        }
+    public PerfilMB() {
+        con = new AcessoBD();
     }
 
-    public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            System.out.println("Perfil: Banco: "+ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    Integer adicionarPerfil(String novoPerfil) {
+    public int adicionarPerfil(String novoPerfil) {
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select nome_perfil from perfil "
-                    + " where nome_perfil = '" + novoPerfil + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
+            String sql = "select nome_perfil from perfil where nome_perfil = '" + novoPerfil + "'";
+            ResultSet rs = con.executeQuery(sql);
+            if (rs.next()) {
                 flag = 1;
             }
             rs.close();
-            stmt.close();
-
             if (flag == 0) {
                 String query = "insert into Perfil(nome_perfil) values(?)";
-
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, novoPerfil);
-                pstmt.executeUpdate();
+                if (con.prepareStatement(query)) {
+                    con.pstmt.setString(1, novoPerfil);
+                    con.executeUpdate();
+                }
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("PerfilMB adicionarPerfil " + ex);
             flag = 2;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
     public List<SelectItem> consultaPerfis() {
         List<SelectItem> saida = new ArrayList<SelectItem>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select cod_perfil, nome_perfil from Perfil"
-                    + " ORDER BY nome_perfil ";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select cod_perfil, nome_perfil from Perfil ORDER BY nome_perfil ";
+            ResultSet rs = con.executeQuery(sql);
             saida.add(new SelectItem(-1, "Selecione o perfil"));
 
             while (rs.next()) {
@@ -136,39 +54,21 @@ public class Banco implements Serializable {
                 saida.add(new SelectItem(perfilID, nome));
             }
             rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println("PerfilMB consultaPerfis " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
 
-    public Perfil consultaPermissoesPerfil(Integer perfilSelecionado) {
-
+    public Perfil consultaPermissoesPerfil(int perfilSelecionado) {
         Perfil perfil = new Perfil();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select * from perfil "
-                    + " where cod_perfil = '" + perfilSelecionado + "'";
-
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select * from perfil where cod_perfil = '" + perfilSelecionado + "'";
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
-
                 Integer cod_perfil = rs.getInt("cod_perfil");
                 String nome_perfil = rs.getString("nome_perfil");
                 Boolean consInd = rs.getBoolean("consInd");
@@ -284,26 +184,17 @@ public class Banco implements Serializable {
                 //perfil.setPagamento(pagamento);
             }
             rs.close();
-            stmt.close();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+        } catch (SQLException ex) {
+            System.out.println("PerfilMB consultaPermissoesPerfil " + ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return perfil;
     }
 
-    Integer salvarAlteracoesPerfil(Perfil perfilEdit) {
+    public int salvarAlteracoesPerfil(Perfil perfilEdit) {
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
             String query = "UPDATE Perfil SET cadastrosEConfiguracoes = ?, permissoes = ?, funcionarios = ?, deptos = ?, cargos = ?, feriados = ?, "
                     + "justificativas = ?, tituloDoRelatorio = ?, horaExtraEGratificacoes = ?, consInd = ?, freqnComEscala = ?, freqnSemEscala = ?, "
@@ -316,163 +207,113 @@ public class Banco implements Serializable {
                     + "listaRelogios = ?, downloadAfd = ?, scanIps = ?, relogioPonto = ?, presenca = ?, consultaIrregulares = ?, consultaHoraExtra = ?, autenticaSerial = ? "
                     + "WHERE cod_perfil = ?";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setBoolean(1, perfilEdit.getCadastrosEConfiguracoes());
-            pstmt.setBoolean(2, perfilEdit.getPermissoes());
-            pstmt.setBoolean(3, perfilEdit.getFuncionarios());
-            pstmt.setBoolean(4, perfilEdit.getDeptos());
-            pstmt.setBoolean(5, perfilEdit.getCargos());
-            pstmt.setBoolean(6, perfilEdit.getFeriados());
-            pstmt.setBoolean(7, perfilEdit.getJustificativas());
-            pstmt.setBoolean(8, perfilEdit.getTituloDoRelatorio());
-            pstmt.setBoolean(9, perfilEdit.getHoraExtraEGratificacoes());
+            if (con.prepareStatement(query)) {
+                con.pstmt.setBoolean(1, perfilEdit.getCadastrosEConfiguracoes());
+                con.pstmt.setBoolean(2, perfilEdit.getPermissoes());
+                con.pstmt.setBoolean(3, perfilEdit.getFuncionarios());
+                con.pstmt.setBoolean(4, perfilEdit.getDeptos());
+                con.pstmt.setBoolean(5, perfilEdit.getCargos());
+                con.pstmt.setBoolean(6, perfilEdit.getFeriados());
+                con.pstmt.setBoolean(7, perfilEdit.getJustificativas());
+                con.pstmt.setBoolean(8, perfilEdit.getTituloDoRelatorio());
+                con.pstmt.setBoolean(9, perfilEdit.getHoraExtraEGratificacoes());
 
+                con.pstmt.setBoolean(10, perfilEdit.getConsInd());
+                con.pstmt.setBoolean(11, perfilEdit.getFreqnComEscala());
+                con.pstmt.setBoolean(12, perfilEdit.getFreqnSemEscala());
+                con.pstmt.setBoolean(13, perfilEdit.getHoraExtra());
 
-            pstmt.setBoolean(10, perfilEdit.getConsInd());
-            pstmt.setBoolean(11, perfilEdit.getFreqnComEscala());
-            pstmt.setBoolean(12, perfilEdit.getFreqnSemEscala());
-            pstmt.setBoolean(13, perfilEdit.getHoraExtra());
+                con.pstmt.setBoolean(14, perfilEdit.getHorCronoJorn());
+                con.pstmt.setBoolean(15, perfilEdit.getHorarios());
+                con.pstmt.setBoolean(16, perfilEdit.getCronogramas());
+                con.pstmt.setBoolean(17, perfilEdit.getJornadas());
 
-            pstmt.setBoolean(14, perfilEdit.getHorCronoJorn());
-            pstmt.setBoolean(15, perfilEdit.getHorarios());
-            pstmt.setBoolean(16, perfilEdit.getCronogramas());
-            pstmt.setBoolean(17, perfilEdit.getJornadas());
+                con.pstmt.setBoolean(18, perfilEdit.getRelatorios());
+                con.pstmt.setBoolean(19, perfilEdit.getRelatorioMensComEscala());
+                con.pstmt.setBoolean(20, perfilEdit.getRelatorioMensSemEscala());
+                con.pstmt.setBoolean(21, perfilEdit.getRelatorioDeResumodeEscalas());
+                con.pstmt.setBoolean(22, perfilEdit.getRelatorioDeResumodeFrequencias());
+                con.pstmt.setBoolean(23, perfilEdit.getListaDePresenca());
 
-            pstmt.setBoolean(18, perfilEdit.getRelatorios());
-            pstmt.setBoolean(19, perfilEdit.getRelatorioMensComEscala());
-            pstmt.setBoolean(20, perfilEdit.getRelatorioMensSemEscala());
-            pstmt.setBoolean(21, perfilEdit.getRelatorioDeResumodeEscalas());
-            pstmt.setBoolean(22, perfilEdit.getRelatorioDeResumodeFrequencias());
-            pstmt.setBoolean(23, perfilEdit.getListaDePresenca());
+                con.pstmt.setBoolean(24, perfilEdit.getAbonos());
+                con.pstmt.setBoolean(25, perfilEdit.getSolicitacao());
+                con.pstmt.setBoolean(26, perfilEdit.getDiasEmAberto());
+                con.pstmt.setBoolean(27, perfilEdit.getAbonosRapidos());
+                con.pstmt.setBoolean(28, perfilEdit.getHistoricoAbono());
+                con.pstmt.setBoolean(29, perfilEdit.getAbonosEmMassa());
+                con.pstmt.setBoolean(30, perfilEdit.getExclusaoAbono());
+                con.pstmt.setBoolean(31, perfilEdit.getRankingAbono());
 
-            pstmt.setBoolean(24, perfilEdit.getAbonos());
-            pstmt.setBoolean(25, perfilEdit.getSolicitacao());
-            pstmt.setBoolean(26, perfilEdit.getDiasEmAberto());
-            pstmt.setBoolean(27, perfilEdit.getAbonosRapidos());
-            pstmt.setBoolean(28, perfilEdit.getHistoricoAbono());
-            pstmt.setBoolean(29, perfilEdit.getAbonosEmMassa());
-            pstmt.setBoolean(30, perfilEdit.getExclusaoAbono());
-            pstmt.setBoolean(31, perfilEdit.getRankingAbono());
+                con.pstmt.setBoolean(32, perfilEdit.getAfdt());
+                con.pstmt.setBoolean(33, perfilEdit.getAcjef());
 
-            pstmt.setBoolean(32, perfilEdit.getAfdt());
-            pstmt.setBoolean(33, perfilEdit.getAcjef());
+                con.pstmt.setBoolean(34, perfilEdit.getEspelhoDePonto());
+                con.pstmt.setBoolean(35, perfilEdit.getBancoDeDados());
+                con.pstmt.setBoolean(36, perfilEdit.getRelatorioLogDeOperacoes());
+                con.pstmt.setBoolean(37, perfilEdit.getRelatorioConfiguracao());
+                con.pstmt.setBoolean(38, perfilEdit.getCategoriaAfastamento());
+                con.pstmt.setBoolean(39, perfilEdit.getAfastamento());
+                con.pstmt.setBoolean(40, perfilEdit.getManutencao());
+                con.pstmt.setBoolean(41, perfilEdit.getEmpresas());
+                con.pstmt.setBoolean(42, perfilEdit.getVerbas());
+                con.pstmt.setBoolean(43, perfilEdit.getShowResumo());
+                con.pstmt.setBoolean(44, perfilEdit.getRelatorioCatracas());
+                con.pstmt.setBoolean(45, perfilEdit.getPesquisarData());
+                con.pstmt.setBoolean(46, perfilEdit.getListaRelogios());
+                con.pstmt.setBoolean(47, perfilEdit.getDownloadAfd());
+                con.pstmt.setBoolean(48, perfilEdit.getScanIP());
+                con.pstmt.setBoolean(49, perfilEdit.getRelogioPonto());
 
-            pstmt.setBoolean(34, perfilEdit.getEspelhoDePonto());
-            pstmt.setBoolean(35, perfilEdit.getBancoDeDados());
-            pstmt.setBoolean(36, perfilEdit.getRelatorioLogDeOperacoes());
-            pstmt.setBoolean(37, perfilEdit.getRelatorioConfiguracao());
-            pstmt.setBoolean(38, perfilEdit.getCategoriaAfastamento());
-            pstmt.setBoolean(39, perfilEdit.getAfastamento());
-            pstmt.setBoolean(40, perfilEdit.getManutencao());
-            pstmt.setBoolean(41, perfilEdit.getEmpresas());
-            pstmt.setBoolean(42, perfilEdit.getVerbas());
-            pstmt.setBoolean(43, perfilEdit.getShowResumo());
-            pstmt.setBoolean(44, perfilEdit.getRelatorioCatracas());
-            pstmt.setBoolean(45, perfilEdit.getPesquisarData());
-            pstmt.setBoolean(46, perfilEdit.getListaRelogios());
-            pstmt.setBoolean(47, perfilEdit.getDownloadAfd());
-            pstmt.setBoolean(48, perfilEdit.getScanIP());
-            pstmt.setBoolean(49, perfilEdit.getRelogioPonto());
-            
-            pstmt.setBoolean(50, perfilEdit.getPresenca());
-            pstmt.setBoolean(51, perfilEdit.getConsultaIrregulares());
-            pstmt.setBoolean(52, perfilEdit.getConsultaHoraExtra());
-            
-            pstmt.setBoolean(53, perfilEdit.getAutenticaSerial());
+                con.pstmt.setBoolean(50, perfilEdit.getPresenca());
+                con.pstmt.setBoolean(51, perfilEdit.getConsultaIrregulares());
+                con.pstmt.setBoolean(52, perfilEdit.getConsultaHoraExtra());
 
-            pstmt.setInt(54, perfilEdit.getCod_perfil());
-            
+                con.pstmt.setBoolean(53, perfilEdit.getAutenticaSerial());
 
-            pstmt.executeUpdate();
+                con.pstmt.setInt(54, perfilEdit.getCod_perfil());
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+                con.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            System.out.println("PerfilMB salvarAlteracoesPerfil " + ex);
             flag = 1;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
     public int salvarEditPerfil(Perfil perfilEdit) {
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select nome_perfil from Perfil "
+            String sql = "select nome_perfil from Perfil "
                     + " WHERE     (cod_perfil <> " + perfilEdit.getCod_perfil()
                     + ") AND (nome_perfil = '" + perfilEdit.getNome_perfil() + "') ";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
+            ResultSet rs = con.executeQuery(sql);
+            if (rs.next()) {
                 flag = 1;
             }
             rs.close();
-            stmt.close();
 
             if (flag == 0) {
                 String query = "UPDATE Perfil SET nome_perfil = ? WHERE cod_perfil = ?";
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, perfilEdit.getNome_perfil());
-
-                pstmt.setInt(2, perfilEdit.getCod_perfil());
-
-                pstmt.executeUpdate();
-                pstmt.executeUpdate();
+                if (con.prepareStatement(query)) {
+                    con.pstmt.setString(1, perfilEdit.getNome_perfil());
+                    con.pstmt.setInt(2, perfilEdit.getCod_perfil());
+                    con.executeUpdate();
+                }
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException ex) {
+            System.out.println("PerfilMB salvarEditPerfil "+ex);
             flag = 2;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
-
     }
 
-    Boolean excluirPerfil(Integer perfilSelecionado) {
-        Boolean flag = false;
-        PreparedStatement pstmt = null;
-
-        String queryDelete = "delete from Perfil "
-                + " where cod_perfil = " + perfilSelecionado;
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            flag = true;
-        } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-        return flag;
+    public boolean excluirPerfil(int perfilSelecionado) {
+        String queryDelete = "delete from Perfil where cod_perfil = " + perfilSelecionado;
+        return con.executeUpdate(queryDelete) > 0;
     }
 }
