@@ -173,7 +173,6 @@ public class folhaBean implements Serializable{
                 }
             }
         }
-        banco.closeConection();
         return folhaSaida;
     }
 

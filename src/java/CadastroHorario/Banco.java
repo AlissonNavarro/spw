@@ -1,47 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package CadastroHorario;
 
-import Metodos.Metodos;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author amsgama
- */
 public class Banco implements Serializable {
-
-    Driver d;
-    Connection c;
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe);
-        }
-    }
+    
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-        }
+        con = new AcessoBD();
     }
 
     public List<Horario> consultaHorarios() {
@@ -49,13 +21,9 @@ public class Banco implements Serializable {
         List<Horario> horarioList = new ArrayList<Horario>();
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
-
             sql = "select * from schClass where active = 'true' ORDER BY schName";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer horario_id = rs.getInt("schClassid");
@@ -123,35 +91,20 @@ public class Banco implements Serializable {
                 horarioList.add(horario);
             }
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return horarioList;
     }
 
     public Horario consultaHorario(Integer id) {
-
         Horario horario = new Horario();
         try {
             ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select * from schClass "
-                    + " where schClassid = " + id;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select * from schClass where schClassid = " + id;
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer horario_id = rs.getInt("schClassid");
@@ -218,130 +171,97 @@ public class Banco implements Serializable {
 
             }
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return horario;
     }
 
     public int addHorario(Horario horario) {
-
         int flag = 0;
-        PreparedStatement pstmt = null;
         try {
-
             ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select schName from schClass "
+            String sql = "select schName from schClass "
                     + " where schName like '" + horario.getNome() + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            rs = con.executeQuery(sql);
             while (rs.next()) {
                 flag = 1;
             }
             rs.close();
-            stmt.close();
-
             if (flag == 0) {
                 String query = "insert into schclass(schName, legend, startTime, endTime, "
                         + "checkin,checkout, checkInTime1, checkInTime2, checkOutTime1, checkOutTime2, "
                         + "restInTime1, restOutTime1, restInTime2, restOutTime2, restTolerance, "
                         + "ReduceRestTime1, ReduceRestTime2, InterRestIn, InterRestOut, ReduceInterRest, "
                         + "CombineIn, CombineOut) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-                
-
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, horario.getNome());
+                con.prepareStatement(query);
+                con.pstmt.setString(1, horario.getNome());
                 if (horario.getLegenda().equals("")) {
-                    pstmt.setString(2, null);
+                    con.pstmt.setString(2, null);
                 } else {
-                    pstmt.setString(2, horario.getLegenda());
+                    con.pstmt.setString(2, horario.getLegenda());
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 
-                pstmt.setString(3, formatDate(sdf.format(horario.getEntrada())));
-                pstmt.setString(4, formatDate(sdf.format(horario.getSaida())));
-                pstmt.setBoolean(5, horario.getIsEntradaObrigatoria());
-                pstmt.setBoolean(6, horario.getIsSaidaObrigatoria());
-                pstmt.setString(7, formatDate(sdf.format(horario.getInicioFaixaEntrada())));
-                pstmt.setString(8, formatDate(sdf.format(horario.getFimFaixaEntrada())));
-                pstmt.setString(9, formatDate(sdf.format(horario.getInicioFaixaSaida())));
-                pstmt.setString(10, formatDate(sdf.format(horario.getFimFaixaSaida())));
+                con.pstmt.setString(3, formatDate(sdf.format(horario.getEntrada())));
+                con.pstmt.setString(4, formatDate(sdf.format(horario.getSaida())));
+                con.pstmt.setBoolean(5, horario.getIsEntradaObrigatoria());
+                con.pstmt.setBoolean(6, horario.getIsSaidaObrigatoria());
+                con.pstmt.setString(7, formatDate(sdf.format(horario.getInicioFaixaEntrada())));
+                con.pstmt.setString(8, formatDate(sdf.format(horario.getFimFaixaEntrada())));
+                con.pstmt.setString(9, formatDate(sdf.format(horario.getInicioFaixaSaida())));
+                con.pstmt.setString(10, formatDate(sdf.format(horario.getFimFaixaSaida())));
                 if (horario.getEntradaDescanso1() == null || horario.getEntradaDescanso1().equals("")) {
-                    pstmt.setString(11, null);
+                    con.pstmt.setString(11, null);
                 } else {
-                    pstmt.setString(11, formatDate(horario.getEntradaDescanso1()));
+                    con.pstmt.setString(11, formatDate(horario.getEntradaDescanso1()));
                 }
                 if (horario.getSaidaDescanso1() == null || horario.getSaidaDescanso1().equals("")) {
-                    pstmt.setString(12, null);
+                    con.pstmt.setString(12, null);
                 } else {
-                    pstmt.setString(12, formatDate(horario.getSaidaDescanso1()));
+                    con.pstmt.setString(12, formatDate(horario.getSaidaDescanso1()));
                 }
                 if (horario.getEntradaDescanso2() == null || horario.getEntradaDescanso2().equals("")) {
-                    pstmt.setString(13, null);
+                    con.pstmt.setString(13, null);
                 } else {
-                    pstmt.setString(13, formatDate(horario.getEntradaDescanso2()));
+                    con.pstmt.setString(13, formatDate(horario.getEntradaDescanso2()));
                 }
                 if (horario.getSaidaDescanso2() == null || horario.getSaidaDescanso2().equals("")) {
-                    pstmt.setString(14, null);
+                    con.pstmt.setString(14, null);
                 } else {
-                    pstmt.setString(14, formatDate(horario.getSaidaDescanso2()));
+                    con.pstmt.setString(14, formatDate(horario.getSaidaDescanso2()));
                 }
                 
                 if (horario.getToleranciaDesc() == null) {
-                    pstmt.setInt(15, 0);
+                    con.pstmt.setInt(15, 0);
                 } else {
-                    pstmt.setInt(15, horario.getToleranciaDesc());
+                    con.pstmt.setInt(15, horario.getToleranciaDesc());
                 }
-                pstmt.setBoolean(16, horario.getDeduzirDescanso1());
-                pstmt.setBoolean(17, horario.getDeduzirDescanso2());
+                con.pstmt.setBoolean(16, horario.getDeduzirDescanso1());
+                con.pstmt.setBoolean(17, horario.getDeduzirDescanso2());
                 if (horario.getEntradaIntrajornada() == null || horario.getEntradaIntrajornada().equals("")) {
-                    pstmt.setString(18, null);
+                    con.pstmt.setString(18, null);
                 } else {
-                    pstmt.setString(18, formatDate(horario.getEntradaIntrajornada()));
+                    con.pstmt.setString(18, formatDate(horario.getEntradaIntrajornada()));
                 }
                 if (horario.getSaidaIntrajornada()== null || horario.getSaidaIntrajornada().equals("")) {
-                    pstmt.setString(19, null);
+                    con.pstmt.setString(19, null);
                 } else {
-                    pstmt.setString(19, formatDate(horario.getSaidaIntrajornada()));
+                    con.pstmt.setString(19, formatDate(horario.getSaidaIntrajornada()));
                 }
-                pstmt.setBoolean(20, horario.getDeduzirIntrajornada());
-                pstmt.setBoolean(21, horario.getCombinarEntrada());
-                pstmt.setBoolean(22, horario.getCombinarSaida());
-                
-                pstmt.executeUpdate();
-
-
+                con.pstmt.setBoolean(20, horario.getDeduzirIntrajornada());
+                con.pstmt.setBoolean(21, horario.getCombinarEntrada());
+                con.pstmt.setBoolean(22, horario.getCombinarSaida());
+                con.executeUpdate();
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             flag = 2;
         } finally {
-            try {
-                if (c != null) {
-                    if (flag != 1) {
-                        pstmt.close();
-                    }
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
@@ -352,10 +272,7 @@ public class Banco implements Serializable {
     }
 
     public int editHorario(Horario horario) {
-
         int flag = 0;
-        PreparedStatement pstmt = null;
-
         try {
 
             String query = "update schclass set schName = ?, legend = ?,startTime = ?, "
@@ -369,166 +286,123 @@ public class Banco implements Serializable {
 
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, horario.getNome());
-            pstmt.setString(2, horario.getLegenda());
-            pstmt.setString(3, formatDate(sdf.format(horario.getEntrada())));
-            pstmt.setString(4, formatDate(sdf.format(horario.getSaida())));
-            pstmt.setBoolean(5, horario.getIsEntradaObrigatoria());
-            pstmt.setBoolean(6, horario.getIsSaidaObrigatoria());
-            pstmt.setString(7, formatDate(sdf.format(horario.getInicioFaixaEntrada())));
-            pstmt.setString(8, formatDate(sdf.format(horario.getFimFaixaEntrada())));
-            pstmt.setString(9, formatDate(sdf.format(horario.getInicioFaixaSaida())));
-            pstmt.setString(10, formatDate(sdf.format(horario.getFimFaixaSaida())));
+            con.prepareStatement(query);
+            con.pstmt.setString(1, horario.getNome());
+            con.pstmt.setString(2, horario.getLegenda());
+            con.pstmt.setString(3, formatDate(sdf.format(horario.getEntrada())));
+            con.pstmt.setString(4, formatDate(sdf.format(horario.getSaida())));
+            con.pstmt.setBoolean(5, horario.getIsEntradaObrigatoria());
+            con.pstmt.setBoolean(6, horario.getIsSaidaObrigatoria());
+            con.pstmt.setString(7, formatDate(sdf.format(horario.getInicioFaixaEntrada())));
+            con.pstmt.setString(8, formatDate(sdf.format(horario.getFimFaixaEntrada())));
+            con.pstmt.setString(9, formatDate(sdf.format(horario.getInicioFaixaSaida())));
+            con.pstmt.setString(10, formatDate(sdf.format(horario.getFimFaixaSaida())));
             if (horario.getEntradaDescanso1() == null || horario.getEntradaDescanso1().equals("")) {
-                pstmt.setString(11, null);
+                con.pstmt.setString(11, null);
             } else {
-                pstmt.setString(11, formatDate(horario.getEntradaDescanso1()));
+                con.pstmt.setString(11, formatDate(horario.getEntradaDescanso1()));
             }
             if (horario.getSaidaDescanso1() == null || horario.getSaidaDescanso1().equals("")) {
-                pstmt.setString(12, null);
+                con.pstmt.setString(12, null);
             } else {
-                pstmt.setString(12, formatDate(horario.getSaidaDescanso1()));
+                con.pstmt.setString(12, formatDate(horario.getSaidaDescanso1()));
             }
             if (horario.getEntradaDescanso2() == null || horario.getEntradaDescanso2().equals("")) {
-                pstmt.setString(13, null);
+                con.pstmt.setString(13, null);
             } else {
-                pstmt.setString(13, formatDate(horario.getEntradaDescanso2()));
+                con.pstmt.setString(13, formatDate(horario.getEntradaDescanso2()));
             }
             if (horario.getSaidaDescanso2() == null || horario.getSaidaDescanso2().equals("")) {
-                pstmt.setString(14, null);
+                con.pstmt.setString(14, null);
             } else {
-                pstmt.setString(14, formatDate(horario.getSaidaDescanso2()));
+                con.pstmt.setString(14, formatDate(horario.getSaidaDescanso2()));
             }
-            pstmt.setInt(15, horario.getToleranciaDesc());
-            pstmt.setBoolean(16, horario.getDeduzirDescanso1());
-            pstmt.setBoolean(17, horario.getDeduzirDescanso2());
+            con.pstmt.setInt(15, horario.getToleranciaDesc());
+            con.pstmt.setBoolean(16, horario.getDeduzirDescanso1());
+            con.pstmt.setBoolean(17, horario.getDeduzirDescanso2());
             
             if (horario.getEntradaIntrajornada()== null || horario.getEntradaIntrajornada().equals("")) {
-                pstmt.setString(18, null);
+                con.pstmt.setString(18, null);
             } else {
-                pstmt.setString(18, formatDate(horario.getEntradaIntrajornada()));
+                con.pstmt.setString(18, formatDate(horario.getEntradaIntrajornada()));
             }
             if (horario.getSaidaIntrajornada()== null || horario.getSaidaIntrajornada().equals("")) {
-                pstmt.setString(19, null);
+                con.pstmt.setString(19, null);
             } else {
-                pstmt.setString(19, formatDate(horario.getSaidaIntrajornada()));
+                con.pstmt.setString(19, formatDate(horario.getSaidaIntrajornada()));
             }
-            pstmt.setBoolean(20, horario.getDeduzirIntrajornada());
-            pstmt.setBoolean(21, horario.getCombinarEntrada());
-            pstmt.setBoolean(22, horario.getCombinarSaida());
+            con.pstmt.setBoolean(20, horario.getDeduzirIntrajornada());
+            con.pstmt.setBoolean(21, horario.getCombinarEntrada());
+            con.pstmt.setBoolean(22, horario.getCombinarSaida());
             
-            pstmt.setInt(23, horario.getHorario_id());
-            pstmt.executeUpdate();
+            con.pstmt.setInt(23, horario.getHorario_id());
+            con.executeUpdate();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             flag = 1;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
     public boolean verificaHorario(Integer horario_id) {
         ResultSet rs;
-        Statement stmt;
-        Boolean flag = true;
-
+        boolean flag = true;
         try {
-
             String queryVerify = "select * select count(*) "
                     + "from user_temp_sch uts, SchClass sc "
                     + "where uts.schclassid = sc.schclassid and "
                     + "uts.schclassid = " + horario_id;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(queryVerify);
-
+            rs = con.executeQuery(queryVerify);
             while (rs.next()) {
                 System.out.println("Encontrou um Deslocamento vinculado");
                 flag = false;
             }
-
             rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println(ex);
             flag = false;
-
         } finally {
-            return flag;
+            con.Desconectar();
         }
+        return flag;
     }
 
     public boolean deleteHorario(Integer horario_id) {
-
         boolean flag = true;
-        PreparedStatement pstmt = null;
-
         try {
             if (verificaHorario(horario_id)) {
-
                 String query = "delete from schClass where schclassId = ?";
-
-                pstmt = c.prepareStatement(query);
-                pstmt.setInt(1, horario_id);
-
-                pstmt.executeUpdate();
-
+                con.prepareStatement(query);
+                con.pstmt.setInt(1, horario_id);
+                con.executeUpdate();
             } else {
                 flag = false;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+        } catch (Exception ex) {
+            System.out.println(ex);
             flag = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }
 
     public boolean desativarHorario(Integer horario_id) {
-
         boolean flag = true;
-        PreparedStatement pstmt = null;
-
         try {
-
             String query = "update schClass set active = 'false' "
                     + " where schclassId = ?";
-
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, horario_id);
-
-            pstmt.executeUpdate();
-
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, horario_id);
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-
             flag = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return flag;
     }

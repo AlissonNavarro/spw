@@ -15,7 +15,7 @@
         <link href="../css/cssTemplate.css" rel="stylesheet" type="text/css" />
         <title>Consulta Administrador</title>
         <script type="text/javascript">
-            function limitText(limitField, limitNum) {
+            function limitText(limitField, limitNum) 
                 if (limitField.value.length > limitNum) {
                     limitField.value = limitField.value.substring(0, limitNum);
                 }
@@ -524,8 +524,8 @@
                                                             <h:outputText value="Regime: " styleClass="label" style="float:right"/>
                                                             <h:selectOneMenu id="regimeComboBox" value="#{funcionarioBean.funcionario.cod_regime}">
                                                                 <f:selectItems value="#{funcionarioBean.regimelist}"/>
-                                                                <a4j:support  event="onchange" action="#{funcionario.nada}"
-                                                                              ajaxSingle="true"/>
+                                                                <%--<a4j:support  event="onchange" action="#{funcionario.nada}"
+                                                                              ajaxSingle="true"/>--%>
                                                             </h:selectOneMenu>
 
                                                             <rich:spacer width="25"/>
@@ -570,9 +570,9 @@
                                                                 </center>
                                                             </h:panelGrid>
 
-                                                            <h:panelGrid columns="1" rendered="#{not empty empresaBean.ipDigitCatcher}">    
+                                                            <h:panelGrid columns="1" rendered="#{not empty configBean.ipDigitCatcher}">    
                                                                 <center>
-                                                                    <h:outputLink id="fingerlink" value="#{empresaBean.fullNameIpCatcher}" 
+                                                                    <h:outputLink id="fingerlink" value="#{configBean.fullNameIpCatcher}" 
                                                                                   target="_blank">
                                                                         <h:graphicImage value="../images/fingerprint_scan.png" />
                                                                         <a4j:support event="onclick" action="#{funcionarioBean.insertFingerPrint}"/>
@@ -624,10 +624,10 @@
                                                                 </h:panelGrid>
 
 
-                                                                <rich:spacer width="10" rendered="#{not empty empresaBean.ipDigitSender}"/>
-                                                                <h:panelGrid columns="1" style="text-align:center;float:center" rendered="#{not empty empresaBean.ipDigitSender}">    
+                                                                <rich:spacer width="10" rendered="#{not empty configBean.ipDigitSender}"/>
+                                                                <h:panelGrid columns="1" style="text-align:center;float:center" rendered="#{not empty configBean.ipDigitSender}">    
                                                                     <center>
-                                                                        <h:outputLink id="senderlink" value="#{empresaBean.fullNameIpSender}" 
+                                                                        <h:outputLink id="senderlink" value="#{onfigBean.fullNameIpSender}" 
                                                                                       target="_blank" style="float:center" >
                                                                             <h:graphicImage value="../images/pontoClock.png" style="border:0"/>
                                                                         </h:outputLink>
@@ -960,7 +960,7 @@
 
                                                             <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
                                                             <rich:spacer width="3"/>
-                                                            <h:inputText id="itEmpresaAddress" size="40" value="#{empresaBean.empresa.address}"/>
+                                                            <h:inputText id="itEmpresaAddress" size="40" value="#{empresaBean.empresa.endereco}"/>
 
                                                             <h:outputText value="Cei: " styleClass="label" style="float:left"/>
                                                             <rich:spacer width="3"/>
@@ -1005,7 +1005,7 @@
 
                                                             <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
                                                             <rich:spacer width="3"/>
-                                                            <h:inputText id="itEditEmpresaAddress" size="40" value="#{empresaBean.empresaEdit.address}"/>
+                                                            <h:inputText id="itEditEmpresaAddress" size="40" value="#{empresaBean.empresaEdit.endereco}"/>
 
                                                             <h:outputText value="Cei: " styleClass="label" style="float:left"/>
                                                             <rich:spacer width="3"/>
@@ -1026,17 +1026,17 @@
                                                     <rich:panel rendered="#{empresaBean.empresaSelecionada != '-1'}">
                                                         <h:panelGrid>
                                                             <h:panelGrid id="dadosEmpresaRazaoSocial" columns="3" style="text-align:center;float:center" >
-                                                                <h:outputText value="Razão Social: " styleClass="label" style="float:left"/>
-                                                                <rich:spacer width="3"/>
-                                                                <h:outputText value="#{empresaBean.empresa.razaoSocial}" style="text-align:left;float:left"/>
-
                                                                 <h:outputText value="CNPJ: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
                                                                 <h:outputText value="#{empresaBean.empresa.cnpj}" style="text-align:left;float:left"/>
 
+                                                                <h:outputText value="Razão Social: " styleClass="label" style="float:left"/>
+                                                                <rich:spacer width="3"/>
+                                                                <h:outputText value="#{empresaBean.empresa.razaoSocial}" style="text-align:left;float:left"/>
+
                                                                 <h:outputText value="Endereço: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
-                                                                <h:outputText value="#{empresaBean.empresa.address}" style="text-align:left;float:left"/>
+                                                                <h:outputText value="#{empresaBean.empresa.endereco}" style="text-align:left;float:left"/>
 
                                                                 <h:outputText value="Cei: " styleClass="label" style="float:left"/>
                                                                 <rich:spacer width="3"/>
@@ -1067,7 +1067,7 @@
                                                     <a4j:support event="onchange"
                                                                  reRender="BotaoAddcargo,editCargoOutputPanel,deleteCargoOutputPanel"/>
                                                 </h:selectOneMenu>
-
+                                                                                                
                                                 <a4j:status id="progressoEmAberto5"  for="cargosRegion" onstart="Richfaces.showModalPanel('cargosRegionPanelStatus');"
                                                             onstop="#{rich:component('cargosRegionPanelStatus')}.hide()"/>
                                                 <rich:modalPanel id="cargosRegionPanelStatus" autosized="true" >
@@ -1109,7 +1109,7 @@
                                                                         <h:outputLink  value="#" id="linkRenomearCargo" style="float:center">
                                                                             <h:graphicImage value="../images/edit_dent.png" style="border:0"/>
                                                                             <rich:componentControl for="renomearCargoPanel" attachTo="linkRenomearCargo" operation="show" event="onclick"/>
-                                                                            <a4j:support event="onclick" action = "#{cargoBean.showEditar}" reRender="editCargoGrid"/>
+                                                                            <a4j:support event="onclick" action="#{cargoBean.showEditar}" reRender="editCargoGrid"/>
                                                                         </h:outputLink>
                                                                         <h:outputText value="Editar" styleClass="label"/>
                                                                     </center>
@@ -1168,7 +1168,7 @@
                                                         <center>
                                                             <br>
                                                             <h:outputText value="Nome do cargo: " styleClass="label"/>
-                                                            <h:inputText id="novoCargoID" value="#{cargoBean.cargoNovo.nomeCargo}"/>
+                                                            <h:inputText id="novoCargoID" value="#{cargoBean.cargoNovo.nome}"/>
                                                             <br>
                                                         </center>
                                                     </h:panelGrid>
@@ -1199,7 +1199,7 @@
                                                         <center>
                                                             <br>
                                                             <h:outputText value="Nome do cargo: " styleClass="label"/>
-                                                            <h:inputText id="editCargoID" value="#{cargoBean.cargoEdit.nomeCargo}"/>
+                                                            <h:inputText id="editCargoID" value="#{cargoBean.cargoEdit.nome}"/>
                                                             <br>
                                                         </center>
                                                     </h:panelGrid>
@@ -1247,23 +1247,23 @@
                                                         </h:column>
                                                     </rich:columnGroup>
                                                 </f:facet>
-                                                <h:column>
+                                                <rich:column sortBy="#{linha.nome}">
                                                     <center>
                                                         <h:outputText id="nomeFeriadoInput" value="#{linha.nome}"/>
                                                     </center>
-                                                </h:column>
-                                                <h:column>
+                                                </rich:column>
+                                                <rich:column sortBy="#{linha.data}">
                                                     <center>
                                                         <h:outputText id="dataFeriadoInput" value="#{linha.data}">
                                                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                                                         </h:outputText>
                                                     </center>
-                                                </h:column>
-                                                <h:column>
+                                                </rich:column>
+                                                <rich:column sortBy="#{linha.isOficial}">
                                                     <center>
                                                         <h:selectBooleanCheckbox id="isOficialInput" value="#{linha.isOficial}" disabled="true"/>
                                                     </center>
-                                                </h:column>
+                                                </rich:column>
                                                 <h:column>
                                                     <center>
                                                         <h:outputLink  value="#" id="linkFeriado">
@@ -1411,11 +1411,11 @@
                                                                 </h:column>
                                                             </rich:columnGroup>
                                                         </f:facet>
-                                                        <h:column>
+                                                        <rich:column sortBy="#{justificativa.justificativaNome}">
                                                             <center>
                                                                 <h:outputText  value="#{justificativa.justificativaNome}"/>
                                                             </center>
-                                                        </h:column>
+                                                        </rich:column>
                                                         <h:column>
                                                             <center>
                                                                 <h:outputLink  value="#" id="linkJustificativa">
@@ -1565,7 +1565,7 @@
                                 </rich:tab>
 
 
-                                <rich:tab id="subtab39" label="Verbas" rendered="#{usuarioBean.perfil.verbas == true}">
+                                    <rich:tab id="subtab39" label="Verbas" rendered="#{usuarioBean.perfil.verbas == true}">
                                     <br/>
                                     <center>
                                         <h:outputText value="Lista de verbas" styleClass="labelMaior"/>
@@ -1576,21 +1576,21 @@
                                             </f:facet>
                                             <h:panelGrid columns="2">
                                                 <h:outputText value="Código da empresa: " styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.empresa.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.empresa}"/>
                                                 <h:outputText value="Adicional Noturno: " styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.adicionalNoturno.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.adicionalNoturno}"/>
                                                 <h:outputText value="Atrasos:" styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.atrasos.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.atrasos}"/>
                                                 <h:outputText value="Atrasos < 1:" styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.atrasos_menor_uma_hora.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.atrasosMenorHora}"/>
                                                 <h:outputText value="Atrasos > 1:" styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.atrasos_maior_uma_hora.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.atrasosMaiorHora}"/>
                                                 <h:outputText value="Feriado Crítico: " styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.feriadoCritico.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.feriadoCritico}"/>
                                                 <h:outputText value="DSR: " styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.dsr.cod_verba}"/>
+                                                <h:inputText size="3" value="#{verbaBean.verba.dsr}"/>
                                                 <h:outputText value="Faltas: " styleClass="labelRight"/>
-                                                <h:inputText size="3" value="#{verbaBean.faltas.cod_verba}"/>                                             
+                                                <h:inputText size="3" value="#{verbaBean.verba.faltas}"/>                                             
                                             </h:panelGrid>
                                         </rich:panel>
                                         <br/>
@@ -1632,7 +1632,7 @@
                                                         </f:facet>
                                                         <h:column>
                                                             <center>
-                                                                <h:outputText  value="#{categoriaAfastamento.descCategoriaAfastamento}"/>
+                                                                <h:outputText  value="#{categoriaAfastamento.descricao}"/>
                                                             </center>
                                                         </h:column>
                                                         <h:column>
@@ -1646,7 +1646,7 @@
                                                                     <a4j:support action="#{categoriaAfastamentoBean.showEditar}"
                                                                                  event="onclick"
                                                                                  reRender="paneleditCategoriaAfastamento">
-                                                                        <f:param name="categoriaAfastamento_id" value="#{categoriaAfastamento.categoriaAfastamentoID}"/>
+                                                                        <f:param name="categoriaAfastamento_id" value="#{categoriaAfastamento.id}"/>
                                                                     </a4j:support>
                                                                 </h:outputLink>
                                                             </center>
@@ -1658,7 +1658,7 @@
                                                                                    reRender="categPanel"
                                                                                    ajaxSingle="true"
                                                                                    onclick="javascript:if (!confirm('Tem certeza que deseja deletar a categoria?')) return false;">
-                                                                    <f:param name="categoriaAfastamento_id" value="#{categoriaAfastamento.categoriaAfastamentoID}"/>
+                                                                    <f:param name="categoriaAfastamento_id" value="#{categoriaAfastamento.id}"/>
                                                                 </a4j:commandButton>
                                                             </center>
                                                         </h:column>
@@ -1690,7 +1690,7 @@
                                                                 <h:outputText value="Nome do justificativa  " style="float:right;font-weight:bold"/>
                                                                 <rich:spacer width="15"/>
                                                                 <h:inputText size="20"
-                                                                             value="#{categoriaAfastamentoBean.editCategoriaAfastamento.descCategoriaAfastamento}"
+                                                                             value="#{categoriaAfastamentoBean.editCategoriaAfastamento.descricao}"
                                                                              maxlength="20" style="float:left"/>
 
                                                                 <h:outputText value="Legenda:  " style="float:right;font-weight:bold"/>
@@ -1748,7 +1748,7 @@
                                                         <h:panelGrid columns="3" style="text-align:center;float:center;">
                                                             <h:outputText value="Nome da justificativas  " style="float:right;font-weight:bold"/>
                                                             <rich:spacer width="15"/>
-                                                            <h:inputText size="20" value="#{categoriaAfastamentoBean.novaCategoriaAfastamento.descCategoriaAfastamento}"
+                                                            <h:inputText size="20" value="#{categoriaAfastamentoBean.novaCategoriaAfastamento.descricao}"
                                                                          maxlength="20" style="float:left"/>
 
                                                             <h:outputText value="Legenda:  " style="float:right;font-weight:bold"/>

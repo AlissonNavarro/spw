@@ -46,7 +46,10 @@ public class DiaHoraExtraBean implements Serializable {
     }
 
     private void inserirHoraExtra() {
-        if (diaHoraExtra.getCod_categoria().equals(-1)) {
+        if (categoriaJustificativaList.size() == 1) {
+            FacesMessage msgErro = new FacesMessage("Funcionário não possui um regime cadastrado ou o regime não possui uma categoria de justificativa!");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+        } else if (diaHoraExtra.getCod_categoria().equals(-1)) {
             FacesMessage msgErro = new FacesMessage("Escolha uma categoria de justificativa!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         } else {            

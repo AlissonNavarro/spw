@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Metodos;
 
 import Administracao.Conexao;
-import CadastroHoraExtra.RegimeHoraExtra;
 import ConsultaPonto.Jornada;
 import Usuario.UsuarioBean;
 import java.io.BufferedReader;
@@ -50,16 +45,21 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-/**
- *
- * @author Alexandre
- */
 public class Metodos {
 
     static Document doc = null;
     static String driver = "jdbc:jtds:sqlserver://";
     static boolean servidorAtivo = false;
     private static String version = "1.9.0";
+    private static String urlCompleta = "";
+    
+    public static void carregarUrlCompleta() {
+        urlCompleta = getUrlConexao();
+    }
+    
+    public static String getUrlCompleta() {
+        return urlCompleta;
+    } 
 
     public static void setServidorAtivo() {
         try {
@@ -621,22 +621,11 @@ public class Metodos {
 
     public static void setTitulo(String titulo) {
         Banco b = new Banco();
-        try {
-            String senha = b.getSenhaAdministrador();
-            b.Conectar();
-            byte[] logo = b.getImageLogo();
-            b.Conectar();
-            int tipoRelatorio = b.getTipoRelatorio();
-            b.Conectar();
-            b.deleteAllConfig();
-            b.Conectar();
-            b.inserirConfig(titulo, senha, tipoRelatorio, logo);
-
-        } catch (SQLException ex) {
-            System.out.println("Metodos: setTitulo: " + ex);
-            //Logger.getLogger(Metodos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //b.setTitulo(titulo);
+        String senha = b.getSenhaAdministrador();
+        byte[] logo = b.getImageLogo();
+        int tipoRelatorio = b.getTipoRelatorio();
+        b.deleteAllConfig();
+        b.inserirConfig(titulo, senha, tipoRelatorio, logo);
     }
 
     public static void setSenha(String senha) {

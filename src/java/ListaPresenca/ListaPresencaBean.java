@@ -169,7 +169,6 @@ public class ListaPresencaBean implements Serializable{
                 }
             }
         }
-        banco.closeConection();
         return listaPresencaSaida;
     }
 

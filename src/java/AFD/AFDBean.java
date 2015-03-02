@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package AFD;
 
 import java.io.BufferedReader;
@@ -13,10 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-/**
- *
- * @author amvboas
- */
+
 public class AFDBean {
 
     public static Boolean isMain = false;
@@ -190,7 +183,6 @@ public class AFDBean {
                     break;
             }
         }
-        banco.fecharConexao();
     }
 
     public void imprimeRegistrosList() {

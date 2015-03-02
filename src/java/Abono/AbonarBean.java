@@ -118,7 +118,6 @@ public class AbonarBean implements Serializable {
                         FacesContext.getCurrentInstance().addMessage(null, msgErro);
                     }
                 }
-                banco.fecharConexao();
                 if (!horaAbonoList.isEmpty() && ok) {
                     SolicitacaoAbonoBean solicitacaoAbonoBean = ((SolicitacaoAbonoBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("solicitacaoAbonoBean"));
                     solicitacaoAbonoBean.atualizar();

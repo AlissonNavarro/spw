@@ -5,7 +5,7 @@
 package RelatorioMensal;
 
 import Abono.Abono;
-import Afastamento.Afastamento;
+import entidades.Afastamento;
 
 import ConsultaPonto.Escala;
 import ConsultaPonto.Feriado;
@@ -19,6 +19,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import manageBean.CategoriaAfastamentoMB;
+import entidades.CategoriaAfastamento;
 
 /**
  *
@@ -87,7 +89,9 @@ public class RelatorioResumoEscala implements Serializable {
                 //Verifica se é um periodoAbonodo
                 Boolean teste = getDiaComAfastamento(i);
                 if (teste) {
-                    escalasListStr.add(afastamento.getCategoriaAfastamento().getLegenda());
+                    CategoriaAfastamentoMB caMB = new CategoriaAfastamentoMB();
+                    CategoriaAfastamento ca = caMB.consultaCategoriaAfastamento(afastamento.getCodCategoriaAfastamento());
+                    escalasListStr.add(ca.getLegenda());
                 } else {
                     if (buscaEscala(i) == null) {
                         escalasListStr.add("");

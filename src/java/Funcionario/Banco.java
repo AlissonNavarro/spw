@@ -1,17 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Funcionario;
 
-import Metodos.Metodos;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import comunicacao.AcessoBD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,56 +12,338 @@ import java.util.List;
 import java.util.Set;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
 public class Banco {
 
-    Driver d;
-    Connection c;
-    Connection conSQLite;
+    //Driver d;
+    //Connection conSQLite;
     // Departamento Hieraquico
     List<Integer> deptList = new ArrayList<Integer>();
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe);
-        }
-    }
-
-    public void Desconectar() {
-        try {
-            c.close();
-        } catch (SQLException ex) {
-            ex.getMessage();
-        }
-    }
-
-    public static Connection getSQLiteConnection() throws Exception {
-        Driver d = (Driver) Class.forName("org.sqlite.JDBC").newInstance();
-        Connection c = DriverManager.getConnection("jdbc:sqlite://C:/Arquivos de programas/ID DATA Tecnologia/ID REP Config 32 Bits/Data/IDREP.s3db");
-        return c;
-    }
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-        }
+        con = new AcessoBD();
     }
+
+    /*
+     public static Connection getSQLiteConnection() throws Exception {
+     Driver d = (Driver) Class.forName("org.sqlite.JDBC").newInstance();
+     Connection c = DriverManager.getConnection("jdbc:sqlite://C:/Arquivos de programas/ID DATA Tecnologia/ID REP Config 32 Bits/Data/IDREP.s3db");
+     return c;
+     }*/
+    public Integer cadastrarNovoFuncionario(Funcionario func) {
+        Integer flag = 0;
+        try {
+            int nextId = 0;
+            ResultSet rs;
+            String sqlSelect = "select max(userid) as u from USERINFO ";
+            rs = con.executeQuery(sqlSelect);
+
+            while (rs.next()) {
+                nextId = rs.getInt("u");
+            }
+            nextId++;
+            String matricula = "" + nextId;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String nasc = func.getDataNascimento() == null ? null : sdf.format(func.getDataNascimento());
+            String contr = func.getDataContratação() == null ? null : sdf.format(func.getDataContratação());
+            Integer dept = func.getCod_dept() == -1 ? 1 : func.getCod_dept();
+            String carg = func.getCargo() == 0 ? null : func.getCargo().toString();
+
+            String sql = "insert into USERINFO(name,ssn,pis,badgenumber,mat_emcs,gender,birthday,hiredday,defaultdeptid,"
+                    + "cargo,cod_regime,ativo,holiday,userid,livreAcesso) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            con.prepareStatement(sql);
+            con.pstmt.setString(1, func.getNome());
+            con.pstmt.setString(2, func.getCpf());
+            con.pstmt.setString(3, setSomenteNumerosPis(func.getPIS()));
+            Administracao.Banco b = new Administracao.Banco();
+            if (b.CheckWithPIN()) {
+                con.pstmt.setString(4, func.getMatricula());
+            } else {
+                con.pstmt.setString(4, addLetraPin(func.getMatricula()));
+            }
+            con.pstmt.setInt(5, func.getMat_emcs());
+            con.pstmt.setString(6, genderIntToString(func.getSexo()));
+            con.pstmt.setString(7, nasc);
+            con.pstmt.setString(8, contr);
+            con.pstmt.setInt(9, dept);
+            con.pstmt.setString(10, carg);
+            con.pstmt.setInt(11, func.getCod_regime());
+            con.pstmt.setBoolean(12, func.getIsAtivo());
+            con.pstmt.setInt(13, func.getSucetivelAFeriado() ? 1 : 0);
+            con.pstmt.setString(14, matricula);
+            con.pstmt.setBoolean(15, func.getLivreAcesso());
+            con.executeUpdate();
+
+            /*            try {
+             conSQLite = getSQLiteConnection();
+             sql = "insert into employee(employeename, pis, employeereg, idcompany) values (?,?,?,?)";
+             PreparedStatement pstmt = conSQLite.prepareStatement(sql);
+             pstmt.setString(1, func.getNome());
+             pstmt.setString(2, setSomenteNumerosPis(func.getPIS()));
+             pstmt.setString(3, func.getCpf());
+             pstmt.setInt(4, 1);
+             pstmt.executeUpdate();
+
+             } catch (Exception e) {
+             System.out.println(e.getMessage());
+             flag = 2;
+
+             }*/
+        } catch (Exception e) {
+            System.out.println(e);
+            flag = 1;
+        } finally {
+            con.Desconectar();
+        }
+        return flag;
+    }
+
+    public Integer cadastrarNovoFuncionarioItdentity(Funcionario func) {
+        Integer flag = 0;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String nasc = func.getDataNascimento() == null ? null : sdf.format(func.getDataNascimento());
+            String contr = func.getDataContratação() == null ? null : sdf.format(func.getDataContratação());
+            Integer dept = func.getCod_dept() == -1 ? 1 : func.getCod_dept();
+            String carg = func.getCargo() == 0 ? null : func.getCargo().toString();
+
+            String sql = "insert into USERINFO(name,ssn,pis,badgenumber,mat_emcs,gender,birthday,hiredday,defaultdeptid,"
+                    + "cargo,cod_regime,ativo,holiday,livreAcesso) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            con.prepareStatement(sql);
+            con.pstmt.setString(1, func.getNome());
+            con.pstmt.setString(2, func.getCpf());
+            con.pstmt.setString(3, setSomenteNumerosPis(func.getPIS()));
+            Administracao.Banco b = new Administracao.Banco();
+            if (b.CheckWithPIN()) {
+                con.pstmt.setString(4, func.getMatricula());
+            } else {
+                con.pstmt.setString(4, addLetraPin(func.getMatricula()));
+            }
+            con.pstmt.setInt(5, func.getMat_emcs());
+            con.pstmt.setString(6, genderIntToString(func.getSexo()));
+            con.pstmt.setString(7, nasc);
+            con.pstmt.setString(8, contr);
+            con.pstmt.setInt(9, dept);
+            con.pstmt.setString(10, carg);
+            con.pstmt.setInt(11, func.getCod_regime());
+            con.pstmt.setBoolean(12, func.getIsAtivo());
+            con.pstmt.setInt(13, func.getSucetivelAFeriado() ? 1 : 0);
+            con.pstmt.setBoolean(14, func.getLivreAcesso());
+            con.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            flag = 1;
+        } finally {
+            con.Desconectar();
+        }
+        return flag;
+    }
+
+    public List<SelectItem> consultaFuncionarioTotal(Integer dep, Boolean incluirSubSetores) {
+
+        List<SelectItem> userList = new ArrayList<SelectItem>();
+        List<Integer> deptIDList;
+
+        try {
+            ResultSet rs = null;
+            String sql;
+
+            if (incluirSubSetores) {
+
+                //Selecionando os departamentos com permissão de visibilidade.
+                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+                        + " ORDER BY SUPDEPTID asc";
+
+                rs = con.executeQuery(sql);
+
+                deptIDList = new ArrayList<Integer>();
+                deptIDList.add(dep);
+
+                HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
+
+                while (rs.next()) {
+                    Integer cod = rs.getInt("DEPTID");
+                    Integer supdeptid = rs.getInt("SUPDEPTID");
+                    idToSuperHash.put(cod, supdeptid);
+                }
+                rs.close();
+
+                List<Integer> deptPermitidos = new ArrayList<Integer>();
+                deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
+
+                sql = "select u.userid,u.name,u.defaultdeptid"
+                        + " from  USERINFO u "
+                        + " ORDER BY u.name asc";
+
+                rs = con.executeQuery(sql);
+                userList.add(new SelectItem(null, "Selecione um funcionário"));
+
+                while (rs.next()) {
+                    String userid = rs.getString("userid");
+                    String name = rs.getString("name");
+                    Integer dept = rs.getInt("defaultdeptid");
+
+                    if (deptIDList.contains(dept)) {
+                        userList.add(new SelectItem(userid, name));
+                    }
+                }
+
+            } else {
+                sql = "select u.userid,u.name"
+                        + " from  USERINFO u "
+                        + " where u.defaultdeptid = " + dep
+                        + " ORDER BY u.name asc";
+
+                rs = con.executeQuery(sql);
+                userList.add(new SelectItem(null, "Selecione um funcionário"));
+
+                while (rs.next()) {
+                    String userid = rs.getString("userid");
+                    String name = rs.getString("name");
+                    userList.add(new SelectItem(userid, name));
+                }
+            }
+            rs.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
+        }
+        return userList;
+    }
+
+    public Funcionario consultaDetalhesFuncionario(Integer cod_funcionario) {
+        Funcionario func = new Funcionario();
+        try {
+            ResultSet rs;
+            String sql;
+            sql = "SELECT * FROM  USERINFO  WHERE (USERID = " + cod_funcionario + ")";
+            rs = con.executeQuery(sql);
+
+            while (rs.next()) {
+
+                Integer funcionarioId = cod_funcionario;
+                String matricula = removeLetraPin(rs.getString("BADGENUMBER"));
+                String cpf = rs.getString("SSN");
+                String PIS = rs.getString("PIS");
+                String nome = rs.getString("NAME");
+                Integer sexo = genderStringToInt(rs.getString("GENDER"));
+                Integer cargo = rs.getInt("Cargo");
+                Integer dept = rs.getInt("DEFAULTDEPTID");
+                String cracha = rs.getString("CardNo");
+                Date dataNascimento = rs.getDate("BIRTHDAY");
+                Date dataContratação = rs.getDate("HIREDDAY");
+                Boolean ativo = rs.getBoolean("ativo");
+                Integer cod_regime = rs.getInt("cod_regime");
+                Integer mat_emcs = rs.getInt("mat_emcs");
+                Integer feriado = rs.getInt("holiday");
+                Boolean sucetivelAFeriado = (feriado == 1) ? true : false;
+                String ADUsername = rs.getString("adusername");
+                Boolean livreAcesso = rs.getBoolean("livreAcesso");
+                func = new Funcionario(funcionarioId, matricula, cpf, PIS, nome, sexo, cargo,
+                        cracha, dataNascimento, dataContratação, sucetivelAFeriado, dept,
+                        cod_regime, mat_emcs, ADUsername, livreAcesso);
+                func.setIsAtivo(ativo);
+            }
+            rs.close();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
+        }
+        return func;
+    }
+
+    public Boolean salvarAlteracoes(Funcionario funcionario) {
+        Boolean flag = true;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String nasc = funcionario.getDataNascimento() == null ? null : sdf.format(funcionario.getDataNascimento());
+        String contr = funcionario.getDataContratação() == null ? null : sdf.format(funcionario.getDataContratação());
+
+        String carg = funcionario.getCargo() == 0 ? null : funcionario.getCargo().toString();
+
+        String query = "update USERINFO set BADGENUMBER=?,"
+                + " SSN=?, NAME=?, GENDER=?, Cargo=?, CardNo=?,"
+                + " BIRTHDAY=?, HIREDDAY=?, PIS=?, HOLIDAY=?,"
+                + " ATIVO=?, cod_regime=?,Mat_emcs=?, livreAcesso=?"
+                + " where userid=? ";
+
+        try {
+            con.prepareStatement(query);
+            Administracao.Banco b = new Administracao.Banco();
+            if (b.CheckWithPIN()) {
+                con.pstmt.setString(1, funcionario.getMatricula());
+            } else {
+                con.pstmt.setString(1, addLetraPin(funcionario.getMatricula()));
+            }
+            con.pstmt.setString(2, funcionario.getCpf());
+            con.pstmt.setString(3, funcionario.getNome());
+            con.pstmt.setString(4, genderIntToString(funcionario.getSexo()));
+            con.pstmt.setString(5, carg);
+            con.pstmt.setString(6, funcionario.getCracha());
+            con.pstmt.setString(7, nasc);
+            con.pstmt.setString(8, contr);
+            con.pstmt.setString(9, setSomenteNumerosPis(funcionario.getPIS()));
+            Integer feriado = funcionario.getSucetivelAFeriado() ? 1 : 0;
+            con.pstmt.setInt(10, feriado);
+            con.pstmt.setBoolean(11, funcionario.getIsAtivo());
+            con.pstmt.setInt(12, funcionario.getCod_regime());
+            con.pstmt.setInt(13, funcionario.getMat_emcs());
+            con.pstmt.setBoolean(14, funcionario.getLivreAcesso());
+            con.pstmt.setInt(15, funcionario.getFuncionarioId());
+
+            con.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e);
+            flag = false;
+        } finally {
+            con.Desconectar();
+        }
+        return flag;
+    }
+
+    public Integer salvarTransferencia(Integer departamentoDestino, Integer cod_funcionario) {
+        Integer flag = 0;
+        String query = "update USERINFO set DEFAULTDEPTID=? "
+                + " where userid=? ";
+        flag = departamentoDestino == 0 ? 0 : 1;
+        try {
+            if (flag == 1) {
+                con.prepareStatement(query);
+                con.pstmt.setInt(1, departamentoDestino);
+                con.pstmt.setInt(2, cod_funcionario);
+                con.executeUpdate();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
+        }
+        return flag;
+    }
+    
+    public void zerarSenhaUsuario(int idUsuario) {
+        try {
+            String query = "UPDATE USERINFO SET senha = NULL WHERE userid = ?";
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, idUsuario);
+            con.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Erro:" + e);
+        } finally {
+            con.Desconectar();
+        }
+    }    
 
     //retorna uma sequencia para o pin, buscando o maior pin do banco e somando mais 1.
     public String getNextPIN() {
         String str = null;
         try {
-            Conectar();
-            PreparedStatement pstmt = c.prepareStatement("select Max(Cast((replace(badgenumber,'A',''))as int)) 'Maior' from userinfo");
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery("select Max(Cast((replace(badgenumber,'A',''))as int)) 'Maior' from userinfo");
             if (rs.next()) {
                 int y = rs.getInt("Maior");
                 y++;
@@ -79,14 +352,9 @@ public class Banco {
         } catch (SQLException e) {
             e.getMessage();
         } finally {
-            try {
-                c.close();
-            } catch (SQLException e) {
-                e.getMessage();
-            }
-            return str;
+            con.Desconectar();
         }
-
+        return str;
     }
 
     //adiciona uma letra para o pin.
@@ -115,15 +383,13 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -134,7 +400,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -145,8 +410,8 @@ public class Banco {
             sql = "select u.DEFAULTDEPTID,d.deptname from USERINFO u, DEPARTMENTS d"
                     + " where u.userid = " + codigo_funcionario + " and "
                     + " u.DEFAULTDEPTID = d.deptid ";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
             String nome_dept = "";
@@ -156,13 +421,11 @@ public class Banco {
                 nome_dept = rs.getString("DEPTNAME");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -180,7 +443,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptSrtList = ordenarDepts(permissao, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -197,139 +459,20 @@ public class Banco {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
         return saida;
     }
 
-    public Integer apagaUserZero() {
-        Integer flag = 0;
+    public int apagaUserZero() {
+        int flag = 0;
         try {
-            PreparedStatement pstmt;
-            ResultSet rs = null;
             String sqlSelect = "delete from userinfo where userid = 0";
-            pstmt = c.prepareStatement(sqlSelect);
-            pstmt.executeUpdate();
-            pstmt.close();
+            con.executeUpdate(sqlSelect);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             flag = 1;
-        }
-        return flag;
-    }
-
-    public Integer cadastrarNovoFuncionario(Funcionario func) {
-        Integer flag = 0;
-        try {
-            int nextId = 0;
-            Statement stmt = null;
-            ResultSet rs = null;
-            String sqlSelect = "select max(userid) as u from USERINFO ";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sqlSelect);
-
-            while (rs.next()) {
-                nextId = rs.getInt("u");
-            }
-            nextId++;
-            String matricula = "" + nextId;
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            String nasc = func.getDataNascimento() == null ? null : sdf.format(func.getDataNascimento());
-            String contr = func.getDataContratação() == null ? null : sdf.format(func.getDataContratação());
-            Integer dept = func.getCod_dept() == -1 ? 1 : func.getCod_dept();
-            String carg = func.getCargo() == 0 ? null : func.getCargo().toString();
-
-            PreparedStatement pstmt;
-            String sql = "insert into USERINFO(name,ssn,pis,badgenumber,mat_emcs,gender,birthday,hiredday,defaultdeptid,"
-                    + "cargo,cod_regime,ativo,holiday,userid,livreAcesso) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, func.getNome());
-            pstmt.setString(2, func.getCpf());
-            pstmt.setString(3, setSomenteNumerosPis(func.getPIS()));
-            Administracao.Banco b = new Administracao.Banco();
-            if (b.CheckWithPIN()){
-                pstmt.setString(4, func.getMatricula());
-            } else {
-            pstmt.setString(4, addLetraPin(func.getMatricula()));
-            }
-            pstmt.setInt(5, func.getMat_emcs());
-            pstmt.setString(6, genderIntToString(func.getSexo()));
-            pstmt.setString(7, nasc);
-            pstmt.setString(8, contr);
-            pstmt.setInt(9, dept);
-            pstmt.setString(10, carg);
-            pstmt.setInt(11, func.getCod_regime());
-            pstmt.setBoolean(12, func.getIsAtivo());
-            pstmt.setInt(13, func.getSucetivelAFeriado() ? 1 : 0);
-            pstmt.setString(14, matricula);
-            pstmt.setBoolean(15, func.getLivreAcesso());
-            pstmt.executeUpdate();
-            pstmt.close();
-
-            try {
-                conSQLite = getSQLiteConnection();
-                sql = "insert into employee(employeename, pis, employeereg, idcompany) values (?,?,?,?)";
-                pstmt = conSQLite.prepareStatement(sql);
-                pstmt.setString(1, func.getNome());
-                pstmt.setString(2, setSomenteNumerosPis(func.getPIS()));
-                pstmt.setString(3, func.getCpf());
-                pstmt.setInt(4, 1);
-                pstmt.executeUpdate();
-                pstmt.close();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                flag = 2;
-                pstmt.close();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            flag = 1;
-            return flag;
-        }
-        return flag;
-    }
-
-    public Integer cadastrarNovoFuncionarioItdentity(Funcionario func) {
-        Integer flag = 0;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            String nasc = func.getDataNascimento() == null ? null : sdf.format(func.getDataNascimento());
-            String contr = func.getDataContratação() == null ? null : sdf.format(func.getDataContratação());
-            Integer dept = func.getCod_dept() == -1 ? 1 : func.getCod_dept();
-            String carg = func.getCargo() == 0 ? null : func.getCargo().toString();
-
-            PreparedStatement pstmt;
-            String sql = "insert into USERINFO(name,ssn,pis,badgenumber,mat_emcs,gender,birthday,hiredday,defaultdeptid,"
-                    + "cargo,cod_regime,ativo,holiday,livreAcesso) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            pstmt = c.prepareStatement(sql);
-            pstmt.setString(1, func.getNome());
-            pstmt.setString(2, func.getCpf());
-            pstmt.setString(3, setSomenteNumerosPis(func.getPIS()));
-            Administracao.Banco b = new Administracao.Banco();
-            if (b.CheckWithPIN()){
-                pstmt.setString(4, func.getMatricula());
-            } else {
-            pstmt.setString(4, addLetraPin(func.getMatricula()));
-            }
-            pstmt.setInt(5, func.getMat_emcs());
-            pstmt.setString(6, genderIntToString(func.getSexo()));
-            pstmt.setString(7, nasc);
-            pstmt.setString(8, contr);
-            pstmt.setInt(9, dept);
-            pstmt.setString(10, carg);
-            pstmt.setInt(11, func.getCod_regime());
-            pstmt.setBoolean(12, func.getIsAtivo());
-            pstmt.setInt(13, func.getSucetivelAFeriado() ? 1 : 0);
-            pstmt.setBoolean(14, func.getLivreAcesso());
-            pstmt.executeUpdate();
-            pstmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            flag = 1;
-            return flag;
         }
         return flag;
     }
@@ -438,15 +581,14 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -457,7 +599,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -465,8 +606,8 @@ public class Banco {
             //Selecionando o departamento do administrador
             sql = "select DEFAULTDEPTID from USERINFO"
                     + " where userid = " + codigo_funcionario;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
 
@@ -474,13 +615,11 @@ public class Banco {
                 dept = rs.getInt("DEFAULTDEPTID");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -497,17 +636,11 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return isAdministradorVisivel;
     }
@@ -545,92 +678,6 @@ public class Banco {
         return list;
     }
 
-    public List<SelectItem> consultaFuncionarioTotal(Integer dep, Boolean incluirSubSetores) {
-
-        List<SelectItem> userList = new ArrayList<SelectItem>();
-        List<Integer> deptIDList;
-
-        try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
-            if (incluirSubSetores) {
-
-                //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-
-                deptIDList = new ArrayList<Integer>();
-                deptIDList.add(dep);
-
-                HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
-
-                while (rs.next()) {
-                    Integer cod = rs.getInt("DEPTID");
-                    Integer supdeptid = rs.getInt("SUPDEPTID");
-                    idToSuperHash.put(cod, supdeptid);
-                }
-                rs.close();
-                stmt.close();
-
-                List<Integer> deptPermitidos = new ArrayList<Integer>();
-                deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
-
-                sql = "select u.userid,u.name,u.defaultdeptid"
-                        + " from  USERINFO u "
-                        + " ORDER BY u.name asc";
-
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-                userList.add(new SelectItem(null, "Selecione um funcionário"));
-
-
-                while (rs.next()) {
-                    String userid = rs.getString("userid");
-                    String name = rs.getString("name");
-                    Integer dept = rs.getInt("defaultdeptid");
-
-                    if (deptIDList.contains(dept)) {
-                        userList.add(new SelectItem(userid, name));
-                    }
-                }
-
-            } else {
-                sql = "select u.userid,u.name"
-                        + " from  USERINFO u "
-                        + " where u.defaultdeptid = " + dep
-                        + " ORDER BY u.name asc";
-
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-                userList.add(new SelectItem(null, "Selecione um funcionário"));
-
-                while (rs.next()) {
-                    String userid = rs.getString("userid");
-                    String name = rs.getString("name");
-                    userList.add(new SelectItem(userid, name));
-                }
-            }
-            rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-        return userList;
-    }
-
     public List<SelectItem> consultaDepartamentoOrdernado() {
         List<SelectItem> saida = new ArrayList<SelectItem>();
         List<SelectItem> deptOrdersList = new ArrayList<SelectItem>();
@@ -641,15 +688,13 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
             saida.add(new SelectItem(0, "Selecione o departamento"));
 
             while (rs.next()) {
@@ -663,7 +708,6 @@ public class Banco {
                 idToNomeHash.put(deptID, nome);
             }
             rs.close();
-            stmt.close();
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -676,12 +720,7 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -690,12 +729,10 @@ public class Banco {
         List<SelectItem> saida = new ArrayList<SelectItem>();
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
+            sql = "SELECT * FROM Cargo";
 
-            sql = "SELECT     * FROM         Cargo";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
             saida.add(new SelectItem(null, "Não Especificado"));
             while (rs.next()) {
                 Integer cod_cargo = rs.getInt("cod_cargo");
@@ -703,105 +740,13 @@ public class Banco {
                 saida.add(new SelectItem(cod_cargo, nome));
             }
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
-    }
-
-    public Integer salvarTransferencia(Integer departamentoDestino, Integer cod_funcionario) {
-        Integer flag = 0;
-        PreparedStatement pstmt = null;
-        String query = "update USERINFO set DEFAULTDEPTID=? "
-                + " where userid=? ";
-        flag = departamentoDestino == 0 ? 0 : 1;
-        try {
-            if (flag == 1) {
-                pstmt = c.prepareStatement(query);
-                pstmt.setInt(1, departamentoDestino);
-                pstmt.setInt(2, cod_funcionario);
-
-                pstmt.executeUpdate();
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.print(e.getMessage());
-
-        } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-
-
-        return flag;
-    }
-
-    public Funcionario consultaDetalhesFuncionario(Integer cod_funcionario) {
-        Funcionario func = new Funcionario();
-        try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "SELECT * FROM  USERINFO  WHERE (USERID = " + cod_funcionario + ")";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
-
-            while (rs.next()) {
-
-                Integer funcionarioId = cod_funcionario;
-                String matricula = removeLetraPin(rs.getString("BADGENUMBER"));
-                String cpf = rs.getString("SSN");
-                String PIS = rs.getString("PIS");
-                String nome = rs.getString("NAME");
-                Integer sexo = genderStringToInt(rs.getString("GENDER"));
-                Integer cargo = rs.getInt("Cargo");
-                Integer dept = rs.getInt("DEFAULTDEPTID");
-                String cracha = rs.getString("CardNo");
-                Date dataNascimento = rs.getDate("BIRTHDAY");
-                Date dataContratação = rs.getDate("HIREDDAY");
-                Boolean ativo = rs.getBoolean("ativo");
-                Integer cod_regime = rs.getInt("cod_regime");
-                Integer mat_emcs = rs.getInt("mat_emcs");
-                Integer feriado = rs.getInt("holiday");
-                Boolean sucetivelAFeriado = (feriado == 1) ? true : false;
-                String ADUsername = rs.getString("adusername");
-                Boolean livreAcesso = rs.getBoolean("livreAcesso");
-                func = new Funcionario(funcionarioId, matricula, cpf, PIS, nome, sexo, cargo,
-                        cracha, dataNascimento, dataContratação, sucetivelAFeriado, dept,
-                        cod_regime, mat_emcs, ADUsername, livreAcesso);
-                func.setIsAtivo(ativo);
-            }
-            rs.close();
-            stmt.close();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-        return func;
     }
 
     private String genderIntToString(Integer gender) {
@@ -828,66 +773,9 @@ public class Banco {
         return result;
     }
 
-    public Boolean salvarAlteracoes(Funcionario funcionario) {
-        Boolean flag = true;
-        PreparedStatement pstmt = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String nasc = funcionario.getDataNascimento() == null ? null : sdf.format(funcionario.getDataNascimento());
-        String contr = funcionario.getDataContratação() == null ? null : sdf.format(funcionario.getDataContratação());
-
-        String carg = funcionario.getCargo() == 0 ? null : funcionario.getCargo().toString();
-
-        String query = "update USERINFO set BADGENUMBER=?,"
-                + " SSN=?, NAME=?, GENDER=?, Cargo=?, CardNo=?,"
-                + " BIRTHDAY=?, HIREDDAY=?, PIS=?, HOLIDAY=?,"
-                + " ATIVO=?, cod_regime=?,Mat_emcs=?, livreAcesso=?"
-                + " where userid=? ";
-
-        try {
-            Conectar();
-            pstmt = c.prepareStatement(query);
-            Administracao.Banco b = new Administracao.Banco();
-            if (b.CheckWithPIN()) {
-                pstmt.setString(1, funcionario.getMatricula());
-            } else {
-                pstmt.setString(1, addLetraPin(funcionario.getMatricula()));
-            }
-            pstmt.setString(2, funcionario.getCpf());
-            pstmt.setString(3, funcionario.getNome());
-            pstmt.setString(4, genderIntToString(funcionario.getSexo()));
-            pstmt.setString(5, carg);
-            pstmt.setString(6, funcionario.getCracha());
-            pstmt.setString(7, nasc);
-            pstmt.setString(8, contr);
-            pstmt.setString(9, setSomenteNumerosPis(funcionario.getPIS()));
-            Integer feriado = funcionario.getSucetivelAFeriado() ? 1 : 0;
-            pstmt.setInt(10, feriado);
-            pstmt.setBoolean(11, funcionario.getIsAtivo());
-            pstmt.setInt(12, funcionario.getCod_regime());
-            pstmt.setInt(13, funcionario.getMat_emcs());
-            pstmt.setBoolean(14, funcionario.getLivreAcesso());
-            pstmt.setInt(15, funcionario.getFuncionarioId());
-
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.print(e.getMessage());
-            flag = false;
-
-        } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-        return flag;
-    }
     /*public Boolean updateRegime(Integer userid, Integer cod_regime) {
     
-     PreparedStatement pstmt = null;
+     
      Boolean flag = true;
      try {
     
@@ -904,7 +792,7 @@ public class Banco {
      } finally {
      try {
      if (c != null) {
-     pstmt.close();
+     
      c.close();
      }
      } catch (Exception e) {
@@ -913,19 +801,15 @@ public class Banco {
      }
      return flag;
      }*/
-
     public List<SelectItem> consultaRegimeList() {
 
         List<SelectItem> regimeSelectItemList = new ArrayList<SelectItem>();
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
-
             sql = "select * from Regime_HoraExtra ORDER BY nome";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
             regimeSelectItemList.add(new SelectItem(0, "Escolha o regime"));
             while (rs.next()) {
                 Integer cod_regime = rs.getInt("cod_regime");
@@ -934,17 +818,11 @@ public class Banco {
                 regimeSelectItemList.add(regimeSelectItem);
             }
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return regimeSelectItemList;
     }
@@ -952,19 +830,19 @@ public class Banco {
      String nome = null;
      try {
      ResultSet rs;
-     Statement stmt;
+     
     
      String sql;
     
     
      sql = "SELECT nome FROM Regime_HoraExtra WHERE (cod_regime = " + cod_regime + ")";
-     stmt = c.createStatement();
+     
      rs = stmt.executeQuery(sql);
      while (rs.next()) {
      nome = rs.getString("nome");
      }
      rs.close();
-     stmt.close();
+     
      } catch (Exception e) {
      System.out.println(e.getMessage());
      }
@@ -975,52 +853,17 @@ public class Banco {
         return pis.replace(".", "").replace("/", "");
     }
 
-    public static void main(String[] args) {
-        String g = Banco.setSomenteNumerosPis("000.000.000/23");
-        System.out.println(g);
-    }
-
-    public void zerarSenhaUsuario(int idUsuario) {
-        PreparedStatement pstmt = null;
-        try {
-            String query = "UPDATE USERINFO SET senha = NULL WHERE userid = ?";
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, idUsuario);
-
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("Erro:" + e);
-        } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
-        }
-    }
-
     public void removoLinkAD(String aduser) {
-        PreparedStatement pstmt = null;
+
         try {
             String query = "UPDATE USERINFO SET adusername = NULL WHERE adusername = ?";
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, aduser);
-
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setString(1, aduser);
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
@@ -1032,8 +875,6 @@ public class Banco {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
-
             String sql;
 
             if (incluirSubSetores) {
@@ -1041,8 +882,8 @@ public class Banco {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1053,7 +894,6 @@ public class Banco {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1062,8 +902,7 @@ public class Banco {
                         + " from USERINFO u"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1081,8 +920,7 @@ public class Banco {
                         + " where u.defaultdeptid = " + dep
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1093,109 +931,64 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
-            System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
 
     public void excluirFuncionario(Integer userid) {
-        PreparedStatement pstmt = null;
+
         try {
             String query = "delete from USERINFO where userid = ?";
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, userid);
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
     public void prepararCapturaDigital(Integer userid) {
         finalizarCapturaDigital();
-        PreparedStatement pstmt = null;
         try {
             String query = "insert into calldigit(func_id) values(?)";
-            if (c.isClosed()) {
-                Conectar();
-            }
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, userid);
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
     public void finalizarCapturaDigital() {
-        PreparedStatement pstmt = null;
         try {
             String query = "delete from calldigit";
-            if (c.isClosed()) {
-                Conectar();
-            }
-            pstmt = c.prepareStatement(query);
-
-            pstmt.executeUpdate();
+            con.executeUpdate(query);
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
     public List<SelectItem> consultaFuncionarioProprioAdministrador(Integer codigo_usuario) {
-
         List<SelectItem> userList = new ArrayList<SelectItem>();
-
         try {
             ResultSet rs = null;
-            Statement stmt = null;
-
             String sql;
 
             sql = "select name from USERINFO "
                     + " where userid = " + codigo_usuario;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
@@ -1204,17 +997,11 @@ public class Banco {
                 userList.add(new SelectItem(codigo_usuario, name));
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1222,15 +1009,15 @@ public class Banco {
     public List<SelectItem> getRegimeSelectItem() {
 
         List<SelectItem> regimeList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         regimeList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from regime_HoraExtra";
 
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
 
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery();
 
             while (rs.next()) {
                 Integer cod_regime = rs.getInt("cod_regime");
@@ -1240,20 +1027,22 @@ public class Banco {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return regimeList;
 
     }
-    
+
     public List<SelectItem> getCargoSelectItem() {
         List<SelectItem> cargoList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         cargoList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from cargo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            con.prepareStatement(query);
+            rs = con.executeQuery();
             while (rs.next()) {
                 Integer cargo = rs.getInt("cod_cargo");
                 String nome = rs.getString("nome");
@@ -1261,6 +1050,8 @@ public class Banco {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return cargoList;
     }
@@ -1268,15 +1059,13 @@ public class Banco {
     public HashMap<Integer, Integer> getcod_funcionarioRegime() {
 
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
 
         try {
             String query = "select userid,cod_regime from userinfo";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            con.prepareStatement(query);
+            rs = con.executeQuery();
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -1287,30 +1076,20 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
 
     }
-    
+
     public HashMap<Integer, Integer> getcod_funcionarioCargo() {
         HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         //System.out.println("pesquisando getcod_funcionarioCargo");
         try {
-            if (c.isClosed()) {
-                Conectar();
-            }
             String query = "select userid,CARGO from userinfo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 Integer cargo = rs.getInt("CARGO");
@@ -1320,14 +1099,7 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return cod_funcionarioCargoHashMap;
 
@@ -1343,15 +1115,13 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -1362,7 +1132,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -1370,8 +1139,7 @@ public class Banco {
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -1385,7 +1153,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -1399,13 +1166,7 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -1418,8 +1179,6 @@ public class Banco {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
-
             String sql;
 
             if (incluirSubSetores) {
@@ -1427,8 +1186,8 @@ public class Banco {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1439,7 +1198,6 @@ public class Banco {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1449,8 +1207,7 @@ public class Banco {
                         + " where u.permissao != " + permissao
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1469,8 +1226,7 @@ public class Banco {
                         + " and u.permissao != " + permissao
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1481,18 +1237,11 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
-            System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1501,21 +1250,21 @@ public class Banco {
         String nome = null;
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
 
-
             sql = "SELECT     cod_cargo, nome FROM  Cargo WHERE     (cod_cargo = " + cargo + ")";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
             while (rs.next()) {
                 nome = rs.getString("nome");
             }
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return nome;
     }
@@ -1523,18 +1272,14 @@ public class Banco {
     public HashMap<Integer, Integer> getcod_funcionarioSubordinacaoDepartamento(Integer dept) {
 
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
 
         HashMap<Integer, Integer> idToSuperHash = getHierarquiaDepartamentos();
 
         try {
             String query = "select userid,defaultdeptid,permissao from userinfo ";
-
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -1553,12 +1298,9 @@ public class Banco {
             }
 
         } catch (Exception e) {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException ex) {
-                }
-            }
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
 
@@ -1570,15 +1312,14 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer cod = rs.getInt("DEPTID");
@@ -1586,11 +1327,10 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
-
-
 
         } catch (Exception e) {
+        } finally {
+            con.Desconectar();
         }
         return idToSuperHash;
     }

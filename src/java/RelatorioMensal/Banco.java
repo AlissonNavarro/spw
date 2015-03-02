@@ -1,27 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package RelatorioMensal;
 
-/**
- *
- * @author Alexandre
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import Funcionario.Funcionario;
-import Metodos.Metodos;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,222 +16,108 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-//import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amsgama
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Alexandre
- */
 public class Banco implements Serializable {
 
-    Driver d;
-    Connection c;
-    Boolean hasConnection = false;
-
-    private void Conectar() throws SQLException {
-        hasConnection = true;
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            hasConnection = false;
-            System.out.println("RelatorioMensal.Banco: Conectar(): " + cnfe);
-        }
-    }
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            hasConnection = false;
-            System.out.println("RelatorioMensal.Banco: Banco(): " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con = new AcessoBD();
     }
 
     public boolean insertRelatorio(List<Relatorio> relatorio) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
         String query = "insert into relatorio(data,definicao,Entrada1,Saida1,Entrada2,Saida2,horasTrabalhadas,saldo,observacao) values(?,?,?,?,?,?,?,?,?)";
         String queryDelete = "delete from relatorio";
+        con.executeUpdate(queryDelete);
         try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorio 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorio 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
+            con.prepareStatement(query);
             for (Iterator<Relatorio> it = relatorio.iterator(); it.hasNext();) {
                 Relatorio relatorio1 = it.next();
-
-                pstmt.setString(1, relatorio1.getData());
-                pstmt.setString(2, relatorio1.getDefinicao());
-                pstmt.setString(3, relatorio1.getEntrada1());
-                pstmt.setString(4, relatorio1.getSaida1());
-                pstmt.setString(5, relatorio1.getEntrada2());
-                pstmt.setString(6, relatorio1.getSaida2());
-                pstmt.setString(7, relatorio1.getHorasTrabalhadas());
-                pstmt.setString(8, relatorio1.getSaldo());
-                pstmt.setString(9, relatorio1.getObservacao());
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, relatorio1.getData());
+                con.pstmt.setString(2, relatorio1.getDefinicao());
+                con.pstmt.setString(3, relatorio1.getEntrada1());
+                con.pstmt.setString(4, relatorio1.getSaida1());
+                con.pstmt.setString(5, relatorio1.getEntrada2());
+                con.pstmt.setString(6, relatorio1.getSaida2());
+                con.pstmt.setString(7, relatorio1.getHorasTrabalhadas());
+                con.pstmt.setString(8, relatorio1.getSaldo());
+                con.pstmt.setString(9, relatorio1.getObservacao());
+                con.executeUpdate();
             }
         } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+            System.out.print(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean insertRelatorioLotacao(List<RelatorioLotacao> relatorioLotacao) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into relatorio_lotacao values(?,?,?,?)";
         String queryDelete = "delete from relatorio_lotacao";
+        con.executeUpdate(queryDelete);
         try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioLotacao 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioLotacao 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
+            con.prepareStatement(query);
             for (Iterator<RelatorioLotacao> it = relatorioLotacao.iterator(); it.hasNext();) {
                 RelatorioLotacao relatorioLotacao_ = it.next();
-
-                pstmt.setString(1, relatorioLotacao_.getCpf());
-                pstmt.setString(2, relatorioLotacao_.getNome());
-                pstmt.setString(3, relatorioLotacao_.getDepartamento());
-                pstmt.setString(4, relatorioLotacao_.getEscala());
-
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, relatorioLotacao_.getCpf());
+                con.pstmt.setString(2, relatorioLotacao_.getNome());
+                con.pstmt.setString(3, relatorioLotacao_.getDepartamento());
+                con.pstmt.setString(4, relatorioLotacao_.getEscala());
+                con.executeUpdate();
             }
         } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+            System.out.print(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean insertRelatorioPortaria1510(List<HorarioContratual> horarioContratualList, List<RelatorioPortaria1510> relatorioPortaria1510) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query1 = "insert into RelatorioHorarioContratual values(?,?,?,?,?)";
         String queryDelete1 = "truncate table RelatorioHorarioContratual";
         String query2 = "insert into RelatorioPortaria1510(dia,marcacoes,entrada1,entrada2,entrada3,saida1,saida2,saida3,ch) values(?,?,?,?,?,?,?,?,?)";
         String queryDelete2 = "truncate table RelatorioPortaria1510";
+        con.executeUpdate(queryDelete1);
+        con.executeUpdate(queryDelete2);
 
         try {
-            pstmt = c.prepareStatement(queryDelete1);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(queryDelete2);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query1);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510 3: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
+            con.prepareStatement(query1);
             for (Iterator<HorarioContratual> it = horarioContratualList.iterator(); it.hasNext();) {
                 HorarioContratual horarioContratual = it.next();
-
-                pstmt.setString(1, horarioContratual.getCod_horario());
-                pstmt.setString(2, horarioContratual.getEntrada1());
-                pstmt.setString(3, horarioContratual.getSaida1());
-                pstmt.setString(4, horarioContratual.getEntrada2());
-                pstmt.setString(5, horarioContratual.getSaida2());
-
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, horarioContratual.getCod_horario());
+                con.pstmt.setString(2, horarioContratual.getEntrada1());
+                con.pstmt.setString(3, horarioContratual.getSaida1());
+                con.pstmt.setString(4, horarioContratual.getEntrada2());
+                con.pstmt.setString(5, horarioContratual.getSaida2());
+                con.executeUpdate();
             }
-        } catch (Exception e) {
 
-            System.out.print(e.getMessage());
-            ok = false;
-        }
-
-        try {
-            pstmt = c.prepareStatement(query2);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510 4: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
+            con.prepareStatement(query2);
             for (Iterator<RelatorioPortaria1510> it = relatorioPortaria1510.iterator(); it.hasNext();) {
                 RelatorioPortaria1510 relatorioPortaria1510_ = it.next();
-
-                pstmt.setString(1, relatorioPortaria1510_.getDia());
-                pstmt.setString(2, relatorioPortaria1510_.getMarcacoesRegistradas());
-                pstmt.setString(3, relatorioPortaria1510_.getEntrada1());
-                pstmt.setString(4, relatorioPortaria1510_.getEntrada2());
-                pstmt.setString(5, relatorioPortaria1510_.getEntrada3());
-                pstmt.setString(6, relatorioPortaria1510_.getSaida1());
-                pstmt.setString(7, relatorioPortaria1510_.getSaida2());
-                pstmt.setString(8, relatorioPortaria1510_.getSaida3());
-                pstmt.setString(9, relatorioPortaria1510_.getCh());
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, relatorioPortaria1510_.getDia());
+                con.pstmt.setString(2, relatorioPortaria1510_.getMarcacoesRegistradas());
+                con.pstmt.setString(3, relatorioPortaria1510_.getEntrada1());
+                con.pstmt.setString(4, relatorioPortaria1510_.getEntrada2());
+                con.pstmt.setString(5, relatorioPortaria1510_.getEntrada3());
+                con.pstmt.setString(6, relatorioPortaria1510_.getSaida1());
+                con.pstmt.setString(7, relatorioPortaria1510_.getSaida2());
+                con.pstmt.setString(8, relatorioPortaria1510_.getSaida3());
+                con.pstmt.setString(9, relatorioPortaria1510_.getCh());
+                con.executeUpdate();
             }
         } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+            System.out.print(e);
             ok = false;
         }
         Boolean flag2 = insertRelatorioPortaria1510Detalhe(relatorioPortaria1510);
@@ -264,24 +131,11 @@ public class Banco implements Serializable {
 
     public boolean insertRelatorioPortaria1510Detalhe(List<RelatorioPortaria1510> relatorioPortaria1510List) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into RelatorioPortaria1510Detalhe(cod_dia,horario,ocorrencia,motivo) values(?,?,?,?)";
         String queryDelete = "truncate table RelatorioPortaria1510Detalhe";
-
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510Detalhe 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioPortaria1510Detalhe 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
+        con.prepareStatement(query);
 
         try {
             Integer i = 1;
@@ -292,36 +146,30 @@ public class Banco implements Serializable {
 
                 for (Iterator<PontoIrreal> it1 = pontosIrreaisList.iterator(); it1.hasNext();) {
                     PontoIrreal pontoIrreal = it1.next();
-                    pstmt.setInt(1, i);
-                    pstmt.setString(2, pontoIrreal.getHora());
-                    pstmt.setString(3, pontoIrreal.getTipo());
-                    pstmt.setString(4, pontoIrreal.getMotivo());
-                    pstmt.executeUpdate();
+                    con.pstmt.setInt(1, i);
+                    con.pstmt.setString(2, pontoIrreal.getHora());
+                    con.pstmt.setString(3, pontoIrreal.getTipo());
+                    con.pstmt.setString(4, pontoIrreal.getMotivo());
+                    con.executeUpdate();
                 }
                 i++;
             }
         } catch (Exception e) {
             try {
-
-                System.out.print(e.getMessage());
-                ok = false;
-                c.rollback();
+                con.c.rollback();
             } catch (SQLException ex) {
-                System.out.println("RelatorioMensal: insertRelatorioPortaria1510Detalhe 3: " + ex);
-                //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex);
             }
+        } finally {
+            con.Desconectar();
         }
-
         return ok;
     }
 
     public List<Timestamp> consultaChechInOutTotal(Integer userid, Date inicio, Date fim) {
-
         List<Timestamp> getAllTimestamp = new ArrayList<Timestamp>();
         try {
-
             ResultSet rs;
-            Statement stmt;
             String sql;
 
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -332,88 +180,62 @@ public class Banco implements Serializable {
             sql = "select checktime" + " from checkinout"
                     + " where userid = " + userid + " and"
                     + " checktime" + " between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("checktime");
                 getAllTimestamp.add(timestamp);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return getAllTimestamp;
     }
 
     public boolean insertRelatorioFuncionarioSemEscala(List<Funcionario> funcionarioSemEscalaList) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into RelatorioFuncionarioSemEscala(ssn,nome,departamento) values(?,?,?)";
         String queryDelete = "delete from RelatorioFuncionarioSemEscala";
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioFuncionarioSemEscala 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioFuncionarioSemEscala 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
+        con.prepareStatement(query);
 
         try {
             for (Iterator<Funcionario> it = funcionarioSemEscalaList.iterator(); it.hasNext();) {
                 Funcionario funcionario = it.next();
-
-                pstmt.setString(1, funcionario.getCpf());
-                pstmt.setString(2, funcionario.getNome());
-                pstmt.setString(3, funcionario.getDept());
-
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, funcionario.getCpf());
+                con.pstmt.setString(2, funcionario.getNome());
+                con.pstmt.setString(3, funcionario.getDept());
+                con.executeUpdate();
             }
         } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+            System.out.print(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public HashMap<Integer, String> consultaSchClassID_LegendaMap() {
-        PreparedStatement pstmt = null;
-
         String queryLegenda = "select schClassid,legend from schClass";
-        ResultSet rs = null;
+        ResultSet rs;
         HashMap<Integer, String> schClassIDLegendaMap = new HashMap<Integer, String>();
-
         try {
-            pstmt = c.prepareStatement(queryLegenda);
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(queryLegenda);
             while (rs.next()) {
                 Integer schClassid = rs.getInt("schClassid");
                 String legend = rs.getString("legend");
                 schClassIDLegendaMap.put(schClassid, legend);
             }
             rs.close();
-        } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+        } catch (Exception ex) {
+            System.out.print(ex);
+        } finally {
+            con.Desconectar();
         }
         return schClassIDLegendaMap;
     }
@@ -422,30 +244,19 @@ public class Banco implements Serializable {
 
         HashMap<Integer, String> schClassID_LegendaMap = consultaSchClassID_LegendaMap();
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into relatorioResumoEscala"
                 + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String queryDelete = "delete from relatorioResumoEscala";
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioResumoEscala 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
 
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("RelatorioMensal: insertRelatorioResumoEscala 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.prepareStatement(query);
 
         try {
             for (Iterator<RelatorioResumoEscala> it = relatorioResumoEscala.iterator(); it.hasNext();) {
                 RelatorioResumoEscala relatorioResumoEscala_ = it.next();
 
-                pstmt.setString(1, relatorioResumoEscala_.getNome());
+                con.pstmt.setString(1, relatorioResumoEscala_.getNome());
                 List<String> schClassIDListStr = new ArrayList<String>();
                 relatorioResumoEscala_.setSchClassID_LegendaList(schClassID_LegendaMap);
                 if (relatorioResumoEscala_.getHasEscala()) {
@@ -453,45 +264,45 @@ public class Banco implements Serializable {
                 } else {
                     schClassIDListStr = relatorioResumoEscala_.getSemEscalasStr();
                 }
-                pstmt.setString(2, schClassIDListStr.get(0));
-                pstmt.setString(3, schClassIDListStr.get(1));
-                pstmt.setString(4, schClassIDListStr.get(2));
-                pstmt.setString(5, schClassIDListStr.get(3));
-                pstmt.setString(6, schClassIDListStr.get(4));
-                pstmt.setString(7, schClassIDListStr.get(5));
-                pstmt.setString(8, schClassIDListStr.get(6));
-                pstmt.setString(9, schClassIDListStr.get(7));
-                pstmt.setString(10, schClassIDListStr.get(8));
-                pstmt.setString(11, schClassIDListStr.get(9));
-                pstmt.setString(12, schClassIDListStr.get(10));
-                pstmt.setString(13, schClassIDListStr.get(11));
-                pstmt.setString(14, schClassIDListStr.get(12));
-                pstmt.setString(15, schClassIDListStr.get(13));
-                pstmt.setString(16, schClassIDListStr.get(14));
-                pstmt.setString(17, schClassIDListStr.get(15));
-                pstmt.setString(18, schClassIDListStr.get(16));
-                pstmt.setString(19, schClassIDListStr.get(17));
-                pstmt.setString(20, schClassIDListStr.get(18));
-                pstmt.setString(21, schClassIDListStr.get(19));
-                pstmt.setString(22, schClassIDListStr.get(20));
-                pstmt.setString(23, schClassIDListStr.get(21));
-                pstmt.setString(24, schClassIDListStr.get(22));
-                pstmt.setString(25, schClassIDListStr.get(23));
-                pstmt.setString(26, schClassIDListStr.get(24));
-                pstmt.setString(27, schClassIDListStr.get(25));
-                pstmt.setString(28, schClassIDListStr.get(26));
-                pstmt.setString(29, schClassIDListStr.get(27));
-                pstmt.setString(30, schClassIDListStr.get(28));
-                pstmt.setString(31, schClassIDListStr.get(29));
-                pstmt.setString(32, schClassIDListStr.get(30));
+                con.pstmt.setString(2, schClassIDListStr.get(0));
+                con.pstmt.setString(3, schClassIDListStr.get(1));
+                con.pstmt.setString(4, schClassIDListStr.get(2));
+                con.pstmt.setString(5, schClassIDListStr.get(3));
+                con.pstmt.setString(6, schClassIDListStr.get(4));
+                con.pstmt.setString(7, schClassIDListStr.get(5));
+                con.pstmt.setString(8, schClassIDListStr.get(6));
+                con.pstmt.setString(9, schClassIDListStr.get(7));
+                con.pstmt.setString(10, schClassIDListStr.get(8));
+                con.pstmt.setString(11, schClassIDListStr.get(9));
+                con.pstmt.setString(12, schClassIDListStr.get(10));
+                con.pstmt.setString(13, schClassIDListStr.get(11));
+                con.pstmt.setString(14, schClassIDListStr.get(12));
+                con.pstmt.setString(15, schClassIDListStr.get(13));
+                con.pstmt.setString(16, schClassIDListStr.get(14));
+                con.pstmt.setString(17, schClassIDListStr.get(15));
+                con.pstmt.setString(18, schClassIDListStr.get(16));
+                con.pstmt.setString(19, schClassIDListStr.get(17));
+                con.pstmt.setString(20, schClassIDListStr.get(18));
+                con.pstmt.setString(21, schClassIDListStr.get(19));
+                con.pstmt.setString(22, schClassIDListStr.get(20));
+                con.pstmt.setString(23, schClassIDListStr.get(21));
+                con.pstmt.setString(24, schClassIDListStr.get(22));
+                con.pstmt.setString(25, schClassIDListStr.get(23));
+                con.pstmt.setString(26, schClassIDListStr.get(24));
+                con.pstmt.setString(27, schClassIDListStr.get(25));
+                con.pstmt.setString(28, schClassIDListStr.get(26));
+                con.pstmt.setString(29, schClassIDListStr.get(27));
+                con.pstmt.setString(30, schClassIDListStr.get(28));
+                con.pstmt.setString(31, schClassIDListStr.get(29));
+                con.pstmt.setString(32, schClassIDListStr.get(30));
 
-                pstmt.executeUpdate();
+                con.executeUpdate();
             }
-        } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+        } catch (Exception ex) {
+            System.out.print(ex);
             ok = false;
         } finally {
+            con.Desconectar();
         }
         return ok;
     }
@@ -501,16 +312,13 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
 
             sql = " select userid,name,ssn,badgenumber,deptname,c.nome as cargo"
                     + " from userinfo u left join cargo c on u.cargo =  c.cod_cargo, departments d"
                     + " where u.userid = " + cod + " and u.defaultdeptid = d.deptid ";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            rs = con.executeQuery(sql);
+            
             String userid = "";
             String name = "";
             String ssn = "";
@@ -530,161 +338,109 @@ public class Banco implements Serializable {
             infoList.add(lotacao);
             infoList.add(cargo);
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return infoList;
     }
 
     public Integer consultaTipoRelatorio() {
-        Integer tipoRelatorio = new Integer(0);
+        Integer tipoRelatorio = 0;
 
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
-
-            sql = " select tipoRelatorio"
-                    + " from config";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            sql = " select tipoRelatorio from config";
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 tipoRelatorio = rs.getInt("tipoRelatorio");
             }
-
             rs.close();
-            stmt.close();
-        } catch (Exception e) {
-
+        } catch (Exception ex) {
+            System.out.println(ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return tipoRelatorio;
     }
 
     public void alterarTipoRelatorio(Integer tipoRelatorio) {
-
-        PreparedStatement pstmt = null;
         String query = "update config set tipoRelatorio=?";
-
         try {
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, tipoRelatorio);
-
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-
-            System.out.print(e.getMessage());
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, tipoRelatorio);
+            con.executeUpdate();
+        } catch (Exception ex) {
+            System.out.print(ex);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
     }
 
     public byte[] getImageLogo() {
-
         ResultSet rs;
         String query = "select logo from config";
         byte[] fileBytes = null;
         try {
             query = "select logo from config";
-            Statement state = c.createStatement();
-            rs = state.executeQuery(query);
+            rs = con.executeQuery(query);
             if (rs.next()) {
                 fileBytes = rs.getBytes(1);
             }
-
-        } catch (Exception e) {
-
+        } catch (Exception ex) {
+            System.out.println(ex);
         } finally {
-            fecharConexao();
-            return fileBytes;
+            con.Desconectar();
         }
+        return fileBytes;
     }
 
     public void insertImage(byte[] image) {
-
         String query;
-        PreparedStatement pstmt;
-
         try {
             query = ("update config set logo=? ");
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
 
             // Method used to insert a stream of bytes
-            pstmt.setBytes(1, image);
-            pstmt.executeUpdate();
+            con.pstmt.setBytes(1, image);
+            con.executeUpdate();
 
-        } catch (Exception e) {
-
-        }
-        try {
-            if (c != null) {
-                c.close();
-            }
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            con.Desconectar();
         }
     }
 
     public void deleteImage() {
-
         String query;
-        PreparedStatement pstmt;
-
         try {
             query = ("update config set logo=? ");
-            pstmt = c.prepareStatement(query);
-
+            con.prepareStatement(query);
             // Method used to insert a stream of bytes
-            pstmt.setBytes(1, null);
-            pstmt.executeUpdate();
-
+            con.pstmt.setBytes(1, null);
+            con.executeUpdate();
         } catch (Exception e) {
-
-        }
-        try {
-            if (c != null) {
-                c.close();
-            }
-        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
     }
 
     public Funcionario consultaFuncionario(Integer cod) {
-
         Funcionario funcionario = new Funcionario();
-
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
 
             sql = "select userid,name,HIREDDAY,ssn,badgenumber,deptname,c.nome as cargo,r.nome as regime, u.mat_emcs "
                     + "from (userinfo u left join cargo c on u.cargo =  c.cod_cargo) "
                     + "left join  regime_horaextra r on r.cod_regime = u.cod_regime,departments d "
-                    + "where u.userid = " + cod + " and u.defaultdeptid = d.deptid";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+                    + "where u.userid = " + cod + " and u.defaultdeptid = d.deptid";            
+            rs = con.executeQuery(sql);
 
             String name = "";
             String ssn = "";
@@ -717,9 +473,10 @@ public class Banco implements Serializable {
             funcionario.setMat_emcs(mat_emcs);
 
             rs.close();
-            stmt.close();
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return funcionario;
     }
@@ -731,8 +488,7 @@ public class Banco implements Serializable {
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
+            ResultSet rs;            
             String sql;
 
             if (incluirSubsetores) {
@@ -740,8 +496,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dept);
@@ -752,7 +508,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dept, deptPermitidos, idToSuperHash);
@@ -763,8 +519,8 @@ public class Banco implements Serializable {
                         + " u.ativo = 'true'"
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -782,8 +538,8 @@ public class Banco implements Serializable {
                         + " ssn != '999.999.999-99'"
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -791,16 +547,11 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return matriculasList;
     }
@@ -811,7 +562,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
@@ -819,8 +570,8 @@ public class Banco implements Serializable {
                     + " FROM USERINFO U "
                     + "	LEFT JOIN DEPARTMENTS D ON (U.defaultdeptid = D.deptid)"
                     + " ORDER BY D.deptname, U.name";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -831,17 +582,12 @@ public class Banco implements Serializable {
                 relatorioResumoList.add(r);
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return relatorioResumoList;
     }
@@ -852,7 +598,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = " select userid,pis"
@@ -860,8 +606,8 @@ public class Banco implements Serializable {
                     + " where u.ativo = 'true' "
                     + " order by name";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
 
@@ -874,9 +620,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return funcionarioList;
     }
@@ -887,7 +635,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = " select userid,pis"
@@ -895,8 +643,8 @@ public class Banco implements Serializable {
                     + " where u.ativo = 'true' "
                     + " order by name";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String userid = rs.getString("userid");
@@ -910,9 +658,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return funcionarioList;
     }
@@ -935,14 +685,14 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = " select COD_EQUIPAMENTO,NUM_REP"
                     + " from numRep";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer cod_equipamento = rs.getInt("COD_EQUIPAMENTO");
@@ -952,9 +702,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return numREPMap;
     }
@@ -965,9 +717,7 @@ public class Banco implements Serializable {
         List<Integer> deptIDList;
 
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
+            ResultSet rs;
             String sql;
 
             if (incluirSubSetores) {
@@ -975,8 +725,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -989,7 +739,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -998,8 +748,8 @@ public class Banco implements Serializable {
                         + " from  USERINFO u "
                         + " ORDER BY u.name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
                 boolean flag = true;
                 while (rs.next()) {
@@ -1023,8 +773,8 @@ public class Banco implements Serializable {
                         + " where u.defaultdeptid = " + dep
                         + " ORDER BY u.name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
                 boolean flag = true;
                 while (rs.next()) {
@@ -1038,17 +788,12 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1086,15 +831,15 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = " select deptName"
                     + " from departments"
                     + " where deptID = " + cod_departamento;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String deptName = rs.getString("deptName");
@@ -1105,14 +850,14 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
 
             sql = " select name"
                     + " from num_run"
                     + " where num_runid = " + cod_escala;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -1124,17 +869,12 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return departamento_e_escala;
     }
@@ -1148,7 +888,7 @@ public class Banco implements Serializable {
         try {
 
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             if (incluirSubsetores) {
@@ -1156,8 +896,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(cod_dept);
@@ -1168,7 +908,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(cod_dept, deptPermitidos, idToSuperHash);
@@ -1178,8 +918,8 @@ public class Banco implements Serializable {
                         + " where ssn != '999.999.999-99'"
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -1196,8 +936,8 @@ public class Banco implements Serializable {
                         + " ssn != '999.999.999-99'"
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -1205,16 +945,11 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return matriculasList;
     }
@@ -1224,12 +959,12 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = "select num_runid,name from NUM_RUN ORDER BY name";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer num_runid = rs.getInt("num_runid");
@@ -1239,17 +974,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return escalaList;
     }
@@ -1266,7 +995,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
             String sql;
 
             if (incluirSubsetores) {
@@ -1274,8 +1003,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dept);
@@ -1286,7 +1015,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dept, deptPermitidos, idToSuperHash);
@@ -1302,8 +1031,8 @@ public class Banco implements Serializable {
                             + "       u.ssn != '999.999.999-99' "
                             + "       order by u.name";
 
-                    stmt = c.createStatement();
-                    rs = stmt.executeQuery(sql);
+                    
+                    rs = con.executeQuery(sql);
 
                     while (rs.next()) {
                         String cpf = rs.getString("cpf");
@@ -1331,8 +1060,8 @@ public class Banco implements Serializable {
                             + "       u.ssn != '999.999.999-99' "
                             + "       order by u.name";
 
-                    stmt = c.createStatement();
-                    rs = stmt.executeQuery(sql);
+                    
+                    rs = con.executeQuery(sql);
 
                     while (rs.next()) {
                         String cpf = rs.getString("cpf");
@@ -1363,8 +1092,8 @@ public class Banco implements Serializable {
                             + "       u.ssn != '999.999.999-99' "
                             + "       order by u.name";
 
-                    stmt = c.createStatement();
-                    rs = stmt.executeQuery(sql);
+                    
+                    rs = con.executeQuery(sql);
 
                     while (rs.next()) {
                         String cpf = rs.getString("cpf");
@@ -1393,8 +1122,8 @@ public class Banco implements Serializable {
                             + "       u.ssn != '999.999.999-99' "
                             + "       order by u.name";
 
-                    stmt = c.createStatement();
-                    rs = stmt.executeQuery(sql);
+                    
+                    rs = con.executeQuery(sql);
 
                     while (rs.next()) {
                         String cpf = rs.getString("cpf");
@@ -1415,17 +1144,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return relatorioLotacaoList;
     }
@@ -1436,12 +1159,12 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = "select * from Empregador";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String cnpj = rs.getString("CNPJ");
@@ -1473,17 +1196,11 @@ public class Banco implements Serializable {
             cabecalho.setHoraGeracao(hora);
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return cabecalho;
     }
@@ -1494,12 +1211,12 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = "select * from Empregador";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String cnpj = rs.getString("CNPJ");
@@ -1532,17 +1249,11 @@ public class Banco implements Serializable {
             cabecalho.setHoraGeracao(hora);
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return cabecalho;
     }
@@ -1552,14 +1263,14 @@ public class Banco implements Serializable {
         String valor = "00";
         try {
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = "select t.valor from userinfo u ,regime_horaextra r,tipo_horaextra t "
                     + "where u.userid = '" + cod_funcionario + "' and u.cod_regime = r.cod_regime and "
                     + "r.cod_regime = t.cod_regime and t.nome like '" + nome + "'";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 valor = rs.getString("valor");
@@ -1570,17 +1281,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return valor;
     }
@@ -1590,9 +1295,9 @@ public class Banco implements Serializable {
      *
      * AFDTCabecalho cabecalho = new AFDTCabecalho();
      *
-     * try { ResultSet rs; Statement stmt; String sql;
+     * try { ResultSet rs;  String sql;
      *
-     * sql = "select * from num_run_deil"; stmt = c.createStatement(); rs =
+     * sql = "select * from num_run_deil";  rs =
      * stmt.executeQuery(sql);
      *
      * while (rs.next()) { String entrada = rs.getString("STARTTIME"); String
@@ -1608,12 +1313,11 @@ public class Banco implements Serializable {
      * SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm"); String hora =
      * sdfHora.format(new Date()); cabecalho.setHoraGeracao(hora); }
      *
-     * rs.close(); stmt.close(); } catch (Exception e) {
+     * rs.close();  } catch (Exception e) {
      *
      * } finally { try { if (c != null) { c.close(); }
      *
-     * } catch (Exception e) { } } return cabecalho;
-    }
+     * } catch (Exception e) { } } return cabecalho; }
      */
     public List<SelectItem> consultaDepartamentoOrdernado() {
         List<SelectItem> saida = new ArrayList<SelectItem>();
@@ -1625,15 +1329,15 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
 
             String sql;
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
             saida.add(new SelectItem(0, "Selecione o departamento"));
 
             while (rs.next()) {
@@ -1647,7 +1351,7 @@ public class Banco implements Serializable {
                 idToNomeHash.put(deptID, nome);
             }
             rs.close();
-            stmt.close();
+            
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -1658,14 +1362,9 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -1679,7 +1378,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
 
             String sql;
 
@@ -1688,8 +1387,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1700,7 +1399,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1710,8 +1409,8 @@ public class Banco implements Serializable {
                         + " where u.ativo = 'true'"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
                 boolean flag = true;
 
@@ -1740,8 +1439,8 @@ public class Banco implements Serializable {
                         + " u.ativo = 'true'"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
                 userList.add(new SelectItem(0, "TODOS OS FUNCIONÁRIOS"));
 
@@ -1758,18 +1457,13 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
 
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1780,22 +1474,23 @@ public class Banco implements Serializable {
         List<String> cpfList = new ArrayList<String>();
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
             String sql = "SELECT distinct ssn FROM userinfo u1"
                     + "	WHERE (SELECT count(*) FROM userinfo u2	WHERE u2.ssn = u1.ssn) > 1 order by ssn";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String cpf = rs.getString("ssn");
                 cpfList.add(cpf);
             }
             rs.close();
-            stmt.close();
+            
         } catch (SQLException e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
-
         return cpfList;
     }
 
@@ -1808,7 +1503,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
 
             String sql;
 
@@ -1817,8 +1512,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1829,7 +1524,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1840,8 +1535,8 @@ public class Banco implements Serializable {
                         + " u.ativo = 'true'"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1865,8 +1560,8 @@ public class Banco implements Serializable {
                         + " u.ativo = 'true'"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1882,18 +1577,13 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
 
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1906,7 +1596,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
 
             String sql;
 
@@ -1915,8 +1605,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1927,7 +1617,7 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
+                
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1938,8 +1628,8 @@ public class Banco implements Serializable {
                         + " and u.defaultdeptid = d.deptid"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer userid = rs.getInt("userid");
@@ -1969,8 +1659,8 @@ public class Banco implements Serializable {
                         + " and u.defaultdeptid = d.deptid"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer userid = rs.getInt("userid");
@@ -1992,18 +1682,13 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
 
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return matricFuncionarioHashMap;
     }
@@ -2018,7 +1703,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
 
             String sql;
 
@@ -2028,8 +1713,8 @@ public class Banco implements Serializable {
                 sql = "select id, RAZAO_SOCIAL,LOCAL from Empregador where id = " + razaoSocial;
             }
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer id = rs.getInt("id");
@@ -2039,13 +1724,13 @@ public class Banco implements Serializable {
                 relatorioPortaria1510Cabecalho.setEndereco(local);
             }
             rs.close();
-            stmt.close();
+            
 
             sql = "select NAME,HIREDDAY from userinfo"
                     + " where userid = " + cod_funcionario;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String name = rs.getString("NAME");
@@ -2055,17 +1740,12 @@ public class Banco implements Serializable {
                 relatorioPortaria1510Cabecalho.setAdmissao(contratacao);
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
             System.out.println("Erro consulta empregador" + e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return relatorioPortaria1510Cabecalho;
     }
@@ -2076,7 +1756,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
+            
 
             String sql;
 
@@ -2084,8 +1764,8 @@ public class Banco implements Serializable {
                     + " where u.userid = " + cod_funcionario
                     + " and u.defaultdeptid = d.deptid";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -2095,17 +1775,12 @@ public class Banco implements Serializable {
                 relatorioPortaria1510CabecalhoResumo = new RelatorioPortaria1510CabecalhoResumo(name, ssn, badgenumber, deptname);
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return relatorioPortaria1510CabecalhoResumo;
     }
@@ -2113,15 +1788,12 @@ public class Banco implements Serializable {
     public List<SelectItem> getRegimeSelectItem() {
 
         List<SelectItem> regimeList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         regimeList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from regime_HoraExtra";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer cod_regime = rs.getInt("cod_regime");
@@ -2130,24 +1802,22 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return regimeList;
-
     }
 
     public HashMap<Integer, Integer> getcod_funcionarioRegime() {
 
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
 
         try {
             String query = "select userid,cod_regime from userinfo";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -2156,67 +1826,51 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
 
     }
-    
+
     public List<SelectItem> getCargoSelectItem() {
         List<SelectItem> cargoList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         cargoList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from cargo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
             while (rs.next()) {
                 Integer cargo = rs.getInt("cod_cargo");
                 String nome = rs.getString("nome");
                 cargoList.add(new SelectItem(cargo, nome));
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return cargoList;
     }
-    
+
     public HashMap<Integer, Integer> getcod_funcionarioCargo() {
         HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
         try {
-            if (c.isClosed()) {
-                Conectar();
-            }
             String query = "select userid,CARGO from userinfo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 Integer cargo = rs.getInt("CARGO");
                 cod_funcionarioCargoHashMap.put(userid, cargo);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return cod_funcionarioCargoHashMap;
 
@@ -2250,15 +1904,13 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -2269,7 +1921,7 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
+            
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -2280,8 +1932,8 @@ public class Banco implements Serializable {
             sql = "select u.DEFAULTDEPTID,d.deptname from USERINFO u, DEPARTMENTS d"
                     + " where u.userid = " + codigo_funcionario + " and "
                     + " u.DEFAULTDEPTID = d.deptid ";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
             String nome_dept = "";
@@ -2291,13 +1943,13 @@ public class Banco implements Serializable {
                 nome_dept = rs.getString("DEPTNAME");
             }
             rs.close();
-            stmt.close();
+            
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -2315,7 +1967,7 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
 
             List<Integer> deptSrtList = ordenarDepts(permissao, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -2332,7 +1984,9 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return saida;
     }
@@ -2349,15 +2003,15 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -2368,7 +2022,7 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
+            
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -2376,8 +2030,8 @@ public class Banco implements Serializable {
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -2391,7 +2045,7 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
 
             List<Integer> deptSrtList = ordenarDepts(permissao, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -2402,15 +2056,9 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -2426,15 +2074,15 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -2445,7 +2093,7 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
+            
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -2453,8 +2101,8 @@ public class Banco implements Serializable {
             //Selecionando o departamento do administrador
             sql = "select DEFAULTDEPTID from USERINFO"
                     + " where userid = " + codigo_funcionario;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
 
@@ -2462,13 +2110,13 @@ public class Banco implements Serializable {
                 dept = rs.getInt("DEFAULTDEPTID");
             }
             rs.close();
-            stmt.close();
+            
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -2485,17 +2133,12 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return isAdministradorVisivel;
     }
@@ -2593,40 +2236,19 @@ public class Banco implements Serializable {
         return nbsp;
     }
 
-    public void fecharConexao() {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (SQLException ex) {
-                System.out.println("RelatorioMensal.Banco: fecharConexao: " + ex);
-                //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        // Creates two calendars instances
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String hora = sdf.format(new Date());
-        System.out.print(hora);
-
-    }
-
     public List<SelectItem> consultaFuncionarioProprioAdministrador(Integer codigo_usuario) {
 
         List<SelectItem> userList = new ArrayList<SelectItem>();
 
         try {
             ResultSet rs = null;
-            Statement stmt = null;
-
             String sql;
 
             sql = "select name from USERINFO "
                     + " where userid = " + codigo_usuario;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
@@ -2635,17 +2257,12 @@ public class Banco implements Serializable {
                 userList.add(new SelectItem(codigo_usuario, name));
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -2653,17 +2270,14 @@ public class Banco implements Serializable {
     public HashMap<Integer, Integer> getcod_funcionarioSubordinacaoDepartamento(Integer dept) {
 
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
+
         ResultSet rs;
 
         HashMap<Integer, Integer> idToSuperHash = getHierarquiaDepartamentos();
 
         try {
             String query = "select userid,defaultdeptid,permissao from userinfo ";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -2682,13 +2296,9 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException ex) {
-
-                }
-            }
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
 
@@ -2700,15 +2310,15 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+            
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer cod = rs.getInt("DEPTID");
@@ -2716,9 +2326,12 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return idToSuperHash;
     }
@@ -2727,14 +2340,13 @@ public class Banco implements Serializable {
 
         List<Integer> verbasList = new ArrayList<Integer>();
 
-        PreparedStatement pstmt = null;
         try {
 
             String query = "Select * from verba";
 
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
 
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery();
 
             while (rs.next()) {
 
@@ -2759,16 +2371,9 @@ public class Banco implements Serializable {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return verbasList;
     }

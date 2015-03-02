@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package CadastroCronograma;
 
+import entidades.CategoriaAfastamento;
 import CadastroJornada.DiaJornada;
 import CadastroJornada.HorariosXdia;
 import CadastroJornada.Turno;
@@ -34,6 +31,7 @@ import Funcionario.Funcionario;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import manageBean.CategoriaAfastamentoMB;
 
 import org.richfaces.model.selection.SimpleSelection;
 
@@ -280,7 +278,6 @@ public class CadastroCronogramaBean implements Serializable {
                 } else {
                     valido = banco.inserirJornadasGrupo(jornadaAtualList);
                     jornadaList = banco.getJornadas(funcionarioList);
-                    banco.fechaConexao();
                     if (valido) {
                         FacesMessage msgErro = new FacesMessage("Jornadas adicionada com sucesso");
                         FacesContext.getCurrentInstance().addMessage(null, msgErro);
@@ -590,10 +587,10 @@ public class CadastroCronogramaBean implements Serializable {
             b = new ConsultaPonto.Banco();
             ArrayList<DescolamentoTemporario> listaDeslocamentos = b.consultaDeslocamentoTemp(cod_funcionario, dataInicio, dataFim);
             ArrayList<DescolamentoTemporario> listaHorariosRemover = b.consultaHorarioRemover(cod_funcionario, dataInicio, dataFim);
-            Afastamento.Banco afasBD = new Afastamento.Banco();
-            List<Afastamento.Afastamento> listaAfasamento = afasBD.consultaAfastamentoByFuncionario(cod_funcionario, dataInicio, dataFim);
-            CadastroFeriado.Banco bFeriados = new CadastroFeriado.Banco();
-            ArrayList<CadastroFeriado.Feriado> listaFeriados = bFeriados.consultaFeriadosPorData(dataInicio, dataFim);
+            manageBean.AfastamentoMB afasBD = new manageBean.AfastamentoMB();
+            List<entidades.Afastamento> listaAfasamento = afasBD.consultaAfastamentoByFuncionario(cod_funcionario, dataInicio, dataFim);
+            manageBean.FeriadoMB bFeriados = new manageBean.FeriadoMB();
+            ArrayList<entidades.Feriado> listaFeriados = bFeriados.consultaFeriadosPorData(dataInicio, dataFim);
             banco = new Banco();
             DescolamentoTemporario deslTmp;
 
@@ -641,8 +638,8 @@ public class CadastroCronogramaBean implements Serializable {
                 }
 
                 //coloca os feriados no cronograma
-                for (Iterator<CadastroFeriado.Feriado> dt = listaFeriados.iterator(); dt.hasNext();) {
-                    CadastroFeriado.Feriado f = dt.next();
+                for (Iterator<entidades.Feriado> dt = listaFeriados.iterator(); dt.hasNext();) {
+                    entidades.Feriado f = dt.next();
                     if (diasCronogramaList.get(ordem).getDia().getTime() == f.getData().getTime()) {
                         diasCronogramaList.get(ordem).getHorariosList().clear();
                         diasCronogramaList.get(ordem).getHorariosListBkp().clear();
@@ -651,14 +648,17 @@ public class CadastroCronogramaBean implements Serializable {
                     }
                 }
                 
+                CategoriaAfastamentoMB caMB = new CategoriaAfastamentoMB();
+                CategoriaAfastamento ca = new CategoriaAfastamento();
                 //coloca os afastamentos do funcionario
-                for (Iterator<Afastamento.Afastamento> afas = listaAfasamento.iterator(); afas.hasNext();) {
-                    Afastamento.Afastamento af = afas.next();
+                for (Iterator<entidades.Afastamento> afas = listaAfasamento.iterator(); afas.hasNext();) {
+                    entidades.Afastamento af = afas.next();
                     if (diasCronogramaList.get(ordem).getDia().getTime() >= af.getDataInicio().getTime() && diasCronogramaList.get(ordem).getDia().getTime() <= af.getDataFim().getTime()) {
                         diasCronogramaList.get(ordem).getHorariosList().clear();
                         diasCronogramaList.get(ordem).getHorariosListBkp().clear();
                         diasCronogramaList.get(ordem).getHorarioStrList().clear();
-                        diasCronogramaList.get(ordem).getHorarioStrList().add("( " + af.getCategoriaAfastamento().getDescCategoriaAfastamento() + " )");
+                        ca = caMB.consultaCategoriaAfastamento(af.getCodCategoriaAfastamento());
+                        diasCronogramaList.get(ordem).getHorarioStrList().add("( " + ca.getDescricao() + " )");
                     }
                 }
                 
@@ -709,9 +709,6 @@ public class CadastroCronogramaBean implements Serializable {
         }
         
         tituloDeslocTemp = "Deslocamento Temporário - "+banco.getNomeFuncionario(cod_funcionario);
-        
-        banco.fechaConexao();
-        b.fecharConexao();
     }
 
     public List<Jornada> getJornadaList(List<Jornada> jornadaAntigaList, Integer cod_jornada, Date inicio, Date fim) {
@@ -1006,7 +1003,6 @@ public class CadastroCronogramaBean implements Serializable {
         banco = new Banco();
         funcionarioObjList = banco.getFuncionarios();
         jornadaList = banco.getJornadas(funcionarioList);
-        banco.fechaConexao();
 
     }
 
@@ -1026,12 +1022,10 @@ public class CadastroCronogramaBean implements Serializable {
         banco = new Banco();
         funcionarioObjList = banco.getFuncionarios();
         jornadaList = banco.getJornadas(funcionarioList);
-        banco.fechaConexao();
-
     }
 
     public void inicializaAtributos() throws SQLException {
-        //  Banco banco = new Banco();
+        //  FeriadoMB banco = new FeriadoMB();
         //  funcionarioList = new ArrayList<SelectItem>();
         //  funcionarioList = banco.consultaFuncionarioTotal(departamento, incluirSubSetores);
         cod_funcionario = -1;

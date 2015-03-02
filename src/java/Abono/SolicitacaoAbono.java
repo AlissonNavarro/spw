@@ -63,7 +63,6 @@ public class SolicitacaoAbono implements Serializable {
 
         UsuarioBean usuarioBean = ((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean"));
         banco.updateSolicitacaoAbono(cod, false, respostaJustificativa, usuarioBean.getUsuario().getLogin());
-        banco.fecharConexao();
         return "solicitacaoAbonoBean";
     }
 

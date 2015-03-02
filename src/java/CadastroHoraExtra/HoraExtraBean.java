@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package CadastroHoraExtra;
 
 import Metodos.Metodos;
@@ -14,10 +10,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author Alexandre
- */
 public class HoraExtraBean implements Serializable {
 
     private List<RegimeHoraExtra> regimeHoraExtraList;
@@ -39,7 +31,6 @@ public class HoraExtraBean implements Serializable {
     private String insereNomeRegime;
     private String editRegime;
     private String justificativa;
-    private String justificativaSubs;
     private Justificativa editJustificativa;
     private Boolean isPadrao;
     private Boolean feriadoCritico;
@@ -126,7 +117,6 @@ public class HoraExtraBean implements Serializable {
             FacesMessage msgErro = new FacesMessage("O nome do regime não pode estar vazio!");
             FacesContext.getCurrentInstance().addMessage(null, msgErro);
         }
-        banco.fecharConexao();
     }
 
     public void deletar() {

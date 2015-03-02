@@ -1,58 +1,30 @@
 package backup;
 
 import Metodos.Metodos;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import comunicacao.AcessoBD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author amsgama
- */
 public class Banco {
 
-    Driver d;
-    Connection c;
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-            //         executeStatement(con);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println("backup: Conectar: " + cnfe);
-        }
-    }
-
+    AcessoBD con;
+    
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            System.out.println("backup: Banco: " + ex);
-            Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con = new AcessoBD();
     }
 
     public String buscaInstanciaSql() {
         String retorno = "";
-        PreparedStatement pstmt = null;
         try {
-            pstmt = c.prepareStatement("select @@servername as instancia");
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery("select @@servername as instancia");
             if (rs.next()) {
                 retorno = rs.getString("instancia");
                 retorno = retorno.substring(retorno.indexOf("\\")+1);
             }
         } catch(Exception ex) {
             ex.printStackTrace();
+        } finally {
+            con.Desconectar();
         }
         return retorno;
     }
@@ -60,15 +32,10 @@ public class Banco {
     public BackupConfig getBackupConfig() {
 
         BackupConfig backupConfig = new BackupConfig();
-
-        PreparedStatement pstmt = null;
         try {
 
             String query = "Select * from Backup_Config";
-
-            pstmt = c.prepareStatement(query);
-
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
 
             while (rs.next()) {
 
@@ -103,29 +70,17 @@ public class Banco {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return backupConfig;
     }
 
     public boolean updateBackupConfig(BackupConfig backupConfig) throws SQLException {
         boolean ok = true;
-        PreparedStatement pstmt = null;
-
         String query = "Select * from Backup_Config";
-
-        pstmt = c.prepareStatement(query);
-
-        ResultSet rs = pstmt.executeQuery();
+        ResultSet rs = con.executeQuery(query);
         Boolean isBancoVazio = true;
         while (rs.next()) {
             isBancoVazio = false;
@@ -136,40 +91,34 @@ public class Banco {
             query = "insert into Backup_Config(empresa,caminho,port,remetente,destinatario,senha,smtp,ssl,horas,horaBackup,instancia,alteracao) values(?,?,?,?,?,?,?,?,?,?,?,?)";
 
             try {
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, backupConfig.getEmpresa());
-                pstmt.setString(2, backupConfig.getCaminho());
-                pstmt.setString(3, backupConfig.getPort());
-                pstmt.setString(4, backupConfig.getRemetente());
-                pstmt.setString(5, backupConfig.getDestinatario());
-                pstmt.setString(6, backupConfig.getSenha());
-                pstmt.setString(7, backupConfig.getSmtp());
+                con.prepareStatement(query);
+                con.pstmt.setString(1, backupConfig.getEmpresa());
+                con.pstmt.setString(2, backupConfig.getCaminho());
+                con.pstmt.setString(3, backupConfig.getPort());
+                con.pstmt.setString(4, backupConfig.getRemetente());
+                con.pstmt.setString(5, backupConfig.getDestinatario());
+                con.pstmt.setString(6, backupConfig.getSenha());
+                con.pstmt.setString(7, backupConfig.getSmtp());
                 if (backupConfig.getSsl()) {
-                    pstmt.setInt(8, 1);
+                    con.pstmt.setInt(8, 1);
                 } else {
-                    pstmt.setInt(8, 0);
+                    con.pstmt.setInt(8, 0);
                 }
-                pstmt.setInt(9, backupConfig.getIntervaloBackup());
-                pstmt.setString(10, backupConfig.getHoraBackup());
-                pstmt.setString(11, backupConfig.getInstancia());
+                con.pstmt.setInt(9, backupConfig.getIntervaloBackup());
+                con.pstmt.setString(10, backupConfig.getHoraBackup());
+                con.pstmt.setString(11, backupConfig.getInstancia());
                 if (backupConfig.getDiferencial()) {
-                    pstmt.setInt(12, 1);
+                    con.pstmt.setInt(12, 1);
                 } else {
-                    pstmt.setInt(12, 0);
+                    con.pstmt.setInt(12, 0);
                 }
 
-                pstmt.executeUpdate();
+                con.executeUpdate();
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                System.out.println(e);
                 ok = false;
             } finally {
-                try {
-                    if (c != null) {
-                        pstmt.close();
-                        c.close();
-                    }
-                } catch (SQLException e) {
-                }
+                con.Desconectar();
             }
         } else {
 
@@ -177,45 +126,36 @@ public class Banco {
                     + " senha=?,smtp=?, ssl=?,horas=?,horaBackup=?,instancia=?,alteracao=?";
 
             try {
-                pstmt = c.prepareStatement(query);
-                pstmt.setString(1, backupConfig.getEmpresa());
-                pstmt.setString(2, backupConfig.getCaminho());
-                pstmt.setString(3, backupConfig.getPort());
-                pstmt.setString(4, backupConfig.getRemetente());
-                pstmt.setString(5, backupConfig.getDestinatario());
-                pstmt.setString(6, backupConfig.getSenha());
-                pstmt.setString(7, backupConfig.getSmtp());
+                con.prepareStatement(query);
+                con.pstmt.setString(1, backupConfig.getEmpresa());
+                con.pstmt.setString(2, backupConfig.getCaminho());
+                con.pstmt.setString(3, backupConfig.getPort());
+                con.pstmt.setString(4, backupConfig.getRemetente());
+                con.pstmt.setString(5, backupConfig.getDestinatario());
+                con.pstmt.setString(6, backupConfig.getSenha());
+                con.pstmt.setString(7, backupConfig.getSmtp());
                 if (backupConfig.getSsl()) {
-                    pstmt.setString(8, "1");
+                    con.pstmt.setString(8, "1");
                 } else {
-                    pstmt.setString(8, "0");
+                    con.pstmt.setString(8, "0");
                 }
-                pstmt.setInt(9, backupConfig.getIntervaloBackup());
-                pstmt.setString(10, backupConfig.getHoraBackup());
-                pstmt.setString(11, backupConfig.getInstancia());
+                con.pstmt.setInt(9, backupConfig.getIntervaloBackup());
+                con.pstmt.setString(10, backupConfig.getHoraBackup());
+                con.pstmt.setString(11, backupConfig.getInstancia());
                 if (backupConfig.getDiferencial()) {
-                    pstmt.setInt(12, 1);
+                    con.pstmt.setInt(12, 1);
                 } else {
-                    pstmt.setInt(12, 0);
+                    con.pstmt.setInt(12, 0);
                 }
 
-                pstmt.executeUpdate();
+                con.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);;
                 ok = false;
             } finally {
-                try {
-                    if (c != null) {
-                        pstmt.close();
-                        c.close();
-                    }
-                } catch (SQLException e) {
-                }
+                con.Desconectar();
             }
         }
         return ok;
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
     }
 }

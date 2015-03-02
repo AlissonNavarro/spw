@@ -2,7 +2,8 @@ package ConsultaPonto;
 
 import Metodos.Metodos;
 import Abono.Abono;
-import Afastamento.Afastamento;
+import entidades.Afastamento;
+import entidades.CategoriaAfastamento;
 import CadastroHoraExtra.Gratificacao;
 import CadastroHoraExtra.RegimeHoraExtra;
 import CadastroHoraExtra.TipoHoraExtra;
@@ -33,6 +34,7 @@ import java.util.Set;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import manageBean.CategoriaAfastamentoMB;
 import net.sf.jasperreports.engine.JRException;
 
 public class ConsultaFrequenciaComEscalaBean implements Serializable {
@@ -1513,13 +1515,16 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         diaAcesso.setDiaString(sdfSemana.format(date.getTime()));
         diaAcesso.setDefinicao("Afastado");
         diaAcesso.setIsAfastado(true);
+        CategoriaAfastamentoMB ca = new CategoriaAfastamentoMB();
+        CategoriaAfastamento catAfas = new CategoriaAfastamento();
+
         for (Iterator<Afastamento> it = afastamentoList.iterator(); it.hasNext();) {
             Afastamento afastamento = it.next();
 
             if ((afastamento.getDataInicio().before(date) || afastamento.getDataInicio().equals(date))
                     && ((afastamento.getDataFim().after(date)) || afastamento.getDataFim().equals(date))) {
-
-                diaAcesso.setJustificativa(afastamento.getCategoriaAfastamento().getDescCategoriaAfastamento());
+                catAfas = ca.consultaCategoriaAfastamento(afastamento.getCodCategoriaAfastamento());
+                diaAcesso.setJustificativa(catAfas.getDescricao());
             }
         }
         diaAcesso.setColorDia("panelBranco");
@@ -1721,16 +1726,15 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         return mapaDiaEraDataStr;
     }
 
-   /* private boolean containsIntervaloAbono(Integer dia) {
-        for (Iterator<Abono> it = abonoList.iterator(); it.hasNext();) {
-            Abono abono = it.next();
-            if (dia.equals(abono.getDiaAbono())) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
+    /* private boolean containsIntervaloAbono(Integer dia) {
+     for (Iterator<Abono> it = abonoList.iterator(); it.hasNext();) {
+     Abono abono = it.next();
+     if (dia.equals(abono.getDiaAbono())) {
+     return true;
+     }
+     }
+     return false;
+     }*/
     private List<Integer> addDiasDeslocados(List<Integer> diasTrabalhoList, List<Integer> diasDeslocadosAdicionais) {
 
         for (Iterator<Integer> it = diasDeslocadosAdicionais.iterator(); it.hasNext();) {
@@ -2473,7 +2477,7 @@ public class ConsultaFrequenciaComEscalaBean implements Serializable {
         if (isEntradaValida()) {
             Banco banco = new Banco();
             int tipoRelatorio = banco.consultaTipoRelatorio();
-            System.out.println("relatorio: "+tipoRelatorio);
+            System.out.println("relatorio: " + tipoRelatorio);
             switch (tipoRelatorio) {
                 case 1:
                     geraRelatorio();

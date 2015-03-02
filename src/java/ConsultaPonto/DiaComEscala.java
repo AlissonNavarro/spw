@@ -439,8 +439,10 @@ public class DiaComEscala implements Serializable {
         if (jornada.getDeduzirDescanco1()) {
             jornadaTurno1 -= (calcHorasDia(sdfHora.format(jornada.getInicioDescanso1()), sdfHora.format(jornada.getFimDescanso1()), false) / 60);
         }
-        if (jornada.getDeduzirIntrajornada()) {
-            jornadaTurno1 -= (calcHorasDia(sdfHora.format(jornada.getInicioIntrajornada()), sdfHora.format(jornada.getFimIntrajornada()), false) / 60);
+        if (jornada.getDeduzirIntrajornada() != null) {
+            if (jornada.getDeduzirIntrajornada()) {
+                jornadaTurno1 -= (calcHorasDia(sdfHora.format(jornada.getInicioIntrajornada()), sdfHora.format(jornada.getFimIntrajornada()), false) / 60);
+            }
         }
         if (jornada.getDeduzirDescanco2()) {
             jornadaTurno1 -= (calcHorasDia(sdfHora.format(jornada.getInicioDescanso2()), sdfHora.format(jornada.getFimDescanso2()), false) / 60);

@@ -1,7 +1,8 @@
 package Usuario;
 
 import Metodos.Metodos;
-import perfil2.Perfil;
+import comunicacao.AcessoBD;
+import entidades.Perfil;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -15,66 +16,25 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amsgama
- */
 public class Banco {
 
-    Driver d;
-    Connection c;
-    private Boolean isAtivo = false;
+    AcessoBD con;
     static Connection theConn;
     Boolean hasConnection = false;
 
-    public Boolean getIsAtivo() {
-        return isAtivo;
-    }
-
-    public void setIsAtivo(Boolean isAtivo) {
-        this.isAtivo = isAtivo;
-    }
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        hasConnection = true;
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-            //         executeStatement(con);
-        } catch (ClassNotFoundException cnfe) {
-            hasConnection = false;
-            System.out.println("Usuário.Banco: Conectar(): " + cnfe);
-        }
-    }
-
     public Banco() {
-        try {
-            Conectar();
-            isAtivo = true;
-        } catch (SQLException ex) {
-            hasConnection = false;
-            System.out.println("Usuário.Banco: Banco(): " + ex);
-            isAtivo = false;
-        }
+        con = new AcessoBD();
     }
 
     public Usuario getUsuarioByMatricula(String login) {
-
         Usuario usuario = new Usuario();
-
         try {
             ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = "select u.*,d.deptid from"
+            String sql = "select u.*,d.deptid from"
                     + " USERINFO u,DEPARTMENTS d "
                     + " where u.userid = '" + login
-                    + "' and u.defaultdeptid = d.deptid";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+                    + "' and u.defaultdeptid = d.deptid"; 
+            rs = con.executeQuery(sql);
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 String name = rs.getString("name");
@@ -95,13 +55,9 @@ public class Banco {
                 usuario.setDataContratacao(dataContratacao);
             }
             rs.close();
-            stmt.close();
-
             sql = "select supdeptid from DEPARTMENTS "
                     + " where deptid = " + usuario.getPermissao();
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer supdeptid = rs.getInt("supdeptid");
@@ -113,17 +69,10 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return usuario;
     }
@@ -131,28 +80,20 @@ public class Banco {
     public Boolean userADExists(String userAD) {
         Boolean exists = false;
         try {
-            Conectar();
             ResultSet rs;
-            Statement stmt;
             String sql = "select * from USERINFO u "
                     + " where u.ADUsername = '" + userAD;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
             while (rs.next()) {
                 exists = true;
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return exists;
     }
@@ -161,16 +102,14 @@ public class Banco {
 
         Usuario usuario = new Usuario();
         try {
-            Conectar();
             ResultSet rs;
-            Statement stmt;
             String sql = "select u.userid,u.ssn,u.senha,u.name,u.permissao,u.perfil,d.deptid,u.hiredday,u.adusername"
                     + " from USERINFO u,DEPARTMENTS d "
                     + " where u.ADUsername = '" + userAD + "' and "
                     + " u.defaultdeptid = d.deptid";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
             Boolean flag = false;
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -196,8 +135,8 @@ public class Banco {
                 sql = "select supdeptid from DEPARTMENTS "
                         + " where deptid = " + usuario.getPermissao();
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer supdeptid = rs.getInt("supdeptid");
@@ -210,17 +149,10 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return usuario;
     }
@@ -232,37 +164,30 @@ public class Banco {
         try {
             String query = "UPDATE userinfo SET adusername = ? WHERE ssn = ?";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, aduser);
-            pstmt.setString(2, cpf);
-            pstmt.executeUpdate();
-
-            pstmt.close();
+            con.prepareStatement(query);
+            con.pstmt.setString(1, aduser);
+            con.pstmt.setString(2, cpf);
+            con.executeUpdate();
             ok = true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return ok;
     }
 
     public Usuario getUsuarioByCPF(String login) {
-
         Usuario usuario = new Usuario();
-
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
 
             sql = "select u.userid,u.ssn,u.senha,u.name,u.permissao,u.perfil,d.deptid,u.hiredday, u.adusername"
                     + " from USERINFO u,DEPARTMENTS d "
                     + " where u.ssn = '" + login + "' and "
-                    + " u.defaultdeptid = d.deptid";
-            if (c == null) {
-                Conectar();
-            }
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+                    + " u.defaultdeptid = d.deptid";            
+            rs = con.executeQuery(sql);
             Boolean flag = false;
             while (rs.next()) {
                 usuario.setLogin(rs.getInt("userid"));
@@ -277,14 +202,14 @@ public class Banco {
                 flag = true;
             }
             rs.close();
-            stmt.close();
+            
 
             if (flag) {
                 sql = "select supdeptid from DEPARTMENTS "
                         + " where deptid = " + usuario.getPermissao();
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer supdeptid = rs.getInt("supdeptid");
@@ -296,36 +221,28 @@ public class Banco {
                     }
                 }
                 rs.close();
-                stmt.close();
+                
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return usuario;
     }
 
     public List<SelectItem> getUsuarioVinculos(String login) {
-
         List<SelectItem> vinculosList = new ArrayList<>();
-
         try {
-            Conectar();
             ResultSet rs;
-            Statement stmt;
+            
             String sql;
 
             sql = "select userid from USERINFO "
                     + " where ssn = '" + login + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -336,17 +253,12 @@ public class Banco {
                 vinculosList = new ArrayList<>();
             }
             rs.close();
-            stmt.close();
+            
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return vinculosList;
     }
@@ -355,13 +267,12 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
 
             sql = "select u.permissao from USERINFO "
                     + " where u.userid = '" + login + "'";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String permissao = rs.getString("permissao");
@@ -370,16 +281,11 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return false;
     }
@@ -389,30 +295,20 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
             String sql;
 
-            sql = "select IpAD from config";
-            if (c.isClosed()) {
-                return servidor;
-            }
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            sql = "select IpAD from config";            
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 servidor = rs.getString("IpAd");
             }
             rs.close();
-            stmt.close();
+            
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         if (servidor == null) {
             servidor = "";
@@ -427,60 +323,36 @@ public class Banco {
     }
 
     protected void atualizarUltimoLogin(String data) {
-        PreparedStatement pstmt = null;
         try {
-
             String query = "UPDATE config SET lastDate = ?";
-
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, Base64Crypt.encrypt(data));
-
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setString(1, Base64Crypt.encrypt(data));
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
     protected void atualizarSerial(String serial) {
-        PreparedStatement pstmt = null;
         try {
-
             String query = "UPDATE config SET serial = ?";
-
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, serial);
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setString(1, serial);
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
     }
 
     protected String consultarSerial() {
-        PreparedStatement pstmt = null;
         try {
 
             String query = "select serial from config";
-
-            pstmt = c.prepareStatement(query);
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
             if (rs.next()) {
                 return rs.getString("serial");
             } else {
@@ -489,14 +361,7 @@ public class Banco {
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
         return null;
     }
@@ -507,8 +372,7 @@ public class Banco {
 
             String query = "select lastDate from config";
             Date d = null;
-            pstmt = c.prepareStatement(query);
-            ResultSet rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
             if (rs.next()) {
                 String cifra = rs.getString("lastDate");
                 SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmm");
@@ -520,28 +384,16 @@ public class Banco {
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Erro:" + e);
-            }
+            con.Desconectar();
         }
         return null;
     }
     
     public boolean consultaCnpjEmpregador(String cnpj) {
-        PreparedStatement pstmt = null;
         String resultado = "";
         try {
             String querySelect = "select cnpj from empregador order by id";
-            
-            
-            ResultSet rs;
-            pstmt = c.prepareStatement(querySelect);
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(querySelect);
             cnpj = cnpj.replace(".", "").replace("/", "").replace("-", "");
             while (rs.next()) {
                 resultado = rs.getString("Cnpj");
@@ -551,47 +403,30 @@ public class Banco {
                 }
             }
             rs.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return false;
     }
 
     public boolean mudarSenha(String cpf, String senha) {
-
-        PreparedStatement pstmt = null;
-
         try {
             String query = "UPDATE userinfo SET senha = ? WHERE ssn = ?";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, senha);
-            pstmt.setString(2, cpf);
-            int r = pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setString(1, senha);
+            con.pstmt.setString(2, cpf);
+            int r = con.executeUpdate();
             if (r == 1) {
                 return true;
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return false;
 
@@ -601,13 +436,9 @@ public class Banco {
         int[] restricoes = {0, 0, 0, 0};
         try {
             ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select * from senhasRestricoes";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select * from senhasRestricoes";
+            
+            rs = con.executeQuery(sql);
 
             if (rs.next()) {
                 restricoes[0] = rs.getInt("senhaSize");
@@ -616,18 +447,11 @@ public class Banco {
                 restricoes[3] = rs.getInt("simbolosCount");
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
 
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
 
         return restricoes;
@@ -638,9 +462,7 @@ public class Banco {
         try {
             String querySelect = "select * from senhasRestricoes";
             boolean empty = true;
-            ResultSet rs;
-            pstmt = c.prepareStatement(querySelect);
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(querySelect);
             if (rs.next()) {
                 empty = false;
             }
@@ -655,7 +477,7 @@ public class Banco {
                         + "maiusculasCount = ?, numerosCount = ?, simbolosCount = ?";
             }
 
-            pstmt = c.prepareStatement(querySelect);
+            con.prepareStatement(querySelect);
             pstmt.setInt(1, size);
             pstmt.setInt(2, maiusc);
             pstmt.setInt(3, num);
@@ -669,32 +491,20 @@ public class Banco {
             System.out.println(e.getMessage());
 
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return false;
     }
 
     public Perfil consultaPermissoesPerfil(Integer perfilSelecionado) {
-
         Perfil perfil = new Perfil();
         try {
-
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             sql = "select * from perfil "
                     + " where cod_perfil = '" + perfilSelecionado + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
 
@@ -813,39 +623,28 @@ public class Banco {
                 //perfil.setPagamento(pagamento);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
 
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return perfil;
     }
 
     public void select() throws SQLException {
         ResultSet rs;
-        Statement stmt;
         String sql;
         sql = "SELECT * FROM USER_SPEDAY WHERE STARTSPECDAY between #01/06/09 01:20:00# and  #33/06/09 15:50:00#";
         String sql2 = "select *  from USER_SPEDAY "
                 + "WHERE STARTSPECDAY = '01/06/09 01:20:00'";
-
-        stmt = c.createStatement();
-        rs = stmt.executeQuery(sql);
-
+ 
+        rs = con.executeQuery(sql);
         while (rs.next()) {
             Integer userid = rs.getInt("userid");
             System.out.println(userid);
         }
         rs.close();
-        stmt.close();
-
+        
     }
 }

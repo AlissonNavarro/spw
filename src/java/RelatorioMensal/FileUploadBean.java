@@ -33,16 +33,14 @@ public class FileUploadBean implements Serializable {
         if (Metodos.getServidorAtivo()) {
             Banco banco = new Banco();
             try {
-                if (banco.hasConnection) {
-                    file = new UploadFile();
-                    byte[] imageByte = banco.getImageLogo();
-                    if (imageByte != null) {
-                        file.setData(imageByte);
-                        //file = alterarTamanhoImagem(file);
-                        logoExiste = true;
-                    } else {
-                        logoExiste = false;
-                    }
+                file = new UploadFile();
+                byte[] imageByte = banco.getImageLogo();
+                if (imageByte != null) {
+                    file.setData(imageByte);
+                    //file = alterarTamanhoImagem(file);
+                    logoExiste = true;
+                } else {
+                    logoExiste = false;
                 }
             } catch (Exception e) {
                 System.out.println("FileUploadBean: " + e);
@@ -72,7 +70,7 @@ public class FileUploadBean implements Serializable {
         if (largura > 180 || altura > 100) {
             if (largura > 180) {
                 altura = (altura * 180) / largura;
-                largura = 180;                
+                largura = 180;
             }
             if (altura > 100) {
                 altura = 100;

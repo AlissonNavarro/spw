@@ -118,7 +118,6 @@ public class RelatorioMensalBean implements Serializable {
                 if (!isVazio) {
                     matriculasMergeList.add(userid);
                 }
-                banco.fecharConexao();
             }
             if (!matriculasMergeList.isEmpty()) {
                 MergePDF.gerarPDFUnico(matriculasMergeList, "RelatorioFrequencia");
@@ -139,20 +138,20 @@ public class RelatorioMensalBean implements Serializable {
 
         if (!(departamentoSelecionado == null || dataInicio == null || dataFim == null)) {
 
-            ConsultaFrequenciaComEscalaBean c = new ConsultaFrequenciaComEscalaBean("");
-
-            c.setDataInicio(dataInicio);
-            c.setDataFim(dataFim);
-            List<Integer> matriculasList = new ArrayList<>();
+            ConsultaFrequenciaComEscalaBean c;
+            //List<Integer> matriculasList = new ArrayList<>();
             List<Integer> matriculasMergeList = new ArrayList<Integer>();
             List<Funcionario> funcionariosSemEscalaList = new ArrayList<>();
-
-            matriculasList = getFuncionarios();
-            for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
+            SelectItem func;
+            Integer userid = -1;
+            //matriculasList = getFuncionarios();
+            //for (Iterator<Integer> it = matriculasList.iterator(); it.hasNext();) {
+            for (Iterator<SelectItem> it = funcionarioList.iterator(); it.hasNext();) {
+                func = it.next();
+                userid = (Integer) func.getValue();
                 c = new ConsultaFrequenciaComEscalaBean("");
                 c.setDataInicio(dataInicio);
                 c.setDataFim(dataFim);
-                Integer userid = it.next();
                 c.setCod_funcionario(userid);
                 c.consultaDiasSemMsgErro();
                 boolean isVazio = c.geraRelatorioPorDepartamento();
@@ -268,7 +267,6 @@ public class RelatorioMensalBean implements Serializable {
                 if (!isVazio) {
                     matriculasMergeList.add(userid);
                 }
-                banco.fecharConexao();
             }
             if (!matriculasMergeList.isEmpty()) {
                 String dept = Metodos.buscaRotulo(departamentoSelecionado, departamentosSelecItem);
@@ -311,7 +309,6 @@ public class RelatorioMensalBean implements Serializable {
                 if (!isVazio) {
                     matriculasMergeList.add(userid);
                 }
-                banco.fecharConexao();
             }
             if (!matriculasMergeList.isEmpty()) {
                 String dept = Metodos.buscaRotulo(departamentoSelecionado, departamentosSelecItem);

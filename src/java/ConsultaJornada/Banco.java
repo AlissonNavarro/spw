@@ -1,77 +1,29 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ConsultaJornada;
 
-/**
- *
- * @author Alexandre
- */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-import Metodos.Metodos;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-//import java.util.logging.Logger;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amsgama
- */
 public class Banco {
 
-    Driver d;
-    Connection c;
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-            //         executeStatement(con);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println(cnfe);
-        }
-    }
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaJornada: Banco 1: "+ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con = new AcessoBD();
     }
 
     public List<SelectItem> consultaDepartamento(Integer permissao) {
         List<SelectItem> departamentoList = new ArrayList<SelectItem>();
-
         try {
             ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                    + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+            rs = con.executeQuery(sql);
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
             while (rs.next()) {
@@ -82,11 +34,8 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
             sql = "select DEPTNAME,deptId from DEPARTMENTS ORDER BY DEPTNAME asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             departamentoList.add(new SelectItem(-1, "Selecione um departamento"));
 
@@ -95,22 +44,17 @@ public class Banco {
                 Integer deptId = rs.getInt("deptId");
                 SelectItem selectItem = new SelectItem(deptId, title);
                 if (title != null) {
-                     if (deptIDList.contains(deptId))
+                    if (deptIDList.contains(deptId)) {
                         departamentoList.add(selectItem);
+                    }
                 }
             }
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return departamentoList;
     }
@@ -120,33 +64,19 @@ public class Banco {
         String codigo = "";
         try {
             ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select deptname from DEPARTMENTS "
+            String sql = "select deptname from DEPARTMENTS "
                     + " where deptid = " + cod;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            rs = con.executeQuery(sql);
             departamentoList.add(new SelectItem(-1, "Selecione um departamento"));
-
             while (rs.next()) {
                 codigo = rs.getString("DEPTNAME");
             }
             rs.close();
-            stmt.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
 
-            } catch (Exception e) {
-            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            con.Desconectar();
         }
         return codigo;
     }
@@ -158,8 +88,6 @@ public class Banco {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             String dataSrt = df.format(data);
 
@@ -172,8 +100,7 @@ public class Banco {
                     + " '" + dataSrt + "' between ur.startdate and ur.enddate"
                     + " order by ur.num_of_run_id,u.name";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
                 String nome = rs.getString("nome");
@@ -190,7 +117,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
             i = -1;
 
@@ -237,79 +163,38 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return jornadaExibicaoList;
     }
 
     public boolean insertRelatorio(List<JornadaExibicao> jornadaExibicao) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
         String query = "insert into RelatorioEscala(nomeJornada,segunda,terca,quarta,quinta,sexta) values(?,?,?,?,?,?)";
         String queryDelete = "delete from RelatorioEscala";
+        con.executeUpdate(queryDelete);
 
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaJornada: insertRelatorio 1: "+ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaJornada: insertRelatorio 2: "+ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
         try {
             for (Iterator<JornadaExibicao> it = jornadaExibicao.iterator(); it.hasNext();) {
 
                 JornadaExibicao jornadaExibicao_ = it.next();
-
-                pstmt.setString(1, jornadaExibicao_.getNomeJornada());
-                pstmt.setString(2, jornadaExibicao_.getSegunda());
-                pstmt.setString(3, jornadaExibicao_.getTerca());
-                pstmt.setString(4, jornadaExibicao_.getQuarta());
-                pstmt.setString(5, jornadaExibicao_.getQuinta());
-                pstmt.setString(6, jornadaExibicao_.getSexta());
-                pstmt.executeUpdate();
+                con.prepareStatement(query);
+                con.pstmt.setString(1, jornadaExibicao_.getNomeJornada());
+                con.pstmt.setString(2, jornadaExibicao_.getSegunda());
+                con.pstmt.setString(3, jornadaExibicao_.getTerca());
+                con.pstmt.setString(4, jornadaExibicao_.getQuarta());
+                con.pstmt.setString(5, jornadaExibicao_.getQuinta());
+                con.pstmt.setString(6, jornadaExibicao_.getSexta());
+                con.executeUpdate();
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.print(e.getMessage());
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
-    public void closeConection() {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (SQLException ex) {
-                System.out.println("ConsultaJornada: closeConection 1: "+ex);
-                //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-
- 
-       
-    }
 }

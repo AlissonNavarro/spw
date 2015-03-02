@@ -11,15 +11,20 @@ import java.io.Serializable;
 
 public class AcessoBD implements Serializable {
 
-    private Connection c;
+    public Connection c;
     public PreparedStatement pstmt;
     private Statement stmt;
+    private String url;
 
     public AcessoBD() {
+        url = Metodos.getUrlCompleta();
+        if (url.equals("")) {
+            Metodos.carregarUrlCompleta();
+            url = Metodos.getUrlCompleta();
+        }
     }
 
     public boolean Conectar() {
-        String url = Metodos.getUrlConexao();
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
             c = DriverManager.getConnection(url);

@@ -1499,13 +1499,13 @@
                                                             <h:outputText value="Insira o IP do AD por extenso: " styleClass="label" style="float:right" />
                                                             <h:outputText value="(ex. 172.010.000.001)" styleClass="label" />
                                                             <br>
-                                                            <h:inputText id="ipAD" size="12" value="#{empresaBean.ipAD}">                                                
+                                                            <h:inputText id="ipAD" size="12" value="#{configBean.ipAD}">                                                
                                                                 <rich:jQuery selector="#ipAD" query="mask('999.999.999.999')" timing="onload"/>
                                                             </h:inputText>
                                                         </center>
                                                     </h:panelGrid>
                                                     <br>
-                                                    <h:commandButton value="Ativar" action="#{empresaBean.salvarIpAD}"/>
+                                                    <h:commandButton value="Ativar" action="#{configBean.salvarIpAD}"/>
                                                 </a4j:region>
                                             </center>
                                         </rich:panel>
@@ -1539,7 +1539,7 @@
                                                             <h:outputText value="Insira o IP e porta do terminal que captura digitais: " styleClass="label" style="float:right" />
                                                             <h:outputText value="(ex. 172.10.0.1:8050)" styleClass="label" />
                                                             <br>
-                                                            <h:inputText id="ipCatcher" size="18" value="#{empresaBean.ipDigitCatcher}"/>                                                
+                                                            <h:inputText id="ipCatcher" size="18" value="#{configBean.ipDigitCatcher}"/>                                                
                                                         </center>
                                                     </h:panelGrid>
 
@@ -1548,11 +1548,11 @@
                                                             <h:outputText value="Insira o IP e porta do servidor que distribui as digitais: " styleClass="label" style="float:right" />
                                                             <h:outputText value="(ex. 172.10.0.1:8050)" styleClass="label" />
                                                             <br>
-                                                            <h:inputText id="ipSender" size="18" value="#{empresaBean.ipDigitSender}"/>                                                
+                                                            <h:inputText id="ipSender" size="18" value="#{configBean.ipDigitSender}"/>                                                
                                                         </center>
                                                     </h:panelGrid>
                                                     <br>
-                                                    <h:commandButton value="Ativar" action="#{empresaBean.salvarIpDigitSenderCatcher}"/>
+                                                    <h:commandButton value="Ativar" action="#{configBean.salvarIpDigitSenderCatcher}"/>
                                                 </a4j:region>
                                             </center>
                                         </rich:panel>

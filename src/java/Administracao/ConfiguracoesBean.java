@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Administracao;
 
 import Metodos.Metodos;
@@ -10,10 +6,6 @@ import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-/**
- *
- * @author Alexandre
- */
 public class ConfiguracoesBean implements Serializable {
 
     private String titulo;
@@ -29,10 +21,6 @@ public class ConfiguracoesBean implements Serializable {
         titulo = Metodos.getTitulo();
         Banco b = new Banco();
         checkWithPIN = b.CheckWithPIN();
-        b = null;
-        //abaCorrente = "tabUsuarios1";
-        //System.out.println("aba: "+abaCorrente);
-        
     }
 
     public void CorrigePIN() {
@@ -48,14 +36,12 @@ public class ConfiguracoesBean implements Serializable {
     public void editarTitulo() {
         FacesMessage msgErro = new FacesMessage("Título alterado com sucesso!");
         FacesContext.getCurrentInstance().addMessage(null, msgErro);
-      
         Metodos.setTitulo(titulo);
         //Metodos.setLogInfo("Alteração Título Relatórios - Título: "+titulo);
         senhaAtual = "";
     }
 
     public void alterarSenha() {
-
         DesEncrypter encrypter = new DesEncrypter("aabbccab");
         String senha = Metodos.getSenhaAdministrador();
         String senhaDesencriptada = encrypter.decrypt(senha);
@@ -130,6 +116,5 @@ public class ConfiguracoesBean implements Serializable {
     public void setAba() {
         String tab = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("tab");
         abaCorrente = tab;
-        //System.out.println("aba: "+abaCorrente);
     }
 }

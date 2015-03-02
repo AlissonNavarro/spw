@@ -114,7 +114,6 @@ public class AbonarDiaAbertoBean implements Serializable {
                         break;
                     }
                 }
-                banco.fecharConexao();
                 if (horaAbonoList.size() != 0 && ok) {
                     String just = Metodos.buscaRotulo(justificativa, justificativaList);
                     dataStr = new SimpleDateFormat("dd/MM/yyyy").format(data);

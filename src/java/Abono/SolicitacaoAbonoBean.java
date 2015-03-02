@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Abono;
 
 import Usuario.UsuarioBean;
@@ -20,10 +16,6 @@ import javax.faces.component.html.HtmlSelectBooleanCheckbox;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author Alexandre
- */
 public class SolicitacaoAbonoBean implements Serializable {
 
     private Date dataInicio;

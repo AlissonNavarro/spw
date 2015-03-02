@@ -1,21 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Abono;
 
 import ConsultaPonto.Jornada;
-import Metodos.Metodos;
 import Usuario.Usuario;
+import comunicacao.AcessoBD;
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -28,54 +18,22 @@ import java.util.List;
 import java.util.Set;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author Alexandre
- */
 public class Banco implements Serializable {
 
-    Driver d;
-    Connection c;
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-            //         executeStatement(con);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println("Abono: Conectar: "+cnfe);
-        }
-    }
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            System.out.println("Abono: Banco: "+ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con = new AcessoBD();
     }
-    
+
     public void alterarStatus(int cod_solicitacao) {
         try {
-
-            Statement stmt = null;
-            String sql = "UPDATE SolicitacaoAbono SET Status='Pendente',id_responsavel=NULL WHERE codigo = "+cod_solicitacao;
-            stmt = c.createStatement();
-            stmt.executeQuery(sql);
-            stmt.close();
-
+            String sql = "UPDATE SolicitacaoAbono SET Status='Pendente',id_responsavel=NULL WHERE codigo = " + cod_solicitacao;
+            con.executeUpdate(sql);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
     }
 
@@ -90,17 +48,12 @@ public class Banco implements Serializable {
         List<Integer> deptIDList;
 
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
             String sql;
-
+            ResultSet rs;
             if (incluirSubSetores) {
                 //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(departamentoSelecionado);
@@ -123,9 +76,7 @@ public class Banco implements Serializable {
                         + " u.permissao != " + usuario.getPermissao() + " and "
                         + " sa.data between '" + inicioString + "' and '" + fimString
                         + "' order by inclusao";
-
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer codigo = rs.getInt("Codigo");
@@ -146,6 +97,7 @@ public class Banco implements Serializable {
                         solicitacaoAbonoList.add(new SolicitacaoAbono(codigo, departamento, codigoFuncionario, name, data, entrada1, saida1, entrada2, saida2, descricao, status, inclusao, resposta));
                     }
                 }
+                rs.close();
             } else {
                 sql = "select sa.Codigo,d.deptID,d.DEPTNAME,u.USERID,u.name,sa.data,sa.entrada1,sa.saida1,sa.entrada2,sa.saida2,sa.descricao,sa.status,sa.inclusao,sa.resposta"
                         + " from SolicitacaoAbono sa,USERINFO u,DEPARTMENTS d"
@@ -157,8 +109,7 @@ public class Banco implements Serializable {
                         + " sa.data between '" + inicioString + "' and '" + fimString
                         + "' order by inclusao";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer codigo = rs.getInt("Codigo");
@@ -178,39 +129,24 @@ public class Banco implements Serializable {
                     solicitacaoAbonoList.add(new SolicitacaoAbono(codigo, departamento, codigoFuncionario, name, data, entrada1, saida1, entrada2, saida2, descricao, status, inclusao, resposta));
 
                 }
+                rs.close();
             }
-            rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println("consultaSolicitacoesAbono: " + e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return solicitacaoAbonoList;
     }
 
     public List<SolicitacaoAbono> consultaSolicitacoesAbono(Usuario usuario) {
-
         List<SolicitacaoAbono> solicitacaoAbonoList = new ArrayList<SolicitacaoAbono>();
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                    + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+            ResultSet rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(Integer.parseInt(usuario.getPermissao()));
@@ -221,7 +157,6 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(Integer.parseInt(usuario.getPermissao()), deptPermitidos, idToSuperHash);
@@ -230,12 +165,11 @@ public class Banco implements Serializable {
                     + " from SolicitacaoAbono sa,USERINFO u,DEPARTMENTS d"
                     + " where d.deptid = u.DEFAULTDEPTID" + " and"
                     + " sa.userid = u.userid" + " and"
-                    + " u.permissao != " + usuario.getPermissao() +" and"
+                    + " u.permissao != " + usuario.getPermissao() + " and"
                     + " sa.Status = 'Pendente'"
                     + " order by inclusao";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer codigo = rs.getInt("Codigo");
@@ -256,110 +190,91 @@ public class Banco implements Serializable {
                     solicitacaoAbonoList.add(new SolicitacaoAbono(codigo, departamento, codigoFuncionario, name, data, entrada1, saida1, entrada2, saida2, descricao, status, inclusao, resposta));
                 }
             }
+            rs.close();
 
         } catch (Exception e) {
             System.out.println("consultaSolicitacoesAbono: " + e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return solicitacaoAbonoList;
     }
 
     public Boolean consultaHorarioIrregularSolicitado(Integer userid, Long dia) {
         Boolean ok = false;
-
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String registroString = sdf.format(dia);
             ResultSet rs;
-            Statement stmt;
             String sql;
             sql = " select *"
                     + " from  solicitacaoabono"
                     + " where userid = " + userid + " and"
                     + " convert(char(10),data,103) = convert(char(10),'" + registroString + "',103) and"
                     + " status = 'Pendente'";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
 
-
-            while (rs.next()) {
+            rs = con.executeQuery(sql);
+            if (rs.next()) {
                 ok = true;
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
-
         return ok;
     }
-    
-    public String getDescricaoSolicitacao(Integer userid, Long dia){
+
+    public String getDescricaoSolicitacao(Integer userid, Long dia) {
         String descricao = "";
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String registroString = sdf.format(dia);
             ResultSet rs;
-            Statement stmt;
             String sql;
             sql = " select Descricao"
                     + " from  solicitacaoabono"
                     + " where userid = " + userid + " and"
                     + " convert(char(10),data,103) = convert(char(10),'" + registroString + "',103) and"
                     + " status = 'Pendente'";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
 
-
+            rs = con.executeQuery(sql);
             while (rs.next()) {
                 descricao = rs.getString("Descricao");
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
-
         return descricao;
     }
 
     public String consultaDepartamentoNomeByUserid(Integer userid) {
 
         String nomeDept = "";
-
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             sql = " select DEPTNAME"
                     + " from  DEPARTMENTS d, USERINFO u"
                     + " where u.defaultdeptid = d.deptid and "
                     + " userid = " + userid;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 nomeDept = rs.getString("DEPTNAME");
             }
 
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return nomeDept;
     }
@@ -368,15 +283,9 @@ public class Banco implements Serializable {
 
         List<SelectItem> justificativaList = new ArrayList<SelectItem>();
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
-
             String query = "select l.leaveid,l.leavename from LEAVECLASS l"
                     + " where administrador = 0";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
+            ResultSet rs = con.executeQuery(query);
             justificativaList.add(new SelectItem(-1, "Selecione a Justificativa"));
 
             while (rs.next()) {
@@ -387,13 +296,7 @@ public class Banco implements Serializable {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return justificativaList;
     }
@@ -402,15 +305,10 @@ public class Banco implements Serializable {
 
         List<SelectItem> justificativaList = new ArrayList<SelectItem>();
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
-
             String query = "select l.leaveid,l.leavename from LEAVECLASS l"
                     + " where administrador = 0 and descricaoObrigatoria = 0";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
+            ResultSet rs = con.executeQuery(query);
             justificativaList.add(new SelectItem(-1, "Selecione a Justificativa"));
 
             while (rs.next()) {
@@ -421,84 +319,73 @@ public class Banco implements Serializable {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return justificativaList;
     }
 
     /*public boolean abonar(Integer userid, Date inicio, Date fim,
-            Integer dateid, String justificativa,
-            Integer responsavel_id,
-            Integer cod_solicitacao) {
-        boolean ok = true;
-        PreparedStatement pstmt = null;
-        try {
+     Integer dateid, String justificativa,
+     Integer responsavel_id,
+     Integer cod_solicitacao) {
+     boolean ok = true;
+        
+     try {
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            String inicioString = sdf.format(inicio);
-            String fimString = sdf.format(fim);
-            String dataAtual = sdf.format(new java.util.Date());
+     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+     String inicioString = sdf.format(inicio);
+     String fimString = sdf.format(fim);
+     String dataAtual = sdf.format(new java.util.Date());
 
-            String query = "INSERT INTO USER_SPEDAY values(?,?,?,?,?,?,?,?)";
+     String query = "INSERT INTO USER_SPEDAY values(?,?,?,?,?,?,?,?)";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-            pstmt.setString(2, inicioString);
-            pstmt.setString(3, fimString);
-            pstmt.setInt(4, dateid);
-            pstmt.setString(5, justificativa);
-            pstmt.setString(6, dataAtual);
-            pstmt.setInt(7, responsavel_id);
-            pstmt.setInt(8, cod_solicitacao);
+     if (con.prepareStatement(query)) {
+     con.pstmt.setInt(1, userid);
+     con.pstmt.setString(2, inicioString);
+     con.pstmt.setString(3, fimString);
+     con.pstmt.setInt(4, dateid);
+     con.pstmt.setString(5, justificativa);
+     con.pstmt.setString(6, dataAtual);
+     con.pstmt.setInt(7, responsavel_id);
+     con.pstmt.setInt(8, cod_solicitacao);
 
-            pstmt.executeUpdate();
+     con.executeUpdate();
 
-        } catch (Exception e) {
-            ok = false;
-            System.out.println("Erro:" + e);
-        } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                ok = false;
-                System.out.println("Erro:" + e);
-            }
-        }
-        return ok;
-    }*/
-
+     } catch (Exception e) {
+     ok = false;
+     System.out.println("Erro:" + e);
+     } finally {
+     try {
+     if (c != null) {
+     p
+     c.close();
+     }
+     } catch (Exception e) {
+     ok = false;
+     System.out.println("Erro:" + e);
+     }
+     }
+     return ok;
+     }*/
     public boolean isDescricaoObrigatoria(Integer cod_justificativa) {
         boolean retorno = false;
-        PreparedStatement pstmt = null;
         ResultSet rs;
         try {
-
             String query = "select descricaoObrigatoria from leaveClass"
                     + " where leaveid = ?";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, cod_justificativa);
-            rs = pstmt.executeQuery();
-
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, cod_justificativa);
+            rs = con.executeQuery();
             while (rs.next()) {
                 retorno = rs.getBoolean("descricaoObrigatoria");
             }
-
-            pstmt.close();
         } catch (Exception e) {
             retorno = false;
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
-
         return retorno;
     }
 
@@ -507,7 +394,7 @@ public class Banco implements Serializable {
             Integer responsavel_id,
             Integer cod_solicitacao) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         try {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -516,20 +403,22 @@ public class Banco implements Serializable {
 
             String query = "INSERT INTO REGISTRO_ABONO values(?,?,?,?,?,?,?,?)";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-            pstmt.setString(2, registroString);
-            pstmt.setInt(3, dateid);
-            pstmt.setString(4, justificativa);
-            pstmt.setString(5, dataAtual);
-            pstmt.setInt(6, responsavel_id);
-            pstmt.setInt(7, cod_solicitacao);
-            pstmt.setNull(8, java.sql.Types.INTEGER);
+            if (con.prepareStatement(query)) {
+                con.pstmt.setInt(1, userid);
+                con.pstmt.setString(2, registroString);
+                con.pstmt.setInt(3, dateid);
+                con.pstmt.setString(4, justificativa);
+                con.pstmt.setString(5, dataAtual);
+                con.pstmt.setInt(6, responsavel_id);
+                con.pstmt.setInt(7, cod_solicitacao);
+                con.pstmt.setNull(8, java.sql.Types.INTEGER);
 
-            pstmt.executeUpdate();
-            pstmt.close();
+                con.executeUpdate();
+            }
         } catch (Exception e) {
             ok = false;
+        } finally {
+            con.Desconectar();
         }
         if (ok) {
             updateSolicitacaoAbono(cod_solicitacao, ok, justificativa, responsavel_id);
@@ -541,23 +430,23 @@ public class Banco implements Serializable {
         boolean ok = false;
         try {
             ResultSet rs;
-            Statement stmt;
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String data = sdf.format(date);
             String query = "SELECT * FROM SOLICITACAOABONO WHERE userid = " + userid + " AND convert(char(10),data,103) = convert(char(10),'" + data + "',103) AND Status = 'Negado'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 ok = true;
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
 
         return ok;
@@ -567,114 +456,106 @@ public class Banco implements Serializable {
         boolean ok = false;
         try {
             ResultSet rs;
-            Statement stmt;
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String data = sdf.format(date);
             String query = "SELECT * FROM SOLICITACAOABONO WHERE userid = " + userid + " AND convert(char(10),data,103) = convert(char(10),'" + data + "',103) AND Status = 'Aceito'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
+            rs = con.executeQuery(query);
 
             while (rs.next()) {
                 ok = true;
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
 
         return ok;
     }
 
     public void updateSolicitacaoAbono(Integer cod_solicitacao, Boolean aceito, String resposta, Integer cod_responsavel) {
-
-        PreparedStatement pstmt = null;
         try {
-
             String query = "UPDATE SOLICITACAOABONO SET Status = ?, Resposta = ?, id_responsavel = ? WHERE Codigo = ?";
-
-            pstmt = c.prepareStatement(query);
-            if (aceito) {
-                pstmt.setString(1, "Aceito");
-            } else {
-                pstmt.setString(1, "Negado");
+            if (con.prepareStatement(query)) {
+                if (aceito) {
+                    con.pstmt.setString(1, "Aceito");
+                } else {
+                    con.pstmt.setString(1, "Negado");
+                }
+                con.pstmt.setString(2, resposta);
+                con.pstmt.setInt(3, cod_responsavel);
+                con.pstmt.setInt(4, cod_solicitacao);
+                con.executeUpdate();
             }
-
-            pstmt.setString(2, resposta);
-
-            pstmt.setInt(3, cod_responsavel);
-
-            pstmt.setInt(4, cod_solicitacao);
-
-            pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
     }
 
     public void updateAceitarAbono(Integer userid, Integer responsavel, java.util.Date date, String justificativa, Integer dateid) {
-
-        PreparedStatement pstmt = null;
-        PreparedStatement pstmtIns = null;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String data = sdf.format(date);
             String dataAtual = sdf.format(new java.util.Date());
             String query = "UPDATE SOLICITACAOABONO SET Status = ?,  id_responsavel = ? WHERE userid = ? and convert(char(10),data,103) = convert(char(10),'" + data + "',103)";
 
-            pstmt = c.prepareStatement(query);
+            if (con.prepareStatement(query)) {
 
-            pstmt.setString(1, "Aceito");
-            pstmt.setInt(2, responsavel);
-            pstmt.setInt(3, userid);
+                con.pstmt.setString(1, "Aceito");
+                con.pstmt.setInt(2, responsavel);
+                con.pstmt.setInt(3, userid);
+                con.executeUpdate();
 
-            pstmt.executeUpdate();
+                String queryIns = "INSERT INTO REGISTRO_ABONO (userid, checktime,dateid, yuanying,date,responsavel) values(?,?,?,?,?,?)";
 
-            String queryIns = "INSERT INTO REGISTRO_ABONO (userid, checktime,dateid, yuanying,date,responsavel) values(?,?,?,?,?,?)";
-
-            pstmtIns = c.prepareStatement(queryIns);
-            pstmtIns.setInt(1, userid);
-            pstmtIns.setString(2, data);
-            pstmtIns.setInt(3, 0);
-            pstmtIns.setString(4, null);
-            pstmtIns.setString(5, dataAtual);
-            pstmtIns.setInt(6, responsavel);
-
-            pstmtIns.executeUpdate();
-
+                if (con.prepareStatement(queryIns)) {
+                    con.pstmt.setInt(1, userid);
+                    con.pstmt.setString(2, data);
+                    con.pstmt.setInt(3, 0);
+                    con.pstmt.setString(4, null);
+                    con.pstmt.setString(5, dataAtual);
+                    con.pstmt.setInt(6, responsavel);
+                    con.executeUpdate();
+                }
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
     }
 
     public void updateNegarAbono(Integer userid, Integer responsavel, java.util.Date date) {
-
-        PreparedStatement pstmt = null;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String data = sdf.format(date);
             String query = "UPDATE SOLICITACAOABONO SET Status = ?,  id_responsavel = ? WHERE userid = ? and convert(char(10),data,103) = convert(char(10),'" + data + "',103)";
 
-            pstmt = c.prepareStatement(query);
+            if (con.prepareStatement(query)) {
 
-            pstmt.setString(1, "Negado");
-            pstmt.setInt(2, responsavel);
-            pstmt.setInt(3, userid);
+                con.pstmt.setString(1, "Negado");
+                con.pstmt.setInt(2, responsavel);
+                con.pstmt.setInt(3, userid);
 
-            pstmt.executeUpdate();
+                con.executeUpdate();
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
     }
 
-    public boolean abonarDiaEmAberto(Integer userid, java.util.Date registro,
-            Integer dateid, String justificativa,
+    public boolean abonarDiaEmAberto(Integer userid, java.util.Date registro, Integer dateid, String justificativa,
             Integer responsavel_id) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
         try {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -683,27 +564,26 @@ public class Banco implements Serializable {
 
             String query = "INSERT INTO REGISTRO_ABONO (userid, checktime,dateid, yuanying,date,responsavel) values(?,?,?,?,?,?)";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-            pstmt.setString(2, registroString);
-            pstmt.setInt(3, dateid);
-            pstmt.setString(4, justificativa);
-            pstmt.setString(5, dataAtual);
-            pstmt.setInt(6, responsavel_id);
+            if (con.prepareStatement(query)) {
+                con.pstmt.setInt(1, userid);
+                con.pstmt.setString(2, registroString);
+                con.pstmt.setInt(3, dateid);
+                con.pstmt.setString(4, justificativa);
+                con.pstmt.setString(5, dataAtual);
+                con.pstmt.setInt(6, responsavel_id);
 
-            pstmt.executeUpdate();
-
+                con.executeUpdate();
+            }
         } catch (Exception e) {
             ok = false;
+        } finally {
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean abonarDiaEmAbertoEmMassa(List<DiaEmAberto> diasEmAbertoList, Integer responsavel_id) {
         boolean ok = true;
-
-        PreparedStatement pstmt = null;
-        PreparedStatement pstmtUpd = null;
         try {
             for (Iterator<DiaEmAberto> it = diasEmAbertoList.iterator(); it.hasNext();) {
                 DiaEmAberto diaEmAberto = it.next();
@@ -713,41 +593,30 @@ public class Banco implements Serializable {
                 String dataAtual = sdf.format(new java.util.Date());
                 String query = "INSERT INTO REGISTRO_ABONO (userid, checktime,dateid, yuanying,date,responsavel) values(?,?,?,?,?,?)";
 
-                String aux = "Abonar: ";
-                pstmt = c.prepareStatement(query);
-                pstmt.setInt(1, diaEmAberto.getCod_funcionario());
-                aux = aux + diaEmAberto.getCod_funcionario();
-                pstmt.setString(2, registroString);
-                aux = aux + " " + registroString;
-                pstmt.setString(3, diaEmAberto.getJustificativa());
-                aux = aux + " " + diaEmAberto.getJustificativa();
-                pstmt.setString(4, null);
-                aux = aux + " null";
-                pstmt.setString(5, dataAtual);
-                aux = aux + " " + dataAtual;
-                pstmt.setInt(6, responsavel_id);
-                aux = aux + " " + responsavel_id;
+                //String aux = "Abonar: ";
+                if (con.prepareStatement(query)) {
+                    con.pstmt.setInt(1, diaEmAberto.getCod_funcionario());
+                    //aux = aux + diaEmAberto.getCod_funcionario();
+                    con.pstmt.setString(2, registroString);
+                    // aux = aux + " " + registroString;
+                    con.pstmt.setString(3, diaEmAberto.getJustificativa());
+                    //aux = aux + " " + diaEmAberto.getJustificativa();
+                    con.pstmt.setString(4, null);
+                    // aux = aux + " null";
+                    con.pstmt.setString(5, dataAtual);
+                    //aux = aux + " " + dataAtual;
+                    con.pstmt.setInt(6, responsavel_id);
+                    //  aux = aux + " " + responsavel_id;
+                    con.executeUpdate();
 
-                System.out.println();
-                System.out.println(aux);
-                pstmt.executeUpdate();
-
-                String queryUpd = "UPDATE SOLICITACAOABONO SET status='Aceito' where userid = " + diaEmAberto.getCod_funcionario() + " and convert(char(10),data,103) = convert(char(10),'" + registroString + "',103)";
-                pstmtUpd = c.prepareStatement(queryUpd);
-                pstmtUpd.executeUpdate();
+                    String queryUpd = "UPDATE SOLICITACAOABONO SET status='Aceito' where userid = " + diaEmAberto.getCod_funcionario() + " and convert(char(10),data,103) = convert(char(10),'" + registroString + "',103)";
+                    con.executeUpdate(queryUpd);
+                }
             }
         } catch (Exception e) {
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    pstmtUpd.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                ok = false;
-            }
+            con.Desconectar();
         }
         return ok;
     }
@@ -757,8 +626,7 @@ public class Banco implements Serializable {
         List<Jornada> jornadaList = new ArrayList<Jornada>();
         try {
             // connection to an ACCESS MDB
-            ResultSet rs = null;
-            Statement stmt = null;
+
             String sql = null;
 
             sql = "select s.*,nrd.sdays,nrd.edays,nr.startdate, nr.cyle,nr.units" + " from "
@@ -767,8 +635,7 @@ public class Banco implements Serializable {
                     + " nrd.schclassid = s.schclassid and "
                     + " nr.num_runid = " + num_jornada;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String schname = rs.getString("SCHNAME");
@@ -792,27 +659,27 @@ public class Banco implements Serializable {
                 Date startdate = rs.getDate("startdate");
                 float tipoJornada = rs.getFloat("WorkDay");
                 Timestamp inicioDescanso1 = null;
-                if(rs.getTimestamp("RESTINTIME1") != null){
+                if (rs.getTimestamp("RESTINTIME1") != null) {
                     inicioDescanso1 = rs.getTimestamp("RESTINTIME1");
                 }
                 Timestamp fimDescanso1 = null;
-                if(rs.getTimestamp("RESTOUTTIME1") != null){
+                if (rs.getTimestamp("RESTOUTTIME1") != null) {
                     fimDescanso1 = rs.getTimestamp("RESTOUTTIME1");
                 }
                 Timestamp inicioIntrajornada = null;
-                if(rs.getTimestamp("InterRestIn") != null){
+                if (rs.getTimestamp("InterRestIn") != null) {
                     inicioIntrajornada = rs.getTimestamp("InterRestIn");
                 }
                 Timestamp fimIntrajornada = null;
-                if(rs.getTimestamp("InterRestOut") != null){
+                if (rs.getTimestamp("InterRestOut") != null) {
                     fimIntrajornada = rs.getTimestamp("InterRestOut");
                 }
                 Timestamp inicioDescanso2 = null;
-                if(rs.getTimestamp("RESTINTIME2") != null){
+                if (rs.getTimestamp("RESTINTIME2") != null) {
                     inicioDescanso2 = rs.getTimestamp("RESTINTIME2");
                 }
                 Timestamp fimDescanso2 = null;
-                if(rs.getTimestamp("RESTOUTTIME2") != null){
+                if (rs.getTimestamp("RESTOUTTIME2") != null) {
                     fimDescanso2 = rs.getTimestamp("RESTOUTTIME2");
                 }
                 Integer tolerancia = rs.getInt("RestTolerance");
@@ -821,26 +688,21 @@ public class Banco implements Serializable {
                 Boolean deduzirIntrajornada = rs.getBoolean("ReduceInterRest");
                 Boolean combinarEntrada = rs.getBoolean("CombineIn");
                 Boolean combinarSaida = rs.getBoolean("CombineOut");
-                
+
                 Jornada jornada = new Jornada(schname, schClassID, inicioJornada, terminioJornada, prazoMinutosAtraso, prazoMinutosAdiantado,
                         checkIn, checkOut, trabalhoMinutos, checkInLimiteAntecipada, checkInLimiteAtrasada, checkOutLimiteAntecipada,
                         checkOutLimiteAtrasada, tipoJornada, sdays, edays, cyle, units, startdate, inicioJornada, terminioJornada, legend,
-                        inicioDescanso1, fimDescanso1, inicioDescanso2, fimDescanso2, tolerancia, deduzirDescanco1, deduzirDescanco2, 
+                        inicioDescanso1, fimDescanso1, inicioDescanso2, fimDescanso2, tolerancia, deduzirDescanco1, deduzirDescanco2,
                         inicioIntrajornada, fimIntrajornada, deduzirIntrajornada, combinarEntrada, combinarSaida, false);
                 jornadaList.add(jornada);
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return jornadaList;
     }
@@ -851,7 +713,7 @@ public class Banco implements Serializable {
         try {
             // connection to an ACCESS MDB
             ResultSet rs;
-            Statement stmt;
+
             String sql;
 
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -864,8 +726,7 @@ public class Banco implements Serializable {
 
             sql = "select num_of_run_id,startdate,enddate" + " from user_of_run ur" + " where ur.userid = " + userid;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer num_jornada = rs.getInt("num_of_run_id");
@@ -878,16 +739,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return jornadaNumber;
     }
@@ -903,8 +759,6 @@ public class Banco implements Serializable {
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
 
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
 
             String sql;
 
@@ -913,8 +767,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                ResultSet rs = con.executeQuery(sql);
 
                 List<Integer> deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -925,7 +779,6 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -935,8 +788,7 @@ public class Banco implements Serializable {
                         + " where permissao != 0"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-2, "Selecione o responsável"));
                 userList.add(new SelectItem(-1, "TODOS OS RESPONSÁVEIS"));
                 while (rs.next()) {
@@ -947,6 +799,7 @@ public class Banco implements Serializable {
                         userList.add(new SelectItem(userid, name));
                     }
                 }
+                rs.close();
             } else {
                 sql = "select distinct userid,name from"
                         + " USERINFO u"
@@ -954,8 +807,7 @@ public class Banco implements Serializable {
                         + " permissao != 0"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                ResultSet rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-2, "Selecione o responsável"));
                 userList.add(new SelectItem(-1, "TODOS OS RESPONSÁVEIS"));
                 while (rs.next()) {
@@ -963,20 +815,12 @@ public class Banco implements Serializable {
                     String name = rs.getString("name");
                     userList.add(new SelectItem(userid, name));
                 }
+                rs.close();
             }
-
-            rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -985,23 +829,17 @@ public class Banco implements Serializable {
 
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
         List<HistoricoAbono> historicoAbonoList = new ArrayList<HistoricoAbono>();
-        PreparedStatement pstmt = null;
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         List<Integer> deptIDList = new ArrayList<Integer>();
+        ResultSet rs;
+        String sql;
+
         try {
             //Buscar abonos no intervalo de tempo determinado de todos os administradores
             if (cod_funcionario.equals(-1)) {
-
-                ResultSet rs = null;
-                Statement stmt = null;
-
-                String sql;
-
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-
+                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+                rs = con.executeQuery(sql);
                 deptIDList.add(permissao);
 
                 while (rs.next()) {
@@ -1010,60 +848,45 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
 
-               String query = "select t.*, ur.name as responsavel from ( "
-                       + "select u.name, u.defaultdeptid, re.* "
-                       + "from userinfo u, "
-                       + "(select s.userid, s.data as checktime, NULL as leavename, s.resposta as yuanying, s.inclusao as date, s.id_responsavel as id_responsavel, s.codigo, s.descricao, NULL as cod_registro_abono, s.status "
-                       + " from solicitacaoabono s where s.status<>'Aceito' "
-                       + "union "
-                       + "select r.userid, r.checktime, l.leavename, r.yuanying, r.date, r.responsavel as id_responsavel, r.cod_solicitacao as codigo, NULL as descricao, r.cod_registro_abono, 'Aceito' as status "
-                       + "from registro_abono r left join leaveclass l on l.leaveid = r.dateid) re "
-                       + "where u.userid = re.userid  and re.date between ? and ? "
-                       + ") t left join USERINFO ur on ur.USERID = t.id_responsavel order by t.date";               
-                       
-                pstmt = c.prepareStatement(query);
+                String query = "select t.*, ur.name as responsavel from ( "
+                        + "select u.name, u.defaultdeptid, re.* "
+                        + "from userinfo u, "
+                        + "(select s.userid, s.data as checktime, NULL as leavename, s.resposta as yuanying, s.inclusao as date, s.id_responsavel as id_responsavel, s.codigo, s.descricao, NULL as cod_registro_abono, s.status "
+                        + " from solicitacaoabono s where s.status<>'Aceito' "
+                        + "union "
+                        + "select r.userid, r.checktime, l.leavename, r.yuanying, r.date, r.responsavel as id_responsavel, r.cod_solicitacao as codigo, NULL as descricao, r.cod_registro_abono, 'Aceito' as status "
+                        + "from registro_abono r left join leaveclass l on l.leaveid = r.dateid) re "
+                        + "where u.userid = re.userid  and re.date between ? and ? "
+                        + ") t left join USERINFO ur on ur.USERID = t.id_responsavel order by t.date";
+
+                con.prepareStatement(query);
                 String dataInicioSrt = sdf.format(dataInicio);
                 String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
-                pstmt.setString(1, dataInicioSrt);
-                pstmt.setString(2, dataFimSrt);
+                con.pstmt.setString(1, dataInicioSrt);
+                con.pstmt.setString(2, dataFimSrt);
 
             } else {
-                
+
                 //consulta o departamento do usuario
-                ResultSet rs = null;
-                Statement stmt = null;
-
-                String sql;
-
-                sql = "select defaultdeptid from userinfo where userid="+cod_funcionario;
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                sql = "select defaultdeptid from userinfo where userid=" + cod_funcionario;
+                rs = con.executeQuery(sql);
                 int cod_deptid = -1;
-                
+
                 if (rs.next()) {
                     cod_deptid = rs.getInt("DEFAULTDEPTID");
                 }
-
                 rs.close();
-                stmt.close();
-
 
                 //consulta os departamentos permitidos ao usuario
-                rs = null;
-                stmt = null;
-                sql = "";
-
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        +" where (deptid="+cod_deptid+" or supdeptid="+cod_deptid+")"
+                        + " where (deptid=" + cod_deptid + " or supdeptid=" + cod_deptid + ")"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
 
+                rs = con.executeQuery(sql);
                 deptIDList.add(permissao);
 
                 while (rs.next()) {
@@ -1072,104 +895,85 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
-                
+
                 //Buscar abonos no intervalo de tempo determinado de um administrador específico
-               String query = "select t.*, ur.name as responsavel from ( "
-                       + "select u.name, u.defaultdeptid, re.* "
-                       + "from userinfo u, "
-                       + "(select s.userid, s.data as checktime, NULL as leavename, s.resposta as yuanying, s.inclusao as date, s.id_responsavel as id_responsavel, s.codigo, s.descricao, NULL as cod_registro_abono, s.status "
-                       + " from solicitacaoabono s where s.status<>'Aceito' "
-                       + "union "
-                       + "select r.userid, r.checktime, l.leavename, r.yuanying, r.date, r.responsavel as id_responsavel, r.cod_solicitacao as codigo, NULL as descricao, r.cod_registro_abono, 'Aceito' as status "
-                       + "from registro_abono r left join leaveclass l on l.leaveid = r.dateid) re "
-                       + "where u.userid = re.userid and (re.id_responsavel is null or re.id_responsavel = ?) and re.date between ? and ? "
-                       + ") t left join USERINFO ur on ur.USERID = t.id_responsavel order by t.date";
-               
-                pstmt = c.prepareStatement(query);
-                String dataInicioSrt = sdf.format(dataInicio);
-                String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
-                pstmt.setInt(1, cod_funcionario);
-                pstmt.setString(2, dataInicioSrt);
-                pstmt.setString(3, dataFimSrt);
-            }
+                String query = "select t.*, ur.name as responsavel from ( "
+                        + "select u.name, u.defaultdeptid, re.* "
+                        + "from userinfo u, "
+                        + "(select s.userid, s.data as checktime, NULL as leavename, s.resposta as yuanying, s.inclusao as date, s.id_responsavel as id_responsavel, s.codigo, s.descricao, NULL as cod_registro_abono, s.status "
+                        + " from solicitacaoabono s where s.status<>'Aceito' "
+                        + "union "
+                        + "select r.userid, r.checktime, l.leavename, r.yuanying, r.date, r.responsavel as id_responsavel, r.cod_solicitacao as codigo, NULL as descricao, r.cod_registro_abono, 'Aceito' as status "
+                        + "from registro_abono r left join leaveclass l on l.leaveid = r.dateid) re "
+                        + "where u.userid = re.userid and (re.id_responsavel is null or re.id_responsavel = ?) and re.date between ? and ? "
+                        + ") t left join USERINFO ur on ur.USERID = t.id_responsavel order by t.date";
 
-            ResultSet rs = pstmt.executeQuery();
+                if (con.prepareStatement(query)) {
+                    String dataInicioSrt = sdf.format(dataInicio);
+                    String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
+                    con.pstmt.setInt(1, cod_funcionario);
+                    con.pstmt.setString(2, dataInicioSrt);
+                    con.pstmt.setString(3, dataFimSrt);
 
-            while (rs.next()) {
-                String funcionario = rs.getString("name");
-                Integer departamento = rs.getInt("defaultdeptid");
-                Timestamp checktime = rs.getTimestamp("checktime");
-                String categoriaJustificativa = rs.getString("leavename");
-                String justificativa = rs.getString("yuanying");
-                Timestamp diaAbono = rs.getTimestamp("date");
-                String responsavel = rs.getString("responsavel");
-                String solicitacao = rs.getString("descricao");
-                Integer cod_registro_abono = rs.getInt("cod_registro_abono");
-                Integer cod_solicitacao = rs.getInt("codigo");
-                String status = rs.getString("status");
+                    rs = con.executeQuery();
 
-                HistoricoAbono historicoAbono = new HistoricoAbono();
-                historicoAbono.setCod_registro_abono(cod_registro_abono);
-                historicoAbono.setCod_solicitacao(cod_solicitacao);
-                historicoAbono.setFuncionario(funcionario);
-                historicoAbono.setAbono(sdf.format(checktime));
-                historicoAbono.setCategoriaJustificativa(categoriaJustificativa);
-                historicoAbono.setJustificativa(justificativa);
-                historicoAbono.setDiaAbono(diaAbono);
-                historicoAbono.setResponsavel(responsavel);
-                historicoAbono.setSolicitacao(solicitacao);
-                historicoAbono.setStatus(status);
-               // if (cod_funcionario.equals(-1)) {
-                    if (deptIDList.contains(departamento)) {
-                        historicoAbonoList.add(historicoAbono);
+                    while (rs.next()) {
+                        String funcionario = rs.getString("name");
+                        Integer departamento = rs.getInt("defaultdeptid");
+                        Timestamp checktime = rs.getTimestamp("checktime");
+                        String categoriaJustificativa = rs.getString("leavename");
+                        String justificativa = rs.getString("yuanying");
+                        Timestamp diaAbono = rs.getTimestamp("date");
+                        String responsavel = rs.getString("responsavel");
+                        String solicitacao = rs.getString("descricao");
+                        Integer cod_registro_abono = rs.getInt("cod_registro_abono");
+                        Integer cod_solicitacao = rs.getInt("codigo");
+                        String status = rs.getString("status");
+
+                        HistoricoAbono historicoAbono = new HistoricoAbono();
+                        historicoAbono.setCod_registro_abono(cod_registro_abono);
+                        historicoAbono.setCod_solicitacao(cod_solicitacao);
+                        historicoAbono.setFuncionario(funcionario);
+                        historicoAbono.setAbono(sdf.format(checktime));
+                        historicoAbono.setCategoriaJustificativa(categoriaJustificativa);
+                        historicoAbono.setJustificativa(justificativa);
+                        historicoAbono.setDiaAbono(diaAbono);
+                        historicoAbono.setResponsavel(responsavel);
+                        historicoAbono.setSolicitacao(solicitacao);
+                        historicoAbono.setStatus(status);
+                        // if (cod_funcionario.equals(-1)) {
+                        if (deptIDList.contains(departamento)) {
+                            historicoAbonoList.add(historicoAbono);
+                        }
                     }
-               // } else {
-               //     historicoAbonoList.add(historicoAbono);
-               // }
+                    rs.close();
+                }
             }
-            rs.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return historicoAbonoList;
     }
-    
-    
 
     public List<HistoricoAbono> consultaHistoricoDetalhado(Integer cod_funcionario, Boolean incluirSubSetores, Integer dept, Date dataInicio, Date dataFim) {
 
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
         List<HistoricoAbono> historicoAbonoList = new ArrayList<HistoricoAbono>();
-        PreparedStatement pstmt = null;
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         List<Integer> deptIDList = new ArrayList<Integer>();
+        ResultSet rs;
         try {
             //Buscar abonos no intervalo de tempo determinado de todos os administradores
 
-
-
-            ResultSet rs = null;
-            Statement stmt = null;
             if (incluirSubSetores) {
-                String sql;
-
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-
+                String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+                rs = con.executeQuery(sql);
                 deptIDList.add(dept);
 
                 while (rs.next()) {
@@ -1178,7 +982,6 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dept, deptPermitidos, idToSuperHash);
@@ -1191,15 +994,14 @@ public class Banco implements Serializable {
                     + " FROM SolicitacaoAbono AS sa RIGHT OUTER JOIN REGISTRO_ABONO AS r ON r.COD_SOLICITACAO = sa.codigo INNER JOIN "
                     + " USERINFO AS u ON r.USERID = u.USERID INNER JOIN LeaveClass AS l ON r.DATEID = l.LeaveId AND r.DATE BETWEEN ? and ?";
 
-            pstmt = c.prepareStatement(query);
-            String dataInicioSrt = sdf.format(dataInicio);
-            String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
-            pstmt.setString(1, dataInicioSrt);
-            pstmt.setString(2, dataFimSrt);
+            if (con.prepareStatement(query)) {
+                String dataInicioSrt = sdf.format(dataInicio);
+                String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
+                con.pstmt.setString(1, dataInicioSrt);
+                con.pstmt.setString(2, dataFimSrt);
+            }
 
-
-
-            rs = pstmt.executeQuery();
+            rs = con.executeQuery();
 
             while (rs.next()) {
                 Integer codigo_funcionario = rs.getInt("userid");
@@ -1230,19 +1032,12 @@ public class Banco implements Serializable {
                 if (deptIDList.contains(departamento)) {
                     historicoAbonoList.add(historicoAbono);
                 }
-
             }
             rs.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return historicoAbonoList;
     }
@@ -1250,8 +1045,8 @@ public class Banco implements Serializable {
     public List<HistoricoAbono> consultaHistoricoPorPeriodo(Integer cod_funcionario, Date dataInicio, Date dataFim) {
 
         List<HistoricoAbono> historicoAbonoList = new ArrayList<HistoricoAbono>();
-        PreparedStatement pstmt = null;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        ResultSet rs;
         try {
             //Buscar abonos no intervalo de tempo determinado de todos os administradores
             if (cod_funcionario == -1) {
@@ -1265,11 +1060,11 @@ public class Banco implements Serializable {
                         + " date between ? and ? "
                         + " order by date";
 
-                pstmt = c.prepareStatement(query);
+                con.prepareStatement(query);
                 String dataInicioSrt = sdf.format(dataInicio);
                 String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
-                pstmt.setString(1, dataInicioSrt);
-                pstmt.setString(2, dataFimSrt);
+                con.pstmt.setString(1, dataInicioSrt);
+                con.pstmt.setString(2, dataFimSrt);
 
             } else {
                 //Buscar abonos no intervalo de tempo determinado de um administradores específico
@@ -1282,14 +1077,14 @@ public class Banco implements Serializable {
                         + " date between ? and ? "
                         + " order by date";
 
-                pstmt = c.prepareStatement(query);
+                con.prepareStatement(query);
                 String dataInicioSrt = sdf.format(dataInicio);
                 String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
-                pstmt.setInt(1, cod_funcionario);
-                pstmt.setString(2, dataInicioSrt);
-                pstmt.setString(3, dataFimSrt);
+                con.pstmt.setInt(1, cod_funcionario);
+                con.pstmt.setString(2, dataInicioSrt);
+                con.pstmt.setString(3, dataFimSrt);
             }
-            ResultSet rs = pstmt.executeQuery();
+            rs = con.executeQuery();
 
             while (rs.next()) {
                 String funcionario = rs.getString("name");
@@ -1317,38 +1112,32 @@ public class Banco implements Serializable {
                 historicoAbonoList.add(historicoAbono);
             }
             rs.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return historicoAbonoList;
     }
 
     public Boolean excluirAbono(List<HistoricoAbono> historicoAbonoList) {
         Boolean flag = true;
-        PreparedStatement pstmt = null;
         try {
             for (Iterator<HistoricoAbono> it = historicoAbonoList.iterator(); it.hasNext();) {
                 HistoricoAbono historicoAbono = it.next();
                 String queryDelete = "delete from Registro_Abono "
                         + " where cod_registro_abono = " + historicoAbono.getCod_registro_abono();
-                pstmt = c.prepareStatement(queryDelete);
-                pstmt.executeUpdate();
-                
-                String query = "delete from solicitacaoAbono where codigo="+historicoAbono.getCod_solicitacao();
-                pstmt = c.prepareStatement(query);
-                pstmt.executeUpdate();
+                con.executeUpdate(queryDelete);
+
+                String query = "delete from solicitacaoAbono where codigo=" + historicoAbono.getCod_solicitacao();
+                con.executeUpdate(query);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             flag = false;
-            System.out.println("Abono: excluirAbono: "+ex);
+            System.out.println("Abono: excluirAbono: " + ex);
+        } finally {
+            con.Desconectar();
         }
         return flag;
     }
@@ -1365,15 +1154,11 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                    + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -1384,7 +1169,6 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -1392,8 +1176,7 @@ public class Banco implements Serializable {
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -1407,7 +1190,6 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
 
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
@@ -1418,16 +1200,10 @@ public class Banco implements Serializable {
                 saida.add(new SelectItem(id_dept, espaces(espaces) + idToNomeHash.get(id_dept), "", false, false));
             }
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println(ex);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return saida;
     }
@@ -1444,15 +1220,14 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
 
             String sql;
 
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -1463,7 +1238,6 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -1474,8 +1248,8 @@ public class Banco implements Serializable {
             sql = "select u.DEFAULTDEPTID,d.deptname from USERINFO u, DEPARTMENTS d"
                     + " where u.userid = " + codigo_funcionario + " and "
                     + " u.DEFAULTDEPTID = d.deptid ";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
             String nome_dept = "";
@@ -1485,13 +1259,11 @@ public class Banco implements Serializable {
                 nome_dept = rs.getString("DEPTNAME");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -1509,7 +1281,6 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptSrtList = ordenarDepts(permissao, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -1527,6 +1298,8 @@ public class Banco implements Serializable {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return saida;
     }
@@ -1536,20 +1309,14 @@ public class Banco implements Serializable {
         List<SelectItem> userList = new ArrayList<SelectItem>();
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
         List<Integer> deptIDList;
-
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
             String sql;
-
+            ResultSet rs;
             if (incluirSubSetores) {
 
                 //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
-                        + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS ORDER BY SUPDEPTID asc";
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1560,7 +1327,6 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1569,8 +1335,7 @@ public class Banco implements Serializable {
                         + " from USERINFO u"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1588,8 +1353,7 @@ public class Banco implements Serializable {
                         + " where u.defaultdeptid = " + dep
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1600,18 +1364,11 @@ public class Banco implements Serializable {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println("Erro consulta funcionário" + e);
-            System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1624,7 +1381,7 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
+
             String sql;
 
             if (incluirSubsetores) {
@@ -1632,8 +1389,8 @@ public class Banco implements Serializable {
                 //Selecionando os departamentos com permissão de visibilidade.
                 sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dept);
@@ -1644,7 +1401,6 @@ public class Banco implements Serializable {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dept, deptPermitidos, idToSuperHash);
@@ -1656,8 +1412,7 @@ public class Banco implements Serializable {
                         + " u.USERID != " + responsavel_ID
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -1672,12 +1427,11 @@ public class Banco implements Serializable {
                         + " from userinfo u"
                         + " where defaultdeptid = (" + dept + ")" + " and"
                         + " name like '" + filtro + "%' and "
-                        + " u.USERID != "+responsavel_ID+" and "
+                        + " u.USERID != " + responsavel_ID + " and "
                         + " u.ativo = 'true' "
                         + " order by name";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     String userid = rs.getString("userid");
@@ -1685,29 +1439,20 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return matriculasList;
     }
 
     public List<SelectItem> consultaFuncionarioProprioAdministrador(Integer codigo_usuario) {
-
         List<SelectItem> userList = new ArrayList<SelectItem>();
-
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
-            sql = "select name from USERINFO "
-                    + " where userid = " + codigo_usuario;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            String sql = "select name from USERINFO where userid = " + codigo_usuario;
+            ResultSet rs = con.executeQuery(sql);
             userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
             while (rs.next()) {
@@ -1715,17 +1460,11 @@ public class Banco implements Serializable {
                 userList.add(new SelectItem(codigo_usuario, name));
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1741,15 +1480,12 @@ public class Banco implements Serializable {
 
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
             sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -1760,7 +1496,6 @@ public class Banco implements Serializable {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -1768,8 +1503,8 @@ public class Banco implements Serializable {
             //Selecionando o departamento do administrador
             sql = "select DEFAULTDEPTID from USERINFO"
                     + " where userid = " + codigo_funcionario;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
 
@@ -1777,13 +1512,11 @@ public class Banco implements Serializable {
                 dept = rs.getInt("DEFAULTDEPTID");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -1800,53 +1533,35 @@ public class Banco implements Serializable {
                 }
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return isAdministradorVisivel;
     }
 
     public String consultaDepartamentoNome(Integer deptID) {
-
         String nomeDept = "";
-
         try {
             ResultSet rs;
-            Statement stmt;
-
             String sql;
-
             sql = " select DEPTNAME"
                     + " from  DEPARTMENTS d"
                     + " where d.deptid = " + deptID;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 nomeDept = rs.getString("DEPTNAME");
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-            }
+            con.Desconectar();
         }
         return nomeDept;
     }
@@ -1891,7 +1606,7 @@ public class Banco implements Serializable {
             if (depFilho != null) {
                 List<SelectItem> filhosList = getTodosFilhosList(depFilho, list);
                 if (filhosList.isEmpty()) {
-                    if (!deptList.contains(depFilho) ) {
+                    if (!deptList.contains(depFilho)) {
                         deptList.add(depFilho);
                     }
                 } else {
@@ -1971,14 +1686,6 @@ public class Banco implements Serializable {
         return nbsp;
     }
 
-    public static void main(String[] args) throws ParseException {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String g = "08:00 - 12:00 - 13:00";
-        String[] horasAbonoArray = g.split(" - ");
-        System.out.print(g);
-    }
-
     private static Long horaToLong(String hora) {
         Long saida = null;
         try {
@@ -1988,16 +1695,5 @@ public class Banco implements Serializable {
         } catch (Exception e) {
         }
         return saida;
-    }
-
-    public void fecharConexao() {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (SQLException ex) {
-                System.out.println("Abono: fecharConexao: "+ex);
-                //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 }

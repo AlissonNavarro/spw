@@ -1,0 +1,31 @@
+package entidades;
+
+import java.io.Serializable;
+
+public class Cargo implements Serializable{
+
+    private String nome;
+    private int id;
+    
+    public Cargo() {
+        id = 0;
+        nome = "";
+    }
+   
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+}

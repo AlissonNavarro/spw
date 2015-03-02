@@ -67,7 +67,6 @@ public class DiaEmAberto {
         Metodos.setLogInfo("Aceitar Abono - Funcionário: \"" + nomeFuncionario + "\" Data: " + dataStr);
         UsuarioBean usuarioBean = ((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean"));
         b.abonarDiaEmAbertoEmMassa(diasemAbertoSelecionadosList, usuarioBean.getUsuario().getLogin());
-        b.fecharConexao();
     }
 
     public void negar() {
@@ -76,8 +75,6 @@ public class DiaEmAberto {
         Metodos.setLogInfo("Negar Abono - Funcionário: \"" + nomeFuncionario + "\" Data: " + dataStr);
         UsuarioBean usuarioBean = ((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean"));
         b.updateNegarAbono(cod_funcionario, usuarioBean.getUsuario().getLogin(), data);
-        b.fecharConexao();
-
     }
 
     public DiaEmAberto copy() {

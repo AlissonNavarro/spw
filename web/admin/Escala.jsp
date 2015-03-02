@@ -986,8 +986,7 @@
                                     </rich:tabPanel>
                                 </rich:tab>
 
-                                <rich:tab id="sub71" label="Afastamento" style="text-align:center;float:center"
-                                          rendered="#{usuarioBean.perfil.afastamento == true}">
+                                <rich:tab id="sub71" label="Afastamento" style="text-align:center;float:center" rendered="#{usuarioBean.perfil.afastamento == true}">
                                     <a4j:support event="ontabenter" action="#{jornadaCadastroBean.setAba}" reRender="f_messagens">
                                         <a4j:actionparam name="tab" value="sub71"/>
                                     </a4j:support>
@@ -1091,7 +1090,7 @@
                                                 <h:panelGroup id="afastamentoGroup" style="text-align:center;float:center">
                                                     <h:form id="formAfastamentogrupo">
                                                         <center>
-                                                            <rich:dataTable id="afastamentoList"
+                                                            <rich:dataTable id="listaDeAfastamento"
                                                                             value="#{afastamentoBean.afastamentoList}" var="afastamento"
                                                                             rowClasses="zebra1,zebra2"
                                                                             rows="25"
@@ -1121,11 +1120,11 @@
                                                                         <f:convertDateTime pattern="dd/MM/yyyy"/>
                                                                     </h:outputText>
                                                                 </rich:column>
-                                                                <rich:column sortBy="#{afastamento.categoriaAfastamento.descCategoriaAfastamento}" style="text-align:center">
+                                                                <rich:column sortBy="#{afastamento.categoriaAfastamento.descricao}" style="text-align:center">
                                                                     <f:facet name="header">
                                                                         <h:outputText value="CATEGORIA"/>
                                                                     </f:facet>
-                                                                    <h:outputText value="#{afastamento.categoriaAfastamento.descCategoriaAfastamento}"/>
+                                                                    <h:outputText value="#{afastamento.categoriaAfastamento.descricao}"/>
                                                                 </rich:column>
                                                                 <rich:column style="text-align:center">
                                                                     <f:facet name="header">
@@ -1139,7 +1138,7 @@
                                                                             <a4j:support action="#{afastamentoBean.showAlterarAfastamento}"
                                                                                          event="onclick"
                                                                                          reRender="gridAlterarAfastamentoModalPanel">
-                                                                                <f:param name="posAfastamento" value="#{afastamento.index}"/>
+                                                                                <f:param name="posAfastamento" value="#{afastamento.id}"/>
                                                                             </a4j:support>
 
                                                                         </h:outputLink>
@@ -1156,13 +1155,13 @@
                                                                                        ajaxSingle="true"
                                                                                        action="#{afastamentoBean.excluirAfastamento}"
                                                                                        onclick="javascript:if (!confirm('Deseja excluir esse afastamento?')) return false;">
-                                                                        <f:param name="posAfastamento" value="#{afastamento.index}"/>
+                                                                        <f:param name="posAfastamento" value="#{afastamento.id}"/>
                                                                     </a4j:commandButton>
                                                                 </rich:column>
                                                             </rich:dataTable>
                                                         </center>
                                                         <rich:datascroller  id="datascrollerAfastamento"
-                                                                            for="afastamentoList"
+                                                                            for="listaDeAfastamento"
                                                                             renderIfSinglePage="false">
                                                         </rich:datascroller>
 
@@ -1199,7 +1198,7 @@
                                                                         <br>
                                                                         <h:panelGrid style="text-align:center;float:center">
                                                                             <h:outputText value="Categoria do Afastamento" styleClass="label"/>
-                                                                            <h:selectOneMenu  value="#{afastamentoBean.novoAfastamento.categoriaAfastamento.categoriaAfastamentoID}">
+                                                                            <h:selectOneMenu  value="#{afastamentoBean.novoAfastamento.codCategoriaAfastamento}">
                                                                                 <f:selectItems value="#{afastamentoBean.categoriaAfastamentoList}"/>
                                                                             </h:selectOneMenu>
                                                                         </h:panelGrid>
@@ -1250,7 +1249,7 @@
                                                                         <br>
                                                                         <h:panelGrid style="text-align:center;float:center">
                                                                             <h:outputText value="Categoria do Afastamento" styleClass="label"/>
-                                                                            <h:selectOneMenu  value="#{afastamentoBean.alterarAFastamento.categoriaAfastamento.categoriaAfastamentoID}">
+                                                                            <h:selectOneMenu  value="#{afastamentoBean.alterarAFastamento.codCategoriaAfastamento}">
                                                                                 <f:selectItems value="#{afastamentoBean.categoriaAfastamentoList}"/>
                                                                             </h:selectOneMenu>
                                                                         </h:panelGrid>

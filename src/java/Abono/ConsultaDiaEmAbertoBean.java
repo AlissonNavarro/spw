@@ -143,7 +143,6 @@ public class ConsultaDiaEmAbertoBean {
                 FacesMessage msgErro = new FacesMessage("Nenhum ponto em aberto foi encontrado!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco.fecharConexao();
         } else {
             if (departamento == -1) {
                 FacesMessage msgErro = new FacesMessage("Selecione um departamento!");
@@ -206,7 +205,6 @@ public class ConsultaDiaEmAbertoBean {
                     }
                 }
             }
-            banco.fecharConexao();
         }
     }
     

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Administracao;
 
 import Metodos.Metodos;
@@ -20,18 +16,6 @@ public class Permissao implements Serializable {
     private Integer dept_permissao;
     private Integer cod_regime;
     private Integer perfil;
-    /*
-    public Permissao(Integer userid, String badgerNumber, String cpf, String nome, String departamento, String dept_permissao, Integer cod_regime) {
-    this.userid = userid;
-    this.badgerNumber = badgerNumber;
-    this.cpf = cpf;
-    this.nome = nome;
-    this.departamento = departamento;
-    this.dept_permissao = dept_permissao;
-    this.cod_regime = cod_regime;
-    }
-     *
-     */
 
     public Permissao(Integer userid, String badgerNumber, String cpf, String nome, String departamento, Integer dept_permissao, Integer cod_regime, Integer perfil, String nomeRegime) {
         this.userid = userid;

@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Usuario;
 
 import Metodos.Metodos;
-import perfil2.Perfil;
+import entidades.Perfil;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,10 +23,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author amsgama
- */
 public class UsuarioBean implements Serializable {
 
     private Usuario usuario;
@@ -381,7 +373,7 @@ public class UsuarioBean implements Serializable {
     private void checkIsAtivo() {
         if (Metodos.getServidorAtivo()) {
             Banco banco = new Banco();
-            isAtivo = banco.getIsAtivo();
+            isAtivo = true;
         } else {
             isAtivo = false;
         }

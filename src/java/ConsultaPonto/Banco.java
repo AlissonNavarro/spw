@@ -3,21 +3,16 @@ package ConsultaPonto;
 import Metodos.Metodos;
 import Abono.Abono;
 import Abono.SolicitacaoAbono;
-import Afastamento.Afastamento;
-import CadastroDeCategoriaAfastamento.CategoriaAfastamento;
+import entidades.Afastamento;
 import CadastroHoraExtra.DetalheGratificacao;
 import CadastroHoraExtra.DetalheHoraExtra;
 import CadastroHoraExtra.Gratificacao;
 import CadastroHoraExtra.RegimeHoraExtra;
 import CadastroHoraExtra.TipoHoraExtra;
 import Funcionario.Funcionario;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import comunicacao.AcessoBD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
@@ -35,53 +30,25 @@ import java.util.Map;
 import java.util.Set;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amsgama
- */
 public class Banco {
 
-    Driver d;
-    Connection c;
-
-    public void Conectar() throws SQLException {
-        String url = Metodos.getUrlConexao();
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            c = DriverManager.getConnection(url);
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println("ConsultaPonto: Conectar: " + cnfe);
-        }
-    }
+    AcessoBD con;
 
     public Banco() {
-        try {
-            Conectar();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: Banco: " + ex);
-        }
+        con = new AcessoBD();
     }
 
     public List<SolicitacaoAbono> consultaSolicitacaoAbonoFuncionario(Integer cod, String dat) {
-
         List<SolicitacaoAbono> solicitacaoAbonoList = new ArrayList<SolicitacaoAbono>();
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String query = "select * from "
-                    + " SolicitacaoAbono sa"
+            String query = "select * from SolicitacaoAbono sa"
                     + " where userid = " + cod + " and"
                     + " Data = '" + dat + "' "
                     + " order by inclusao";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(query);
+            ResultSet rs = con.executeQuery(query);
             SolicitacaoAbono solicitacaoAbono = new SolicitacaoAbono();
 
             while (rs.next()) {
-
                 solicitacaoAbono = new SolicitacaoAbono();
 
                 Integer codigo = rs.getInt("Codigo");
@@ -111,40 +78,16 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return solicitacaoAbonoList;
     }
 
-    public Boolean deleteSolicitacaoAbono(Integer cod_solicitacao) {
-        Boolean flag = true;
-        PreparedStatement pstmt = null;
-        String queryDelete = "delete from SolicitacaoAbono "
-                + " where codigo = " + cod_solicitacao;
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            flag = false;
-            System.out.println("ConsultaPonto: deleteSolicitacaoAbono: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println(e.getMessage());
-            }
-        }
+    public boolean deleteSolicitacaoAbono(Integer cod_solicitacao) {
+        boolean flag = false;
+        String queryDelete = "delete from SolicitacaoAbono where codigo = " + cod_solicitacao;
+        flag = con.executeUpdate(queryDelete) > 0;
+        con.Desconectar();
         return flag;
     }
 
@@ -152,17 +95,10 @@ public class Banco {
 
         List<String> diaPontoList = new ArrayList<String>();
         try {
-            // connection to an ACCESS MDB
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = "select c.checktime from" + " checkinout c,userinfo u" + " where " + " c.userid = u.userid and" + " " + "c.userid = " + userid.toString();
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            String sql = "select c.checktime from" + " checkinout c,userinfo u" + " where " + " c.userid = u.userid and" + " " + "c.userid = " + userid.toString();
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
-
                 Timestamp timestamp = rs.getTimestamp("checktime");
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -175,18 +111,10 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return diaPontoList;
     }
@@ -195,24 +123,15 @@ public class Banco {
 
         List<String> diaPontoList = new ArrayList<String>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select checktime "
-                    + "from checkinout "
+            String sql = "select checktime from checkinout "
                     + "where userid = " + userid + " and checktime between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
-
                 Timestamp timestamp = rs.getTimestamp("checktime");
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -223,32 +142,25 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diaPontoList;
     }
 
     public List<Integer> consultaDiasNaoFalta(Integer userid, Date inicio, Date fim) {
-
         List<Integer> diaPontoList = new ArrayList<Integer>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select checktime "
-                    + "from checkinout "
+            String sql = "select checktime from checkinout "
                     + "where userid = " + userid + " and checktime between '" + inicioStr + "' and '" + fimStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("checktime");
@@ -259,34 +171,26 @@ public class Banco {
                     diaPontoList.add(diaInt);
                 }
             }
-
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diaPontoList;
     }
 
     public List<Integer> consultaDiasAbono(Integer userid, Date inicio, Date fim) {
-
         List<Integer> diaPontoList = new ArrayList<Integer>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select checktime "
+            String sql = "select checktime "
                     + "from REGISTRO_ABONO "
                     + "where userid = " + userid + " and checktime between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("checktime");
@@ -297,11 +201,11 @@ public class Banco {
                     diaPontoList.add(diaInt);
                 }
             }
-
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diaPontoList;
     }
@@ -310,21 +214,13 @@ public class Banco {
 
         List<Integer> diaPontoList = new ArrayList<Integer>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select startspecday,endspecday "
-                    + "from USER_SPEDAY "
+            String sql = "select startspecday,endspecday from USER_SPEDAY "
                     + "where userid = " + userid + " and startspecday between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Timestamp startspecday = rs.getTimestamp("startspecday");
@@ -343,11 +239,11 @@ public class Banco {
                 }
 
             }
-
             rs.close();
-            stmt.close();
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return diaPontoList;
     }
@@ -356,17 +252,12 @@ public class Banco {
 
         List<PeriodoJornada> dataPeriodoJornadaList = new ArrayList<PeriodoJornada>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
             String sql = " select ur.num_of_run_id, ur.startdate, ur.enddate, nr.units, nr.cyle"
                     + " from user_of_run ur, num_run nr"
                     + " where ur.userid = " + userid + " and"
                     + "       ur.num_of_run_id = nr.num_runid"
                     + " ORDER BY ur.startdate ASC";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
 
@@ -374,13 +265,11 @@ public class Banco {
 
                 Date inicioTimes = rs.getDate("startdate");
                 Date fimTimes = rs.getDate("enddate");
-                
+
                 periodoJornada.setNum_jornada(rs.getInt("num_of_run_id"));
                 periodoJornada.setTipo(rs.getInt("units"));
-                periodoJornada.setCiclo(rs.getInt("cyle"));               
-                
+                periodoJornada.setCiclo(rs.getInt("cyle"));
                 periodoJornada.setInicioJornada(inicioTimes);
-
 
                 if (inicioTimes.getTime() > fimTimes.getTime()) {
                     periodoJornada.setInvalido(true);
@@ -405,10 +294,10 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return dataPeriodoJornadaList;
     }
@@ -417,21 +306,12 @@ public class Banco {
 
         List<Turnos> listaTurnos = new ArrayList<Turnos>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-            sql = "select h.schclassid, h.starttime, h.endtime, t.sdays, t.edays, t.overtime "
+            String sql = "select h.schclassid, h.starttime, h.endtime, t.sdays, t.edays, t.overtime "
                     + "from num_run_deil t, schclass h "
                     + "where t.schclassid = h.schclassid and t.num_runid = " + num_runid;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
-
                 Turnos t = new Turnos();
 
                 t.setSchclassid(rs.getInt("schclassid"));
@@ -443,57 +323,36 @@ public class Banco {
 
                 listaTurnos.add(t);
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return listaTurnos;
     }
 
-    public Boolean feriadoInflui(Integer userid) {
-
-        Boolean feriadoInflui = true;
+    public boolean feriadoInflui(Integer userid) {
+        boolean feriadoInflui = true;
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select holiday "
-                    + " from userinfo "
-                    + " where userid = " + userid;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            String sql = " select holiday from userinfo where userid = " + userid;
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 Integer flag_holiday = rs.getInt("holiday");
                 if (flag_holiday == 0) {
                     feriadoInflui = false;
                 }
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return feriadoInflui;
     }
 
     public void fecharConexao() {
-        if (c != null) {
-            try {
-                c.close();
-            } catch (SQLException ex) {
-                System.out.println("ConsultaPonto: fecharConexao: " + ex);
-                //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 
     public List<Date> consultaInicioEFimContrato(Integer userid) {
@@ -502,16 +361,9 @@ public class Banco {
         Date fimTimes = new Date();
         List<Date> inicioeFimList = new ArrayList<Date>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select min(startdate) as  startdate" + " from user_of_run ur"
+            String sql = " select min(startdate) as  startdate" + " from user_of_run ur"
                     + " where ur.userid = " + userid;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 inicioTimes = rs.getDate("startdate");
@@ -519,15 +371,12 @@ public class Banco {
                     inicioeFimList.add(inicioTimes);
                 }
             }
-
             rs.close();
-            stmt.close();
 
             sql = "select enddate from user_of_run"
                     + " where userid = " + userid
                     + " order by enddate desc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 fimTimes = rs.getDate("enddate");
@@ -537,33 +386,18 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return inicioeFimList;
     }
 
     public List<Ponto> consultaChechInOut(Integer userid, Date inicio, Date fim) {
-
         List<Ponto> pontos = new ArrayList<Ponto>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             GregorianCalendar dia = new GregorianCalendar();
@@ -573,14 +407,12 @@ public class Banco {
             fim_.setTime(dia.getTimeInMillis());
             String fimStr = sdfHora.format(fim_.getTime());
 
-            sql = "select u.name,c.checktime,c.sensorid,c.tipoRegistro, r.repAlias"
+            String sql = "select u.name,c.checktime,c.sensorid,c.tipoRegistro, r.repAlias"
                     + " from CHECKINOUT c join USERINFO u on c.userid = u.userid left join Rep r on c.repid = r.repId"
                     + " where c.userid = " + userid + " and"
                     + " c.checktime between '" + inicioStr + "' and '" + fimStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("checktime");
                 Integer sensor = rs.getInt("sensorid");
@@ -595,25 +427,17 @@ public class Banco {
                 pontos.add(ponto);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return pontos;
     }
 
     public List<RegistroAdicionado> consultaRegistrosAdicionados(Integer userid, Date inicio, Date fim) {
-
         List<RegistroAdicionado> registroAdicionadoList = new ArrayList<RegistroAdicionado>();
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             GregorianCalendar dia = new GregorianCalendar();
@@ -623,15 +447,13 @@ public class Banco {
             fim_.setTime(dia.getTimeInMillis());
             String fimStr = sdfHora.format(fim_.getTime());
 
-            sql = " select u.name, r.checktime,r.tipoRegistro,l.leaveName,l.total,r.yuanying"
+            String sql = " select u.name, r.checktime,r.tipoRegistro,l.leaveName,l.total,r.yuanying"
                     + " from REGISTRO_ABONO r, USERINFO u, LeaveClass l"
                     + " where r.userid = " + userid + " and"
                     + " u.userid = r.userid and "
                     + " l.leaveID = r.dateid and "
                     + " r.checktime" + " between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
 
@@ -654,38 +476,26 @@ public class Banco {
                 registroAdicionadoList.add(registroAdicionado);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return registroAdicionadoList;
     }
 
     public List<Gratificacao> consultaGratificacao(Integer userid) {
-
         List<Gratificacao> gratificacaoList = new ArrayList<Gratificacao>();
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select g.cod_gratificacao,g.nome,g.valor,g.verba,d.diaSemana,d.inicio,d.fim "
+            String sql = " select g.cod_gratificacao,g.nome,g.valor,g.verba,d.diaSemana,d.inicio,d.fim "
                     + " from userInfo u,Gratificacao g,DetalheGratificacao d"
                     + " where u.userid = " + userid + " and"
                     + " u.cod_regime = g.cod_regime and "
                     + " g.cod_gratificacao = d.cod_gratificacao "
                     + " order by g.cod_gratificacao";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             List<Integer> controleGratificacaoList = new ArrayList<Integer>();
             List<DetalheGratificacao> detalheGratificacaoList = new ArrayList<DetalheGratificacao>();
-
             while (rs.next()) {
                 Integer cod_gratificacao = rs.getInt("cod_gratificacao");
                 String nome = rs.getString("nome");
@@ -718,44 +528,35 @@ public class Banco {
                 gratificacaoList.add(gratificacao);
             }
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return gratificacaoList;
     }
 
     public List<Timestamp> consultaChechInOutTotal(Integer userid, Date inicio, Date fim) {
-
         List<Timestamp> getAllTimestamp = new ArrayList<Timestamp>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select checktime" + " from checkinout"
+            String sql = "select checktime" + " from checkinout"
                     + " where userid = " + userid + " and"
                     + " checktime" + " between '" + inicioStr + "' and '" + fimStr + "'";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 Timestamp timestamp = rs.getTimestamp("checktime");
                 getAllTimestamp.add(timestamp);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
+        } finally {
+            con.Desconectar();
         }
         return getAllTimestamp;
     }
@@ -764,23 +565,18 @@ public class Banco {
         List<Abono> abonoList = new ArrayList<Abono>();
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = " select s.userid,s.STARTSPECDAY,s.ENDSPECDAY,s.YUANYING,s.DATEID, l.leavename"
+            String sql = " select s.userid,s.STARTSPECDAY,s.ENDSPECDAY,s.YUANYING,s.DATEID, l.leavename"
                     + " from  USER_SPEDAY s,USERINFO u,LeaveClass l"
                     + " where s.userid = u.userid and"
                     + "       s.userid = " + userid.toString() + " and"
                     + "       s.dateid = " + "l.LeaveID" + " and"
                     + "       s.STARTSPECDAY" + " between '" + inicioStr + "' and '" + fimStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer userId = rs.getInt("userid");
@@ -806,7 +602,7 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -818,21 +614,17 @@ public class Banco {
         String nome = "Funcionario não encontrado";
         try {
             // connection to an ACCESS MDB
-            ResultSet rs;
-            Statement stmt;
-            String sql;
 
-            sql = "select u.name" + " from USERINFO u" + " where u.userid = " + cod;
+            String sql = "select u.name" + " from USERINFO u" + " where u.userid = " + cod;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 nome = rs.getString("Name");
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -840,31 +632,28 @@ public class Banco {
     }
 
     public Funcionario consultaFuncionario(int cod) {
-
         Funcionario funcionario = new Funcionario();
         try {
-
-            ResultSet rs;
-            PreparedStatement pstmt;
             String sql = "select u.name, d.deptname, u.ssn, r.nome as regime "
                     + "from USERINFO u left join Regime_HoraExtra r on u.cod_regime = r.cod_regime, departments d"
                     + " where u.userid = ? and "
                     + " d.deptid = u.defaultdeptid";
 
-            pstmt = c.prepareStatement(sql);
-            pstmt.setInt(1, cod);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                funcionario.setNome(rs.getString("Name"));
-                funcionario.setDept(rs.getString("deptname"));
-                funcionario.setCpf(rs.getString("ssn"));
-                funcionario.setNome_regime(rs.getString("regime"));
+            if (con.prepareStatement(sql)) {
+                con.pstmt.setInt(1, cod);
+                ResultSet rs = con.executeQuery();
+                if (rs.next()) {
+                    funcionario.setNome(rs.getString("Name"));
+                    funcionario.setDept(rs.getString("deptname"));
+                    funcionario.setCpf(rs.getString("ssn"));
+                    funcionario.setNome_regime(rs.getString("regime"));
+                }
+                rs.close();
             }
-
-            rs.close();
         } catch (SQLException e) {
             System.out.println("ConsultaPonto.Banco.consultaFuncionario" + e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return funcionario;
     }
@@ -874,10 +663,6 @@ public class Banco {
         Integer jornadaNumber = -1;
         try {
             // connection to an ACCESS MDB
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             java.util.Date dt = null;
             try {
@@ -887,12 +672,11 @@ public class Banco {
                 //Logger.getLogger(DetalheDiaBean.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            sql = "select num_of_run_id,startdate,enddate"
+            String sql = "select num_of_run_id,startdate,enddate"
                     + " from user_of_run ur"
                     + " where ur.userid = " + userid;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer num_jornada = rs.getInt("num_of_run_id");
@@ -905,157 +689,102 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return jornadaNumber;
     }
 
     public boolean solicitacaoAbono(Integer userid, String data, String entrada1, String saida1, String entrada2, String saida2, String descricao, Date inclusao) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         if (entrada1 == null && saida1 == null && entrada2 == null && saida2 == null) {
             return false;
         }
         try {
             String query = "insert into SolicitacaoAbono(USERID,Data,Entrada1,Saida1,Entrada2,Saida2,Descricao,Status,Inclusao) values(?,?,?,?,?,?,?,?,?)";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, userid);
-            pstmt.setString(2, data);
-            pstmt.setString(3, entrada1);
-            pstmt.setString(4, saida1);
-            pstmt.setString(5, entrada2);
-            pstmt.setString(6, saida2);
-            pstmt.setString(7, descricao);
-            pstmt.setString(8, "Pendente");
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, userid);
+            con.pstmt.setString(2, data);
+            con.pstmt.setString(3, entrada1);
+            con.pstmt.setString(4, saida1);
+            con.pstmt.setString(5, entrada2);
+            con.pstmt.setString(6, saida2);
+            con.pstmt.setString(7, descricao);
+            con.pstmt.setString(8, "Pendente");
             Locale.setDefault(new Locale("pt", "BR"));
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss");
-            pstmt.setString(9, sdf.format(new java.util.Date()));
-            pstmt.executeUpdate();
+            con.pstmt.setString(9, sdf.format(new java.util.Date()));
+            con.executeUpdate();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
 
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean insertRelatorio(List<Relatorio> relatorio) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into relatorio(data,definicao,Entrada1,Saida1,Entrada2,Saida2,horasTrabalhadas,saldo,observacao) values(?,?,?,?,?,?,?,?,?)";
         String queryDelete = "delete from relatorio";
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorio 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorio 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
+        con.prepareStatement(query);
 
         try {
             for (Iterator<Relatorio> it = relatorio.iterator(); it.hasNext();) {
                 Relatorio relatorio1 = it.next();
 
-                pstmt.setString(1, relatorio1.getData());
-                pstmt.setString(2, relatorio1.getDefinicao());
-                pstmt.setString(3, relatorio1.getEntrada1());
-                pstmt.setString(4, relatorio1.getSaida1());
-                pstmt.setString(5, relatorio1.getEntrada2());
-                pstmt.setString(6, relatorio1.getSaida2());
-                pstmt.setString(7, relatorio1.getHorasTrabalhadas());
-                pstmt.setString(8, relatorio1.getSaldo());
-                pstmt.setString(9, relatorio1.getObservacao());
-                pstmt.executeUpdate();
+                con.pstmt.setString(1, relatorio1.getData());
+                con.pstmt.setString(2, relatorio1.getDefinicao());
+                con.pstmt.setString(3, relatorio1.getEntrada1());
+                con.pstmt.setString(4, relatorio1.getSaida1());
+                con.pstmt.setString(5, relatorio1.getEntrada2());
+                con.pstmt.setString(6, relatorio1.getSaida2());
+                con.pstmt.setString(7, relatorio1.getHorasTrabalhadas());
+                con.pstmt.setString(8, relatorio1.getSaldo());
+                con.pstmt.setString(9, relatorio1.getObservacao());
+                con.executeUpdate();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean insertRelatorioSemEscala(List<DiaSemEscala> pontoAcessoTotal) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into relatorio_sem_escala(data,pontos) values(?,?)";
         String queryDelete = "delete from relatorio_sem_escala";
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioSemEscala 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioSemEscala 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
+        con.prepareStatement(query);
 
         try {
             for (Iterator<DiaSemEscala> it = pontoAcessoTotal.iterator(); it.hasNext();) {
                 DiaSemEscala pontoAcessoTotal1 = it.next();
 
-                pstmt.setString(1, pontoAcessoTotal1.getDataSrt());
-                pstmt.setString(2, pontoAcessoTotal1.getPontosBatidos());
+                con.pstmt.setString(1, pontoAcessoTotal1.getDataSrt());
+                con.pstmt.setString(2, pontoAcessoTotal1.getPontosBatidos());
 
-                pstmt.executeUpdate();
+                con.executeUpdate();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
@@ -1064,19 +793,13 @@ public class Banco {
 
         List<Jornada> jornadaList = new ArrayList<Jornada>();
         try {
-
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql = null;
-
-            sql = "select s.*,nrd.sdays,nrd.edays,nr.startdate,nr.cyle,nr.units"
+            String sql = "select s.*,nrd.sdays,nrd.edays,nr.startdate,nr.cyle,nr.units"
                     + " from " + "num_run_deil nrd,schclass s,num_run nr"
                     + " where nrd.num_runid = " + num_jornada + " and"
                     + " nrd.schclassid = s.schclassid and "
                     + " nr.num_runid = " + num_jornada + " order by nrd.SDAYS, nrd.STARTTIME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String schname = rs.getString("SCHNAME");
@@ -1141,7 +864,7 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -1166,17 +889,12 @@ public class Banco {
 
         try {
 
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql = null;
-
-            sql = "select nr.cyle,nr.units,nrd.sdays,nrd.edays from"
+            String sql = "select nr.cyle,nr.units,nrd.sdays,nrd.edays from"
                     + " num_run_deil nrd, num_run nr"
                     + " where nrd.num_runid = " + num_jornada
                     + " and" + " nr.num_runid = " + num_jornada;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             Integer units = 0;
             Boolean primeiroSdays = true;
 
@@ -1217,7 +935,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
             if (units == 0 || units == 2) {
 
@@ -1229,8 +946,7 @@ public class Banco {
                         + " where nrd.num_runid = " + num_jornada + " and"
                         + " nr.num_runid = " + num_jornada;
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer sdays = rs.getInt("SDAYS");
@@ -1247,7 +963,7 @@ public class Banco {
                 }
 
                 rs.close();
-                stmt.close();
+
             }
 
             GregorianCalendar diaHorainicio = new GregorianCalendar();
@@ -1426,17 +1142,12 @@ public class Banco {
 
         try {
 
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql = null;
-
-            sql = "select nr.cyle,nr.units,nrd.sdays,nrd.edays from"
+            String sql = "select nr.cyle,nr.units,nrd.sdays,nrd.edays from"
                     + " num_run_deil nrd, num_run nr"
                     + " where nrd.num_runid = " + num_jornada
                     + " and" + " nr.num_runid = " + num_jornada;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             Integer units = 0;
 
             while (rs.next()) {
@@ -1472,7 +1183,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
             if (units == 0 || units == 2) {
 
@@ -1484,8 +1194,7 @@ public class Banco {
                         + " where nrd.num_runid = " + num_jornada + " and"
                         + " nr.num_runid = " + num_jornada;
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
 
                 while (rs.next()) {
                     Integer sdays = rs.getInt("SDAYS");
@@ -1502,7 +1211,7 @@ public class Banco {
                 }
 
                 rs.close();
-                stmt.close();
+
             }
 
             GregorianCalendar diaHorainicio = new GregorianCalendar();
@@ -1649,7 +1358,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -1665,17 +1373,17 @@ public class Banco {
      Integer cyle = 0;
      try {
      // connection to an ACCESS MDB
-     ResultSet rs;
-     Statement stmt;
-     String sql;
+     
+     
+     
     
-     sql = "select nr.units,nrd.sdays,nrd.edays from"
+     String sql = "select nr.units,nrd.sdays,nrd.edays from"
      + " num_run_deil nrd, num_run nr"
      + " where nrd.num_runid = " + num_jornada
      + " and" + " nr.num_runid = " + num_jornada;
     
-     stmt = c.createStatement();
-     rs = stmt.executeQuery(sql);
+     
+     ResultSet rs = con.executeQuery(sql);
      Integer units = 0;
     
      while (rs.next()) {
@@ -1690,19 +1398,19 @@ public class Banco {
      }
      }
      rs.close();
-     stmt.close();
+     
     
      if (units == 0) {
     
      diaSemanaList = new ArrayList<Integer>();
     
-     sql = "select nr.cyle, nrd.sdays,nrd.edays from"
+     String sql = "select nr.cyle, nrd.sdays,nrd.edays from"
      + " num_run_deil nrd, num_run nr"
      + " where nrd.num_runid = " + num_jornada + " and"
      + " nr.num_runid = " + num_jornada;
     
-     stmt = c.createStatement();
-     rs = stmt.executeQuery(sql);
+     
+     ResultSet rs = con.executeQuery(sql);
     
      while (rs.next()) {
      Integer sdays = rs.getInt("SDAYS");
@@ -1767,7 +1475,7 @@ public class Banco {
      }
     
      rs.close();
-     stmt.close();
+     
     
      } catch (Exception e) {    System.out.println(e.getMessage());
     
@@ -1780,10 +1488,6 @@ public class Banco {
 
         try {
 
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql = null;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             GregorianCalendar diaHorainicio = new GregorianCalendar();
             diaHorainicio.setTime(inicio);
@@ -1791,11 +1495,10 @@ public class Banco {
             String inicioStr = sdfHora.format(diaHorainicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime());
 
-            sql = " SELECT h.HOLIDAYNAME,h.STARTTIME from"
+            String sql = " SELECT h.HOLIDAYNAME,h.STARTTIME from"
                     + " HOLIDAYS h" + " where starttime between '" + inicioStr + "' and '" + fimSrt + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String nome = rs.getString("HOLIDAYNAME");
@@ -1812,7 +1515,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -1824,20 +1526,15 @@ public class Banco {
         List<Date> date = new ArrayList<Date>();
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(dia.getTime());
-            sql = " select * from user_temp_sch u, horaextra h "
+            String sql = " select * from user_temp_sch u, horaextra h "
                     + " where u.userid = " + userid + " and u.userid = h.userid and "
                     + " u.overtime = 1 and "
                     + " convert(nvarchar(10), h.data, 103) = '" + dateStr + "' and "
                     + " (convert(nvarchar(10), u.cometime, 103) = convert(nvarchar(10), h.data, 103) or convert(nvarchar(10), u.leavetime, 103) = convert(nvarchar(10), h.data, 103))";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 date.add(rs.getTimestamp("cometime"));
@@ -1845,7 +1542,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -1859,20 +1555,15 @@ public class Banco {
 
         try {
 
-            ResultSet rs = null;
-            Statement stmt = null;
-            String sql = null;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime());
 
-            sql = " SELECT h.starttime,h.oficial from"
+            String sql = " SELECT h.starttime,h.oficial from"
                     + " HOLIDAYS h" + " where oficial = 'true' and"
                     + " starttime between '" + inicioStr + "' and '" + fimSrt + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
 
@@ -1885,10 +1576,11 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return feriadoCriticoList;
     }
@@ -1897,33 +1589,17 @@ public class Banco {
         List<String> userList = new ArrayList<String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = "select name from" + " userinfo ORDER BY  name asc";
-            stmt = c.createStatement();
-
-            rs = stmt.executeQuery(sql);
+            String sql = "select name from" + " userinfo ORDER BY  name asc";
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 userList.add(rs.getString("name"));
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -1936,18 +1612,13 @@ public class Banco {
         List<String> cpfDuplicados = getCPFsDuplicados();
 
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
             if (incluirSubSetores) {
 
                 //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+                String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                ResultSet rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -1958,7 +1629,6 @@ public class Banco {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -1967,8 +1637,7 @@ public class Banco {
                         + " from USERINFO u"
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -1985,14 +1654,14 @@ public class Banco {
                         userList.add(new SelectItem(userid, name));
                     }
                 }
+                rs.close();
             } else {
-                sql = "select distinct u.userid,u.name,u.badgenumber,u.ssn from"
+                String sql = "select distinct u.userid,u.name,u.badgenumber,u.ssn from"
                         + " USERINFO u"
                         + " where u.defaultdeptid = " + dep
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                ResultSet rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -2005,71 +1674,52 @@ public class Banco {
                     }
                     userList.add(new SelectItem(userid, name));
                 }
+                rs.close();
             }
-
-            rs.close();
-            stmt.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             System.out.println("Erro consulta funcionário" + e);
-
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return userList;
     }
 
     //Lista de pessoas com duplo vínculo
     private List<String> getCPFsDuplicados() {
-
         List<String> cpfList = new ArrayList<String>();
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
             String sql = "SELECT distinct ssn FROM userinfo u1"
                     + "	WHERE (SELECT count(*) FROM userinfo u2	WHERE u2.ssn = u1.ssn) > 1 order by ssn";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String cpf = rs.getString("ssn");
                 cpfList.add(cpf);
             }
             rs.close();
-            stmt.close();
         } catch (SQLException e) {
+        } finally {
+            con.Desconectar();
         }
 
         return cpfList;
     }
 
     public List<SelectItem> consultaFuncionario(Integer dep, String permissao, Boolean incluirSubSetores) {
-
         List<SelectItem> userList = new ArrayList<SelectItem>();
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
         List<Integer> deptIDList;
         List<String> cpfDuplicados = getCPFsDuplicados();
-
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
             if (incluirSubSetores) {
 
                 //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+                String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                ResultSet rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -2080,7 +1730,6 @@ public class Banco {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -2090,8 +1739,7 @@ public class Banco {
                         + " where u.permissao != " + permissao
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -2108,15 +1756,15 @@ public class Banco {
                         userList.add(new SelectItem(userid, name));
                     }
                 }
+                rs.close();
             } else {
-                sql = "select distinct u.userid,u.name,u.badgenumber,u.ssn from"
+                String sql = "select distinct u.userid,u.name,u.badgenumber,u.ssn from"
                         + " USERINFO u"
                         + " where u.defaultdeptid = " + dep
                         + " and u.permissao != " + permissao
                         + " ORDER BY name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                ResultSet rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -2130,23 +1778,12 @@ public class Banco {
                     }
                     userList.add(new SelectItem(userid, name));
                 }
+                rs.close();
             }
-
-            rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             System.out.println("Erro consulta funcionário" + e);
-
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -2154,18 +1791,10 @@ public class Banco {
     public List<SelectItem> consultaFuncionarioProprioAdministrador(Integer codigo_usuario) {
 
         List<SelectItem> userList = new ArrayList<SelectItem>();
-
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
-            sql = "select name from USERINFO "
+            String sql = "select name from USERINFO "
                     + " where userid = " + codigo_usuario;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
@@ -2174,18 +1803,10 @@ public class Banco {
                 userList.add(new SelectItem(codigo_usuario, name));
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return userList;
     }
@@ -2196,18 +1817,13 @@ public class Banco {
         List<Integer> deptIDList;
 
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
             if (incluirSubSetores) {
 
                 //Selecionando os departamentos com permissão de visibilidade.
-                sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+                String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                         + " ORDER BY SUPDEPTID asc";
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+
+                ResultSet rs = con.executeQuery(sql);
 
                 deptIDList = new ArrayList<Integer>();
                 deptIDList.add(dep);
@@ -2220,7 +1836,6 @@ public class Banco {
                     idToSuperHash.put(cod, supdeptid);
                 }
                 rs.close();
-                stmt.close();
 
                 List<Integer> deptPermitidos = new ArrayList<Integer>();
                 deptIDList = getDeptPermitidos(dep, deptPermitidos, idToSuperHash);
@@ -2229,8 +1844,7 @@ public class Banco {
                         + " from  USERINFO u "
                         + " ORDER BY u.name asc";
 
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -2242,15 +1856,13 @@ public class Banco {
                         userList.add(new SelectItem(userid, name));
                     }
                 }
-
+                rs.close();
             } else {
-                sql = "select u.userid,u.name"
+                String sql = "select u.userid,u.name"
                         + " from  USERINFO u "
                         + " where u.defaultdeptid = " + dep
                         + " ORDER BY u.name asc";
-
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
+                ResultSet rs = con.executeQuery(sql);
                 userList.add(new SelectItem(-1, "Selecione um funcionário"));
 
                 while (rs.next()) {
@@ -2258,139 +1870,74 @@ public class Banco {
                     String name = rs.getString("name");
                     userList.add(new SelectItem(userid, name));
                 }
+                rs.close();
             }
-            rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return userList;
     }
 
     public boolean isAdministrador(Integer login) {
-
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql
-                    = "select permissao from" + " USERINFO " + " where userid = " + login;
-            stmt
-                    = c.createStatement();
-            rs
-                    = stmt.executeQuery(sql);
+            String sql = "select permissao from" + " USERINFO " + " where userid = " + login;
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String permissao = rs.getString("permissao");
-
                 if (permissao.equals("1")) {
                     return true;
-
                 }
-
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-
-                }
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return false;
 
     }
 
     public String consultaDepartamentoNome(Integer deptID) {
-
         String nomeDept = "";
-
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = " select DEPTNAME"
+            String sql = " select DEPTNAME"
                     + " from  DEPARTMENTS d"
                     + " where d.deptid = " + deptID;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 nomeDept = rs.getString("DEPTNAME");
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return nomeDept;
     }
 
     public String consultaDepartamentoNomeByUserid(Integer userid) {
-
         String nomeDept = "";
-
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
-            sql = " select DEPTNAME"
+            String sql = " select DEPTNAME"
                     + " from  DEPARTMENTS d, USERINFO u"
                     + " where u.defaultdeptid = d.deptid and "
                     + " userid = " + userid;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
 
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 nomeDept = rs.getString("DEPTNAME");
             }
-
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return nomeDept;
     }
@@ -2399,17 +1946,12 @@ public class Banco {
         List<String> infoList = new ArrayList<String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select userid,name,ssn,badgenumber,deptname,c.nome as cargo, r.nome as regime"
+            String sql = " select userid,name,ssn,badgenumber,deptname,c.nome as cargo, r.nome as regime"
                     + " from userinfo u left join cargo c on u.cargo =  c.cod_cargo"
                     + " left join regime_horaextra r on r.cod_regime = u.cod_regime, departments d"
                     + " where u.userid = " + cod + " and u.defaultdeptid = d.deptid ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             String userid = "";
             String name = "";
@@ -2452,78 +1994,45 @@ public class Banco {
             } else {
                 infoList.add("");
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return infoList;
     }
 
     public List<Integer> consultaFuncionarioDepartamento(String dept) {
-
         List<Integer> matriculasList = new ArrayList<Integer>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
             String subSelect;
-
             subSelect = "select DEPTID FROM DEPARTMENTS WHERE DEPTNAME = '" + dept + "'";
-
-            sql = "select u.userid from userinfo u,user_of_run r"
+            String sql = "select u.userid from userinfo u,user_of_run r"
                     + " where defaultdeptid = (" + subSelect + ")"
                     + " and" + " r.userid = u.userid"
                     + " order by name";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String userid = rs.getString("userid");
                 matriculasList.add(Integer.parseInt(userid));
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return matriculasList;
     }
 
     public ArrayList<Integer> consultaCicloDias(Integer num) {
         ArrayList<Integer> daysList = new ArrayList<Integer>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = "select sdays,edays from num_run_deil"
+            String sql = "select sdays,edays from num_run_deil"
                     + " where num_runid = " + num;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer sdays = rs.getInt("sdays");
@@ -2537,43 +2046,28 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return daysList;
     }
 
     public HashMap<String, ArrayList<Jornada>> consultaDiasDeslocados(Integer cod, Date inicio, Date fim) {
-
         HashMap<String, ArrayList<Jornada>> diasComDeslocamento = new HashMap<String, ArrayList<Jornada>>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = "select uts.cometime,uts.leavetime,uts.overtime,uts.folga,sc.*"
+            String sql = "select uts.cometime,uts.leavetime,uts.overtime,uts.folga,sc.*"
                     + " from user_temp_sch uts left join SchClass sc on uts.schclassid = sc.schclassid"
                     + " where uts.userid = " + cod + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimSrt + "' "
                     + " order by cometime";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date cometime = rs.getDate("cometime");
@@ -2714,7 +2208,7 @@ public class Banco {
                     }
                     schComeList.add(jornada);
                     diasComDeslocamento.put(cometimeSrt, schComeList);
-                    
+
                     ArrayList schLeaveList = new ArrayList();
                     Jornada jornada2 = new Jornada();
                     jornada2.setTemVirada(true);
@@ -2761,36 +2255,29 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diasComDeslocamento;
     }
 
     public ArrayList<DescolamentoTemporario> consultaHorarioRemover(Integer cod, Date inicio, Date fim) {
-
         ArrayList<DescolamentoTemporario> listaDeslocamentoTemporario = new ArrayList<DescolamentoTemporario>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = "select uts.*"
+            String sql = "select uts.*"
                     + " from user_temp_sch uts"
                     + " where uts.userid = " + cod + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimSrt + "' "
                     + "and schclassid = -1"
                     + " order by cometime";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
@@ -2806,36 +2293,29 @@ public class Banco {
 
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return listaDeslocamentoTemporario;
     }
 
     public ArrayList<DescolamentoTemporario> consultaDeslocamentoTemp(Integer cod, Date inicio, Date fim) {
-
         ArrayList<DescolamentoTemporario> listaDeslocamentoTemporario = new ArrayList<DescolamentoTemporario>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = "select uts.*"
+            String sql = "select uts.*"
                     + " from user_temp_sch uts"
                     + " where uts.userid = " + cod + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimSrt + "' "
                     + " and schclassid <> -1"
                     + " order by cometime";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
@@ -2851,35 +2331,27 @@ public class Banco {
 
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return listaDeslocamentoTemporario;
     }
 
     public HashMap<String, DescolamentoTemporario> consultaDiasDeslocamentoTemp(int cod, Date inicio, Date fim) {
-
         HashMap<String, DescolamentoTemporario> diasDeslocamentoTempHashMap = new HashMap<String, DescolamentoTemporario>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimSrt = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = "select uts.*"
+            String sql = "select uts.*"
                     + " from user_temp_sch uts"
                     + " where uts.userid = " + cod + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimSrt + "' "
                     + " order by cometime";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
@@ -2890,28 +2362,22 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diasDeslocamentoTempHashMap;
     }
 
     public List<Afastamento> consultaAfastamento(Integer cod_funcionario, Date inicio, Date fim) {
-
         List<Afastamento> afastamentoList = new ArrayList<Afastamento>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime());
 
-            sql = "SELECT u.name,u.userid,u.defaultdeptid, a.*, ca.*, "
+            String sql = "SELECT u.name,u.userid,u.defaultdeptid, a.*, ca.*, "
                     + "(select name from userinfo where userid = a.cod_responsavel) as responsavel"
                     + " FROM Afastamento a, USERINFO u, CategoriaAfastamento ca"
                     + " where u.userid = a.userid and "
@@ -2922,50 +2388,37 @@ public class Banco {
                     + " (a.inicioAfastamento <= '" + inicioStr + "' and a.fimAfastamento >= '" + fimStr + "')) "
                     + " order by name";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 //    Integer userid = rs.getInt("userid");
                 Date inicioAfastamento = rs.getDate("inicioAfastamento");
                 Date fimAfastamento = rs.getDate("fimAfastamento");
+                Integer codCatAfastamento = rs.getInt("cod_categoria");
                 String descAfastamento = rs.getString("descAfastamento");
                 String legendaAfastamento = rs.getString("legendaAfastamento");
 
                 Afastamento afastamento = new Afastamento();
                 afastamento.setDataInicio(inicioAfastamento);
                 afastamento.setDataFim(fimAfastamento);
-                CategoriaAfastamento ca = new CategoriaAfastamento();
-                ca.setDescCategoriaAfastamento(descAfastamento);
-                ca.setLegenda(legendaAfastamento);
-                afastamento.setCategoriaAfastamento(ca);
+                afastamento.setCodCategoriaAfastamento(codCatAfastamento);
                 afastamentoList.add(afastamento);
-
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return afastamentoList;
     }
 
     public Date consultaStartDate(Integer num, Date inicioPeriodo, Date dataInicio) {
-
         Date startdate = new Date();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = "select startdate,units,cyle from num_run"
+            String sql = "select startdate,units,cyle from num_run"
                     + " where num_runid = " + num;
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 //startdate = rs.getDate("startdate");
                 startdate = inicioPeriodo;
@@ -2973,12 +2426,11 @@ public class Banco {
                 Integer cyle = rs.getInt("cyle");
                 //startdate = geraDiaInicialDeApuracao(startdate, inicioPeriodo, unit, cyle);
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return startdate;
     }
@@ -3033,22 +2485,17 @@ public class Banco {
 
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 172799998);
 
-            sql = " select cometime,leavetime"
+            String sql = " select cometime,leavetime"
                     + " from user_temp_sch "
                     + " where userid = " + userID + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimStr + "' and"
                     + " schclassid = -1";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date inicioDate = rs.getDate("cometime");
@@ -3069,16 +2516,13 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
-
             sql = " select cometime,leavetime"
                     + " from user_temp_sch "
                     + " where userid = " + userID + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimStr + "' and"
                     + " schclassid != -1";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date inicioDate = rs.getDate("cometime");
@@ -3100,7 +2544,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
             for (Iterator<Integer> it = semTrabalhoList.iterator(); it.hasNext();) {
                 Integer folga = it.next();
@@ -3111,32 +2554,26 @@ public class Banco {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return returnList;
     }
 
     public List<Integer> consultaDiasDeslocadosAdicionais(Integer userID, Date inicio, Date fim) {
-
         List<Integer> diasDeslocado = new ArrayList<Integer>();
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = " select cometime,leavetime"
+            String sql = " select cometime,leavetime"
                     + " from user_temp_sch "
                     + " where userid = " + userID + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimStr + "' and"
                     + " schclassid != -1";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date inicioDate = rs.getDate("cometime");
@@ -3156,26 +2593,20 @@ public class Banco {
                     diasDeslocado.add(fimInicio);
                 }
             }
-
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diasDeslocado;
     }
 
     public List<TipoHoraExtra> consultaTipoHoraExtra(int userID) {
-
         List<TipoHoraExtra> tipoHoraExtraList = new ArrayList<>();
         List<DetalheHoraExtra> detalheHoraExtraList = new ArrayList<>();
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql = " select th.*,dh.*"
+            String sql = "select th.*,dh. * "
                     + " from userinfo u, tipo_HoraExtra th, detalhe_HoraExtra dh"
                     + " where u.userid = " + userID + " and "
                     + " u.cod_regime = th.cod_regime and"
@@ -3183,8 +2614,7 @@ public class Banco {
                     + " dh.cod_tipo = th.cod_tipo"
                     + " order by th.cod_tipo";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 TipoHoraExtra tipoHoraExtra = new TipoHoraExtra(rs.getInt("cod_regime"), rs.getInt("cod_tipo"), rs.getString("nome"), rs.getBoolean("padrao"));
                 tipoHoraExtra.setValor(rs.getFloat("valor"));
@@ -3198,12 +2628,11 @@ public class Banco {
                     detalheHoraExtraList = new ArrayList<>();
                 }
             }
-
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return tipoHoraExtraList;
     }
@@ -3211,14 +2640,10 @@ public class Banco {
     public List<SelectItem> consultaCategoriaHoraExtra(Integer userid) {
         List<SelectItem> categoriaHoraExtraSelectItem = new ArrayList<SelectItem>();
         try {
-            ResultSet rs;
-            Statement stmt;
-
             String sql = "select * from categoriaHoraExtra "
                     + " where cod_regime = (select cod_regime from userinfo where userid = " + userid + " )";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             categoriaHoraExtraSelectItem.add(new SelectItem(-1, "Escolha a categoria"));
             while (rs.next()) {
@@ -3228,6 +2653,8 @@ public class Banco {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return categoriaHoraExtraSelectItem;
     }
@@ -3235,148 +2662,105 @@ public class Banco {
     public Integer consultaCodCategoriahoraExtra(Integer userid, Date data) {
         Integer cod_categoria = -1;
         try {
-            ResultSet rs;
-            Statement stmt;
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String dataStr = sdf.format(data.getTime());
             String sql = "select cod_categoria from HoraExtra "
                     + " where userid = " + userid + " and "
                     + " data = '" + dataStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 cod_categoria = rs.getInt("cod_categoria");
             }
+            rs.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return cod_categoria;
     }
 
     public boolean insertRelatorioPortaria1510(List<HorarioContratual> horarioContratualList, List<RelatorioPortaria1510> relatorioPortaria1510) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query1 = "insert into RelatorioHorarioContratual values(?,?,?,?,?,?,?,?,?)";
         String queryDelete1 = "truncate table RelatorioHorarioContratual";
         String query2 = "insert into RelatorioPortaria1510Resumo(dia,marcacoes,entrada1,entrada2,saida1,"
                 + "saida2,horasDia,saldo,ch, EntradaCatraca, SaidaCatraca) values(?,?,?,?,?,?,?,?,?,?,?)";
         String queryDelete2 = "truncate table RelatorioPortaria1510Resumo";
-
-        try {
-            pstmt = c.prepareStatement(queryDelete1);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(queryDelete2);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query1);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510 3: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete1);
+        con.executeUpdate(queryDelete2);
+        con.prepareStatement(query1);
 
         try {
             for (Iterator<HorarioContratual> it = horarioContratualList.iterator(); it.hasNext();) {
                 HorarioContratual horarioContratual = it.next();
 
-                pstmt.setString(1, horarioContratual.getCod_horario());
-                pstmt.setString(2, horarioContratual.getEntrada1());
-                pstmt.setString(3, horarioContratual.getSaida1());
-                pstmt.setString(4, horarioContratual.getEntrada2());
-                pstmt.setString(5, horarioContratual.getSaida2());
-                pstmt.setString(6, horarioContratual.getEntradaD1());
-                pstmt.setString(7, horarioContratual.getSaidaD1());
-                pstmt.setString(8, horarioContratual.getEntradaD2());
-                pstmt.setString(9, horarioContratual.getSaidaD2());
+                con.pstmt.setString(1, horarioContratual.getCod_horario());
+                con.pstmt.setString(2, horarioContratual.getEntrada1());
+                con.pstmt.setString(3, horarioContratual.getSaida1());
+                con.pstmt.setString(4, horarioContratual.getEntrada2());
+                con.pstmt.setString(5, horarioContratual.getSaida2());
+                con.pstmt.setString(6, horarioContratual.getEntradaD1());
+                con.pstmt.setString(7, horarioContratual.getSaidaD1());
+                con.pstmt.setString(8, horarioContratual.getEntradaD2());
+                con.pstmt.setString(9, horarioContratual.getSaidaD2());
 
-                pstmt.executeUpdate();
+                con.executeUpdate();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
         }
-
-        try {
-            pstmt = c.prepareStatement(query2);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510 4: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.prepareStatement(query2);
 
         try {
             for (Iterator<RelatorioPortaria1510> it = relatorioPortaria1510.iterator(); it.hasNext();) {
                 RelatorioPortaria1510 relatorioPortaria1510_ = it.next();
 
-                pstmt.setString(1, relatorioPortaria1510_.getDia());
-                pstmt.setString(2, relatorioPortaria1510_.getMarcacoesRegistradas());
-                pstmt.setString(3, relatorioPortaria1510_.getEntrada1());
-                pstmt.setString(4, relatorioPortaria1510_.getEntrada2());
-                pstmt.setString(5, relatorioPortaria1510_.getSaida1());
-                pstmt.setString(6, relatorioPortaria1510_.getSaida2());
-                pstmt.setString(7, relatorioPortaria1510_.getHorasDias());
-                pstmt.setString(8, relatorioPortaria1510_.getSaldo());
-                pstmt.setString(9, relatorioPortaria1510_.getCh());
+                con.pstmt.setString(1, relatorioPortaria1510_.getDia());
+                con.pstmt.setString(2, relatorioPortaria1510_.getMarcacoesRegistradas());
+                con.pstmt.setString(3, relatorioPortaria1510_.getEntrada1());
+                con.pstmt.setString(4, relatorioPortaria1510_.getEntrada2());
+                con.pstmt.setString(5, relatorioPortaria1510_.getSaida1());
+                con.pstmt.setString(6, relatorioPortaria1510_.getSaida2());
+                con.pstmt.setString(7, relatorioPortaria1510_.getHorasDias());
+                con.pstmt.setString(8, relatorioPortaria1510_.getSaldo());
+                con.pstmt.setString(9, relatorioPortaria1510_.getCh());
                 if (relatorioPortaria1510_.getEntradasCatraca() != null) {
-                    pstmt.setString(10, relatorioPortaria1510_.getEntradasCatraca());
+                    con.pstmt.setString(10, relatorioPortaria1510_.getEntradasCatraca());
                 } else {
-                    pstmt.setString(10, "");
+                    con.pstmt.setString(10, "");
                 }
                 if (relatorioPortaria1510_.getSaidasCatraca() != null) {
-                    pstmt.setString(11, relatorioPortaria1510_.getSaidasCatraca());
+                    con.pstmt.setString(11, relatorioPortaria1510_.getSaidasCatraca());
                 } else {
-                    pstmt.setString(11, "");
+                    con.pstmt.setString(11, "");
                 }
-                pstmt.executeUpdate();
+                con.executeUpdate();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
+        } finally {
+            con.Desconectar();
         }
         Boolean flag2 = insertRelatorioPortaria1510Detalhe(relatorioPortaria1510);
-
         if (flag2.equals(false)) {
             ok = false;
         }
-
         return ok;
     }
 
     public boolean insertRelatorioPortaria1510Detalhe(List<RelatorioPortaria1510> relatorioPortaria1510List) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into RelatorioPortaria1510Detalhe(cod_dia,horario,ocorrencia,motivo) values(?,?,?,?)";
         String queryDelete = "truncate table RelatorioPortaria1510Detalhe";
-
-        try {
-            pstmt = c.prepareStatement(queryDelete);
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510Detalhe 1: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            pstmt = c.prepareStatement(query);
-        } catch (SQLException ex) {
-            System.out.println("ConsultaPonto: insertRelatorioPortaria1510Detalhe 2: " + ex);
-            //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        con.executeUpdate(queryDelete);
+        con.prepareStatement(query);
 
         try {
             Integer i = 1;
@@ -3387,43 +2771,39 @@ public class Banco {
 
                 for (Iterator<PontoIrreal> it1 = pontosIrreaisList.iterator(); it1.hasNext();) {
                     PontoIrreal pontoIrreal = it1.next();
-                    pstmt.setInt(1, i);
-                    pstmt.setString(2, pontoIrreal.getHora());
-                    pstmt.setString(3, pontoIrreal.getTipo());
-                    pstmt.setString(4, pontoIrreal.getMotivo());
-                    pstmt.executeUpdate();
+                    con.pstmt.setInt(1, i);
+                    con.pstmt.setString(2, pontoIrreal.getHora());
+                    con.pstmt.setString(3, pontoIrreal.getTipo());
+                    con.pstmt.setString(4, pontoIrreal.getMotivo());
+                    con.executeUpdate();
                 }
                 i++;
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            ok = false;
             try {
-
-                System.out.print(e.getMessage());
-                ok = false;
-                c.rollback();
+                con.c.rollback();
             } catch (SQLException ex) {
-                System.out.println("ConsultaPonto: insertRelatorioPortaria1510Detalhe 3: " + ex);
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } finally {
+            con.Desconectar();
         }
-
         return ok;
     }
 
     public String consultaJustificativaHoraExtra(Integer userid, Date data) {
         String justificativa = "";
         try {
-            ResultSet rs;
-            Statement stmt;
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String dataStr = sdf.format(data.getTime());
             String sql = "select justificativa from HoraExtra "
                     + " where userid = " + userid + " and "
                     + " data = '" + dataStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 justificativa = rs.getString("justificativa");
@@ -3436,69 +2816,37 @@ public class Banco {
 
     public Integer consultaTipoRelatorio() {
         Integer tipoRelatorio = new Integer(0);
-
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select tipoRelatorio"
-                    + " from config";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            String sql = " select tipoRelatorio from config";
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 tipoRelatorio = rs.getInt("tipoRelatorio");
             }
-
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return tipoRelatorio;
     }
 
     public Integer consultaDias(Integer numrun_id) {
-
         Integer maximo = 0;
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = "select max(edays) as maximo from"
+            String sql = "select max(edays) as maximo from"
                     + " num_run_deil"
                     + " where num_runid = " + numrun_id;
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 maximo = rs.getInt("maximo");
             }
-
             rs.close();
-            stmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return maximo;
     }
@@ -3507,21 +2855,17 @@ public class Banco {
 
         List<String> diasHoraExtraList = new ArrayList<String>();
         try {
-            ResultSet rs;
-            Statement stmt;
-            String sql;
 
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = "select data"
+            String sql = "select data"
                     + " from  HoraExtra "
                     + " where userid = " + userid + " and "
                     + " data between '" + inicioStr + "' and '" + fimStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
                 Date date = rs.getDate("data");
@@ -3529,258 +2873,193 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diasHoraExtraList;
     }
 
     public boolean insertHoraExtra(DiaHoraExtra diaHoraExtra) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
+
         String query = "insert into HoraExtra(userid,data,cod_categoria,justificativa) values(?,?,?,?)";
 
         try {
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
 
-            pstmt.setInt(1, diaHoraExtra.getUserid());
-            pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
-            pstmt.setInt(3, diaHoraExtra.getCod_categoria());
-            pstmt.setString(4, diaHoraExtra.getJustificativa());
+            con.pstmt.setInt(1, diaHoraExtra.getUserid());
+            con.pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
+            con.pstmt.setInt(3, diaHoraExtra.getCod_categoria());
+            con.pstmt.setString(4, diaHoraExtra.getJustificativa());
 
-            pstmt.executeUpdate();
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public void alterarRegistroPonto(String cod_funcionario, String registro, Integer tipoRegistro) {
 
-        PreparedStatement pstmt = null;
         String query = "update checkinout set tipoRegistro=? "
                 + " where userid=? and checktime=?";
         tipoRegistro = tipoRegistro == 0 ? null : tipoRegistro;
         try {
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
             if (tipoRegistro == null) {
-                pstmt.setNull(1, java.sql.Types.INTEGER);
+                con.pstmt.setNull(1, java.sql.Types.INTEGER);
             } else {
-                pstmt.setInt(1, tipoRegistro);
+                con.pstmt.setInt(1, tipoRegistro);
             }
-            pstmt.setString(2, cod_funcionario);
-            pstmt.setString(3, registro);
+            con.pstmt.setString(2, cod_funcionario);
+            con.pstmt.setString(3, registro);
 
-            pstmt.executeUpdate();
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.print(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
     }
 
     public void alterarRegistroPontoAbonado(String cod_funcionario, String registro, Integer tipoRegistro) {
 
-        PreparedStatement pstmt = null;
         String query = "update REGISTRO_ABONO set tipoRegistro=? "
                 + " where userid=? and checktime=?";
         tipoRegistro = tipoRegistro == 0 ? null : tipoRegistro;
         try {
-            pstmt = c.prepareStatement(query);
+            con.prepareStatement(query);
             if (tipoRegistro == null) {
-                pstmt.setNull(1, java.sql.Types.INTEGER);
+                con.pstmt.setNull(1, java.sql.Types.INTEGER);
             } else {
-                pstmt.setInt(1, tipoRegistro);
+                con.pstmt.setInt(1, tipoRegistro);
             }
-            pstmt.setString(2, cod_funcionario);
-            pstmt.setString(3, registro);
+            con.pstmt.setString(2, cod_funcionario);
+            con.pstmt.setString(3, registro);
 
-            pstmt.executeUpdate();
+            con.executeUpdate();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.print(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
     }
 
     public boolean insertHoraExtraEmMassa(Integer cod_funcionario, Date dataInicio, Date dataFim, List<DiaHoraExtra> diaHoraExtraList) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
 
         String query = "insert into HoraExtra(userid,data,cod_categoria,justificativa) values(?,?,?,?)";
         String queryDelete = "delete from HoraExtra where userid = ? and data between ? and ?";
 
         try {
-            pstmt = c.prepareStatement(queryDelete);
+            con.prepareStatement(queryDelete);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String dataInicioStr = sdf.format(dataInicio.getTime());
             String dataFimStr = sdf.format(dataFim.getTime());
-            pstmt.setInt(1, cod_funcionario);
-            pstmt.setString(2, dataInicioStr);
-            pstmt.setString(3, dataFimStr);
-            pstmt.executeUpdate();
+            con.pstmt.setInt(1, cod_funcionario);
+            con.pstmt.setString(2, dataInicioStr);
+            con.pstmt.setString(3, dataFimStr);
+            con.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("ConsultaPonto: insertHoraExtraEmMassa 1: " + ex);
             //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         try {
-            pstmt = c.prepareStatement(query);
-            c.setAutoCommit(false);
+            con.prepareStatement(query);
+            con.c.setAutoCommit(false);
             for (Iterator<DiaHoraExtra> it = diaHoraExtraList.iterator(); it.hasNext();) {
                 DiaHoraExtra diaHoraExtra = it.next();
-                pstmt.setInt(1, diaHoraExtra.getUserid());
-                pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
-                pstmt.setInt(3, diaHoraExtra.getCod_categoria());
-                pstmt.setString(4, diaHoraExtra.getJustificativa());
-                pstmt.executeUpdate();
+                con.pstmt.setInt(1, diaHoraExtra.getUserid());
+                con.pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
+                con.pstmt.setInt(3, diaHoraExtra.getCod_categoria());
+                con.pstmt.setString(4, diaHoraExtra.getJustificativa());
+                con.executeUpdate();
             }
-
-            c.commit();
+            con.c.commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             try {
-                c.rollback();
+                con.c.rollback();
             } catch (SQLException ex) {
                 System.out.println("ConsultaPonto: insertHoraExtraEmMassa 2: " + ex);
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            System.out.print(e.getMessage());
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean editarHoraExtra(DiaHoraExtra diaHoraExtra) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
         String query = "update HoraExtra set cod_categoria=?, justificativa=? "
                 + " where userid=? and data=?";
         try {
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, diaHoraExtra.getCod_categoria());
-            pstmt.setString(2, diaHoraExtra.getJustificativa());
-            pstmt.setInt(3, diaHoraExtra.getUserid());
-            pstmt.setDate(4, new java.sql.Date(diaHoraExtra.getData().getTime()));
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, diaHoraExtra.getCod_categoria());
+            con.pstmt.setString(2, diaHoraExtra.getJustificativa());
+            con.pstmt.setInt(3, diaHoraExtra.getUserid());
+            con.pstmt.setDate(4, new java.sql.Date(diaHoraExtra.getData().getTime()));
+            con.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public boolean excluirHoraExtra(DiaHoraExtra diaHoraExtra) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
         String query = "delete from HoraExtra "
                 + " where userid=? and data=?";
         try {
-            pstmt = c.prepareStatement(query);
-            pstmt.setInt(1, diaHoraExtra.getUserid());
-            pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
-            pstmt.executeUpdate();
+            con.prepareStatement(query);
+            con.pstmt.setInt(1, diaHoraExtra.getUserid());
+            con.pstmt.setDate(2, new java.sql.Date(diaHoraExtra.getData().getTime()));
+            con.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            System.out.print(e.getMessage());
+            System.out.println(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }
 
     public List<Date> getExtraAntesDeDeslocamento(Integer userid, Date dia) {
-
         List<Date> data = new ArrayList<Date>();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(dia.getTime());
 
-            sql = " select * from user_temp_sch "
+            String sql = " select * from user_temp_sch "
                     + " where userid = " + userid + " and schclassid != -1 and overtime = 0 and "
                     + " convert(nvarchar(10), cometime, 103) = '" + dateStr + "' and "
                     + " CONVERT(nvarchar(10),  cometime, 103) != CONVERT(nvarchar(10), leavetime, 103) and "
                     + " CONVERT(nvarchar(10),  cometime, 103) in (select CONVERT(nvarchar(10), s1.leavetime, 103) "
                     + " from user_temp_sch s1 where userid = " + userid + " and schclassid != -1 and overtime = 1 ) ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 data.add(rs.getTimestamp("cometime"));
                 data.add(rs.getTimestamp("leavetime"));
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return data;
     }
@@ -3790,22 +3069,17 @@ public class Banco {
         List<Date> data = new ArrayList<Date>();
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(dia.getTime());
 
-            sql = " select * from user_temp_sch "
+            String sql = " select * from user_temp_sch "
                     + " where userid = " + userid + " and schclassid != -1 and overtime = 0 and "
                     + " convert(nvarchar(10), leavetime, 103) = '" + dateStr + "' and "
                     + " CONVERT(nvarchar(10),  cometime, 103) != CONVERT(nvarchar(10), leavetime, 103) and "
                     + " CONVERT(nvarchar(10),  leavetime, 103) in (select CONVERT(nvarchar(10), s1.cometime, 103) "
                     + " from user_temp_sch s1 where userid = " + userid + " and schclassid != -1 and overtime = 1 ) ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 data.add(rs.getTimestamp("cometime"));
@@ -3813,7 +3087,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -3826,29 +3099,23 @@ public class Banco {
         Boolean contemExtra = false;
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(dia.getTime());
 
-            sql = " select * from user_temp_sch "
+            String sql = " select * from user_temp_sch "
                     + " where userid = " + userid + " and schclassid != -1 and overtime = 0 and "
                     + " convert(nvarchar(10), leavetime, 103) = '" + dateStr + "' and "
                     + " CONVERT(nvarchar(10),  cometime, 103) != CONVERT(nvarchar(10), leavetime, 103) and "
                     + " CONVERT(nvarchar(10),  cometime, 103) in (select CONVERT(nvarchar(10), s1.leavetime, 103) "
                     + " from user_temp_sch s1 where userid = " + userid + " and schclassid != -1 and overtime = 1 ) ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 contemExtra = true;
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -3861,29 +3128,23 @@ public class Banco {
         Boolean contemExtra = false;
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(dia.getTime());
 
-            sql = " select * from user_temp_sch "
+            String sql = " select * from user_temp_sch "
                     + " where userid = " + userid + " and schclassid != -1 and overtime = 0 and "
                     + " convert(nvarchar(10), cometime, 103) = '" + dateStr + "' and "
                     + " CONVERT(nvarchar(10),  cometime, 103) != CONVERT(nvarchar(10), leavetime, 103) and "
                     + " CONVERT(nvarchar(10),  leavetime, 103) in (select CONVERT(nvarchar(10), s1.cometime, 103) "
                     + " from user_temp_sch s1 where userid = " + userid + " and schclassid != -1 and overtime = 1 )";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 contemExtra = true;
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -3898,14 +3159,10 @@ public class Banco {
 
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy");
             String dateStr = sdfHora.format(date.getTime());
 
-            sql = " select cometime,leavetime from user_temp_sch "
+            String sql = " select cometime,leavetime from user_temp_sch "
                     + " where userid = " + userID + " and schclassid != -1 and overtime = 0 "
                     + " and convert(nvarchar(10), leavetime, 103) = '" + dateStr + "'  "
                     + " and CONVERT(nvarchar(10), leavetime, 103)  in  (select CONVERT(nvarchar(10), s1.cometime, 103) "
@@ -3917,8 +3174,7 @@ public class Banco {
                     + " and CONVERT(nvarchar(10), cometime, 103)  in  (select CONVERT(nvarchar(10), s1.leavetime, 103) "
                     + " from user_temp_sch s1 where userid = " + userID + " and schclassid != -1 and overtime = 1 ) ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Timestamp inicioDate = rs.getTimestamp("cometime");
@@ -3937,7 +3193,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -3947,28 +3202,21 @@ public class Banco {
     }
 
     public List<Integer> consultaDiasDeslocadosHoraExtra(int userID, Date inicio, Date fim) {
-
         List<Integer> diasDeslocadoHoraExtra = new ArrayList<Integer>();
-
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
 
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = " select cometime,leavetime"
+            String sql = " select cometime,leavetime"
                     + " from user_temp_sch "
                     + " where userid = " + userID + " and "
                     + " cometime between '" + inicioStr + "' and '" + fimStr + "' and"
                     + " schclassid != -1 and "
                     + " overtime = 1";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date inicioDate = rs.getDate("cometime");
@@ -3989,43 +3237,32 @@ public class Banco {
                     diasDeslocadoHoraExtra.add(fimInicio);
                 }
             }
-
             rs.close();
-            stmt.close();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return diasDeslocadoHoraExtra;
     }
 
-    public Boolean isFeriadoCritico(Integer cod_funcionario) {
-
-        Boolean isFeriadoCritico = false;
+    public boolean isFeriadoCritico(Integer cod_funcionario) {
+        boolean isFeriadoCritico = false;
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select r.feriadoCritico"
+            String sql = " select r.feriadoCritico"
                     + " from Regime_HoraExtra r,userinfo u "
                     + " where u.userid = " + cod_funcionario + " and"
                     + " u.cod_regime = r.cod_regime";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
-
+            ResultSet rs = con.executeQuery(sql);
             while (rs.next()) {
                 Boolean feriadoCritico = rs.getBoolean("feriadoCritico");
                 isFeriadoCritico = feriadoCritico;
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return isFeriadoCritico;
     }
@@ -4034,18 +3271,11 @@ public class Banco {
 
         RegimeHoraExtra regimeHoraExtra = new RegimeHoraExtra();
         try {
-
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
-            sql = " select r.*"
+            String sql = " select r.*"
                     + " from Regime_HoraExtra r,userinfo u "
                     + " where u.userid = " + cod_funcionario + " and"
                     + " u.cod_regime = r.cod_regime";
-
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer cod_regime = rs.getInt("cod_regime");
@@ -4062,34 +3292,28 @@ public class Banco {
                 Boolean feriadoCritico = rs.getBoolean("feriadoCritico");
                 regimeHoraExtra.setFeriadoCritico(feriadoCritico);
             }
-
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return regimeHoraExtra;
     }
 
     public List<SelectItem> getRegimeSelectItem() {
-
         List<SelectItem> regimeList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
-        ResultSet rs;
         regimeList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from regime_HoraExtra";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer cod_regime = rs.getInt("cod_regime");
                 String nome = rs.getString("nome");
                 regimeList.add(new SelectItem(cod_regime, nome));
             }
+            rs.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -4099,13 +3323,10 @@ public class Banco {
 
     public List<SelectItem> getCargoSelectItem() {
         List<SelectItem> cargoList = new ArrayList<SelectItem>();
-        PreparedStatement pstmt = null;
-        ResultSet rs;
         cargoList.add(new SelectItem(-1, "TODOS"));
         try {
             String query = "select * from cargo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
             while (rs.next()) {
                 Integer cargo = rs.getInt("cod_cargo");
                 String nome = rs.getString("nome");
@@ -4113,21 +3334,17 @@ public class Banco {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            con.Desconectar();
         }
         return cargoList;
     }
 
     public HashMap<Integer, Integer> getcod_funcionarioRegime() {
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
-        ResultSet rs;
         try {
-            if (c.isClosed()) {
-                Conectar();
-            }
             String query = "select userid,cod_regime from userinfo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 Integer cod_regime = rs.getInt("cod_regime");
@@ -4136,31 +3353,18 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
-
     }
 
     public HashMap<Integer, Integer> getcod_funcionarioCargo() {
         HashMap<Integer, Integer> cod_funcionarioCargoHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
-        ResultSet rs;
         //System.out.println("pesquisando getcod_funcionarioCargo");
         try {
-            if (c.isClosed()) {
-                Conectar();
-            }
             String query = "select userid,CARGO from userinfo";
-            pstmt = c.prepareStatement(query);
-            rs = pstmt.executeQuery();
+            con.prepareStatement(query);
+            ResultSet rs = con.pstmt.executeQuery();
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
                 Integer cargo = rs.getInt("CARGO");
@@ -4170,33 +3374,18 @@ public class Banco {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return cod_funcionarioCargoHashMap;
 
     }
 
     public HashMap<Integer, Integer> getcod_funcionarioSubordinacaoDepartamento(Integer dept) {
-
         HashMap<Integer, Integer> cod_funcionarioRegimeHashMap = new HashMap<Integer, Integer>();
-        PreparedStatement pstmt = null;
-        ResultSet rs;
-
         HashMap<Integer, Integer> idToSuperHash = getHierarquiaDepartamentos();
-
         try {
             String query = "select userid,defaultdeptid,permissao from userinfo ";
-
-            pstmt = c.prepareStatement(query);
-
-            rs = pstmt.executeQuery();
+            ResultSet rs = con.executeQuery(query);
 
             while (rs.next()) {
                 Integer userid = rs.getInt("userid");
@@ -4213,37 +3402,23 @@ public class Banco {
                     cod_funcionarioRegimeHashMap.put(userid, -1);
                 }
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException ex) {
-                    System.out.println("ConsultaPonto: getcod_funcionarioSubordinacaoDepartamento 1: " + ex);
-                    //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        } finally {
+            con.Desconectar();
         }
         return cod_funcionarioRegimeHashMap;
 
     }
 
     public HashMap<Integer, Integer> getHierarquiaDepartamentos() {
-
         HashMap<Integer, Integer> idToSuperHash = new HashMap<Integer, Integer>();
-
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer cod = rs.getInt("DEPTID");
@@ -4251,7 +3426,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -4265,22 +3439,17 @@ public class Banco {
 
         try {
 
-            ResultSet rs;
-            Statement stmt;
-            String sql;
-
             SimpleDateFormat sdfHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String inicioStr = sdfHora.format(inicio.getTime());
             String fimStr = sdfHora.format(fim.getTime() + 86399999);
 
-            sql = " select data"
+            String sql = " select data"
                     + " from SolicitacaoAbono "
                     + " where userid = " + userID + " and "
                     + " status = 'Pendente' and "
                     + " data between '" + inicioStr + "' and '" + fimStr + "'";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Date dataPendente = rs.getDate("data");
@@ -4294,7 +3463,6 @@ public class Banco {
             }
 
             rs.close();
-            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -4303,22 +3471,14 @@ public class Banco {
     }
 
     public RelatorioPortaria1510CabecalhoResumo relatorioPortaria1510CabecalhoResumo(Integer cod_funcionario) {
-
         RelatorioPortaria1510CabecalhoResumo relatorioPortaria1510CabecalhoResumo = new RelatorioPortaria1510CabecalhoResumo();
-
         try {
-            ResultSet rs = null;
-            Statement stmt = null;
-
-            String sql;
-
-            sql = " select userid,name,ssn,badgenumber,mat_emcs,deptname,c.nome as cargo, r.nome as regime"
+            String sql = " select userid,name,ssn,badgenumber,mat_emcs,deptname,c.nome as cargo, r.nome as regime"
                     + " from userinfo u left join cargo c on u.cargo =  c.cod_cargo"
                     + " left join regime_horaextra r on u.cod_regime = r.cod_regime, departments d"
                     + " where u.userid = " + cod_funcionario + " and u.defaultdeptid = d.deptid ";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 String userid = rs.getString("userid");
@@ -4339,18 +3499,10 @@ public class Banco {
                 relatorioPortaria1510CabecalhoResumo = new RelatorioPortaria1510CabecalhoResumo(userid, name, ssn, badgenumber, deptname, cargo, regime);
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return relatorioPortaria1510CabecalhoResumo;
     }
@@ -4368,16 +3520,11 @@ public class Banco {
         Boolean isAdministradorVisivel = true;
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            ResultSet rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -4388,7 +3535,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -4399,8 +3545,8 @@ public class Banco {
             sql = "select u.DEFAULTDEPTID,d.deptname from USERINFO u, DEPARTMENTS d"
                     + " where u.userid = " + codigo_funcionario + " and "
                     + " u.DEFAULTDEPTID = d.deptid ";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
             String nome_dept = "";
@@ -4410,13 +3556,11 @@ public class Banco {
                 nome_dept = rs.getString("DEPTNAME");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -4434,7 +3578,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptSrtList = ordenarDepts(permissao, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -4493,16 +3636,11 @@ public class Banco {
         HashMap<Integer, String> idToNomeHash = new HashMap<Integer, String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            ResultSet rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -4513,7 +3651,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -4521,8 +3658,8 @@ public class Banco {
             //Selecionando o departamento do administrador
             sql = "select DEFAULTDEPTID from USERINFO"
                     + " where userid = " + codigo_funcionario;
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            rs = con.executeQuery(sql);
 
             Integer dept = -1;
 
@@ -4530,13 +3667,11 @@ public class Banco {
                 dept = rs.getInt("DEFAULTDEPTID");
             }
             rs.close();
-            stmt.close();
 
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -4553,18 +3688,10 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return isAdministradorVisivel;
     }
@@ -4668,16 +3795,6 @@ public class Banco {
         return nbsp;
     }
 
-    public static void main(String[] args) {
-        int i = 0;
-        teste(i);
-        System.out.print(i);
-    }
-
-    private static void teste(int time) {
-        time++;
-    }
-
     public List<SelectItem> consultaDepartamentoHierarquico(Integer permissao) {
         List<SelectItem> saida = new ArrayList<SelectItem>();
         List<SelectItem> deptOrdersList = new ArrayList<SelectItem>();
@@ -4687,16 +3804,11 @@ public class Banco {
         HashMap<Integer, String> idToNomeHash = new HashMap<Integer, String>();
 
         try {
-            ResultSet rs;
-            Statement stmt;
-
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+
+            ResultSet rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);
@@ -4707,7 +3819,6 @@ public class Banco {
                 idToSuperHash.put(cod, supdeptid);
             }
             rs.close();
-            stmt.close();
 
             List<Integer> deptPermitidos = new ArrayList<Integer>();
             deptIDList = getDeptPermitidos(permissao, deptPermitidos, idToSuperHash);
@@ -4715,8 +3826,7 @@ public class Banco {
             sql = "select DEPTID,DEPTNAME,supdeptid from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc,DEPTNAME";
 
-            stmt = c.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = con.executeQuery(sql);
 
             while (rs.next()) {
                 Integer deptID = rs.getInt("DEPTID");
@@ -4730,8 +3840,6 @@ public class Banco {
                 }
             }
             rs.close();
-            stmt.close();
-
             Integer raiz = Integer.parseInt(deptOrdersList.get(0).getValue().toString());
             List<Integer> deptSrtList = ordenarDepts(raiz, deptOrdersList);
             saida.add(new SelectItem("-1", "Selecione um departamento"));
@@ -4742,56 +3850,38 @@ public class Banco {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         } finally {
-            try {
-                if (c != null) {
-                    c.close();
-                }
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return saida;
     }
 
-    /*-----*/
     public boolean insertLog(String codFuncionario, String nomeFuncionario, String registroAlterado, String codRequerente, String nomeRequerente, String situacao, String liberacao) {
         boolean ok = true;
-        PreparedStatement pstmt = null;
-
         try {
             String query = "insert into LogdeLiberacao(Usuario_ID, Usuario_Nome, Registro_Alterado, Requerente_ID, Requerente_Nome, Data_Alteracao, Situacao, Liberacao) values(?,?,?,?,?,?,?,?)";
 
-            pstmt = c.prepareStatement(query);
-            pstmt.setString(1, codFuncionario);
-            pstmt.setString(2, nomeFuncionario);
-            pstmt.setString(3, registroAlterado);
-            pstmt.setString(4, codRequerente);
-            pstmt.setString(5, nomeRequerente);
+            con.prepareStatement(query);
+            con.pstmt.setString(1, codFuncionario);
+            con.pstmt.setString(2, nomeFuncionario);
+            con.pstmt.setString(3, registroAlterado);
+            con.pstmt.setString(4, codRequerente);
+            con.pstmt.setString(5, nomeRequerente);
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss");
 
             Locale.setDefault(new Locale("pt", "BR")); //<-- Necessario?
 
-            pstmt.setString(6, sdf.format(new java.util.Date()));
-            pstmt.setString(7, situacao);
-            pstmt.setString(8, liberacao);
-            pstmt.executeUpdate();
+            con.pstmt.setString(6, sdf.format(new java.util.Date()));
+            con.pstmt.setString(7, situacao);
+            con.pstmt.setString(8, liberacao);
+            con.executeUpdate();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+            System.out.println(e);
             ok = false;
         } finally {
-            try {
-                if (c != null) {
-                    pstmt.close();
-                    c.close();
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            con.Desconectar();
         }
         return ok;
     }

@@ -208,7 +208,6 @@ public class RelatorioResumoFrequenciaBean implements Serializable {
                 FacesMessage msgErro = new FacesMessage("Não existem informações a serem analisadas!");
                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
             }
-            banco.fecharConexao();
         } else {
             if (departamentoSelecionado.equals("-1")) {
                 FacesMessage msgErro = new FacesMessage("Selecione um departamento!");

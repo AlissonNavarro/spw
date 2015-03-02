@@ -14,6 +14,12 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>configBean</managed-bean-name>
+        <managed-bean-class>beans.ConfigBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+    <managed-bean>
         <managed-bean-name>permissaoBean</managed-bean-name>
         <managed-bean-class>Administracao.PermissaoBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
@@ -171,9 +177,9 @@
 
     <managed-bean>
         <managed-bean-name>justificativaBean</managed-bean-name>
-        <managed-bean-class>CadastroJustificativas.JustificativaBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>beans.JustificativaBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>diaHoraExtraBean</managed-bean-name>
@@ -195,9 +201,9 @@
 
     <managed-bean>
         <managed-bean-name>feriadoBean</managed-bean-name>
-        <managed-bean-class>CadastroFeriado.FeriadoBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>beans.FeriadoBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>historicoAbonoBean</managed-bean-name>
@@ -213,15 +219,15 @@
 
     <managed-bean>
         <managed-bean-name>afastamentoBean</managed-bean-name>
-        <managed-bean-class>Afastamento.AfastamentoBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>beans.AfastamentoBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>categoriaAfastamentoBean</managed-bean-name>
-        <managed-bean-class>CadastroDeCategoriaAfastamento.CategoriaAfastamentoBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>beans.CategoriaAfastamentoBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>abonoEmMassaBean</managed-bean-name>
@@ -261,9 +267,9 @@
 
     <managed-bean>
         <managed-bean-name>verbaBean</managed-bean-name>
-        <managed-bean-class>cadastroVerba.VerbaBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+        <managed-bean-class>beans.VerbaBean</managed-bean-class>
+    
+        <managed-bean-scope>request</managed-bean-scope></managed-bean>
     
     <managed-bean>
         <managed-bean-name>machineBean</managed-bean-name>
@@ -552,23 +558,23 @@
 
     <managed-bean>
         <managed-bean-name>departamentoBean</managed-bean-name>
-        <managed-bean-class>departamento2.DepartamentoBean</managed-bean-class>
+        <managed-bean-class>beans.DepartamentoBean</managed-bean-class>
     
         <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>empresaBean</managed-bean-name>
-        <managed-bean-class>empresa.EmpresaBean</managed-bean-class>
+        <managed-bean-class>beans.EmpresaBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>cargoBean</managed-bean-name>
-        <managed-bean-class>cargo.CargoBean</managed-bean-class>
+        <managed-bean-class>beans.CargoBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope></managed-bean>
 
     <managed-bean>
         <managed-bean-name>perfilBean</managed-bean-name>
-        <managed-bean-class>perfil2.PerfilBean</managed-bean-class>
+        <managed-bean-class>beans.PerfilBean</managed-bean-class>
     
         <managed-bean-scope>request</managed-bean-scope></managed-bean>
 

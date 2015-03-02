@@ -66,7 +66,6 @@ public class RelatorioResumoBean implements Serializable {
             }
         }
         gravarArquivo(relatorioResumoList);
-        banco.fecharConexao();
     }
 
     private void gravarArquivo(List<RelatorioResumo> relatorioResumoList) {

@@ -5,15 +5,13 @@
 package RelatorioMensal;
 
 import Abono.Abono;
-import Afastamento.Afastamento;
+import entidades.Afastamento;
 import ConsultaPonto.ConsultaFrequenciaComEscalaBean;
 import ConsultaPonto.DiaComEscala;
 import ConsultaPonto.Jornada;
 import Usuario.Usuario;
 import Usuario.UsuarioBean;
-import java.io.IOException;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,12 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import Metodos.Metodos;
 import java.util.Locale;
-import java.util.logging.Level;
 //import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import net.sf.jasperreports.engine.JRException;
+import manageBean.CategoriaAfastamentoMB;
+import entidades.CategoriaAfastamento;
 
 /**
  *
@@ -134,7 +132,6 @@ public class RelatorioResumoEscalaBean implements Serializable {
             }
             banco = new Banco();
             banco.insertRelatorioResumoEscala(relatorioResumoEscalaList);
-            banco.fecharConexao();
 
             if (!relatorioResumoEscalaList.isEmpty()) {
                 String deptStr = Metodos.buscaRotulo(departamentoSelecionado, departamentosSelecItem);
@@ -391,12 +388,17 @@ public class RelatorioResumoEscalaBean implements Serializable {
         List<String> legendaList = new ArrayList<String>();
         String legenda = "";
 
+        CategoriaAfastamentoMB caMB = new CategoriaAfastamentoMB();
+        CategoriaAfastamento ca;
+        
         for (Iterator<Afastamento> it = afastamentoList.iterator(); it.hasNext();) {
             Afastamento afastamento = it.next();
-            String legenda_ = afastamento.getCategoriaAfastamento().getLegenda();
-            if (!legendaList.contains(legenda_)&&!afastamento.getCategoriaAfastamento().getLegenda().equals("X")) {
+            ca = caMB.consultaCategoriaAfastamento(afastamento.getCodCategoriaAfastamento());
+            //String legenda_ = afastamento.getCategoriaAfastamento().getLegenda();
+            String legenda_ = ca.getLegenda();
+            if (!legendaList.contains(legenda_)&&!ca.getLegenda().equals("X")) {
                 legendaList.add(legenda_);
-                legenda += afastamento.getCategoriaAfastamento().getSignificadoLegenda() + ", ";
+                legenda += ca.getSignificadoLegenda() + ", ";
             }
         }
         if (legenda.length() > 2) {

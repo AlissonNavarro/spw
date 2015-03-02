@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Administracao;
 
 import Usuario.UsuarioBean;
@@ -10,11 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import manageBean.PerfilMB;
 
-/**
- *
- * @author amsgama
- */
 //@KeepAlive(ajaxOnly=true)
 public class PermissaoBean implements Serializable {
 
@@ -24,28 +17,29 @@ public class PermissaoBean implements Serializable {
     private List<SelectItem> regimelist;
     private List<SelectItem> perfillist;
     private String filterValue = "";
-    private Integer page = 1;
+    private int page = 1;
 
     public PermissaoBean() {
         UsuarioBean usuarioBean = ((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean"));
         if (usuarioBean.getIsAtivo()) {
             permissaoList = new ArrayList<Permissao>();
             Banco banco = new Banco();
+            
             departamentolist = new ArrayList<SelectItem>();
             departamentolist = banco.consultaDepartamentoHierarquico();
-            banco = new Banco();
+            
             regimelist = new ArrayList<SelectItem>();
             regimelist = banco.consultaRegime();
-            banco = new Banco();
+            
             perfillist = new ArrayList<SelectItem>();
-            perfillist = banco.consultaPerfis();
+            PerfilMB perfilMB = new PerfilMB();
+            perfillist = perfilMB.consultaPerfis();
+            
             consultaDepartamentosListDosFuncionarios();
             if (usuarioBean != null) {
                 if (usuarioBean.getEhSuperAdministrador()) {
-                    banco = new Banco();
                     permissaoList = banco.usuarioPermissaoSuperAdmin(filterValue);
                 } else {
-                    banco = new Banco();
                     permissaoList = banco.usuarioPermissao(filterValue, departamentolistDosFuncionarios);
                 }
             }
@@ -53,13 +47,9 @@ public class PermissaoBean implements Serializable {
     }
 
     public void reConstroi() {
-        Banco banco = new Banco();
+        PerfilMB perfilMB = new PerfilMB();
         perfillist = new ArrayList<SelectItem>();
-        perfillist = banco.consultaPerfis();
-    }
-    
-    public void nada(){
-        System.out.println("instanciou");
+        perfillist = perfilMB.consultaPerfis();
     }
 
     public void teste() {
@@ -67,10 +57,8 @@ public class PermissaoBean implements Serializable {
         Banco banco = new Banco();
         departamentolist = new ArrayList<SelectItem>();
         departamentolist = banco.consultaDepartamentoHierarquico();
-        banco = new Banco();
         regimelist = new ArrayList<SelectItem>();
         regimelist = banco.consultaRegime();
-        banco = new Banco();
         permissaoList = banco.usuarioPermissao(filterValue, departamentolistDosFuncionarios);
     }
 
@@ -80,7 +68,6 @@ public class PermissaoBean implements Serializable {
         if (!usuarioBean.getUsuario().getPermissao().equals("")) {
             departamentolistDosFuncionarios = banco.getTodosOsDescendentes(Integer.parseInt(usuarioBean.getUsuario().getPermissao()));
             departamentolistDosFuncionarios.add(Integer.parseInt(usuarioBean.getUsuario().getPermissao()));
-            banco.fecharConexao();
         }
     }
 
@@ -111,25 +98,19 @@ public class PermissaoBean implements Serializable {
         this.departamentolist = departamentolist;
     }
 
-    /**
-     * @return the filterValue
-     */
     public String getFilterValue() {
         return filterValue;
     }
 
-    /**
-     * @param filterValue the filterValue to set
-     */
     public void setFilterValue(String filterValue) {
         this.filterValue = filterValue;
     }
 
-    public Integer getPage() {
+    public int getPage() {
         return page;
     }
 
-    public void setPage(Integer page) {
+    public void setPage(int page) {
         this.page = page;
     }
 
