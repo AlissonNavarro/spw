@@ -8,7 +8,7 @@ import ConsultaPonto.ConsultaFrequenciaComEscalaBean;
 import ConsultaPonto.DescolamentoTemporario;
 import ConsultaPonto.Escala;
 import ConsultaPonto.PeriodoJornada;
-import ConsultaPonto.Turnos;
+import entidades.Turnos;
 import Usuario.UsuarioBean;
 import java.io.Serializable;
 import java.sql.SQLException;

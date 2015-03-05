@@ -14,9 +14,6 @@ import javax.faces.model.SelectItem;
 
 public class Banco {
 
-    //Driver d;
-    //Connection conSQLite;
-    // Departamento Hieraquico
     List<Integer> deptList = new ArrayList<Integer>();
     AcessoBD con;
 
@@ -24,12 +21,6 @@ public class Banco {
         con = new AcessoBD();
     }
 
-    /*
-     public static Connection getSQLiteConnection() throws Exception {
-     Driver d = (Driver) Class.forName("org.sqlite.JDBC").newInstance();
-     Connection c = DriverManager.getConnection("jdbc:sqlite://C:/Arquivos de programas/ID DATA Tecnologia/ID REP Config 32 Bits/Data/IDREP.s3db");
-     return c;
-     }*/
     public Integer cadastrarNovoFuncionario(Funcionario func) {
         Integer flag = 0;
         try {
@@ -382,14 +373,11 @@ public class Banco {
         Boolean isAdministradorVisivel = true;
 
         try {
-            ResultSet rs;
-            String sql;
-
             //Selecionando os departamentos com permissão de visibilidade.
-            sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
+            String sql = "select DEPTID,SUPDEPTID from DEPARTMENTS"
                     + " ORDER BY SUPDEPTID asc";
 
-            rs = con.executeQuery(sql);
+            ResultSet rs = con.executeQuery(sql);
 
             List<Integer> deptIDList = new ArrayList<Integer>();
             deptIDList.add(permissao);

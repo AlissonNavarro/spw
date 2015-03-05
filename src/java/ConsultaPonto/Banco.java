@@ -3,6 +3,7 @@ package ConsultaPonto;
 import Metodos.Metodos;
 import Abono.Abono;
 import Abono.SolicitacaoAbono;
+import entidades.Turnos;
 import entidades.Afastamento;
 import CadastroHoraExtra.DetalheGratificacao;
 import CadastroHoraExtra.DetalheHoraExtra;

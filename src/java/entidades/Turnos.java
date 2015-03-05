@@ -1,17 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package ConsultaPonto;
+package entidades;
 
 import java.util.Date;
 
-/**
- *
- * @author ancouto
- */
 public class Turnos {
     private int schclassid;
     private Date startTime;

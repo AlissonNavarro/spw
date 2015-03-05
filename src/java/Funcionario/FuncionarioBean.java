@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Funcionario;
 
 import Usuario.UsuarioBean;
@@ -16,10 +12,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-/**
- *
- * @author amvboas
- */
 public class FuncionarioBean implements Serializable {
 
     private List<SelectItem> departamentolist;
