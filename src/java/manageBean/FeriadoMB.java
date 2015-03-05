@@ -4,7 +4,6 @@ import entidades.Feriado;
 import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +34,7 @@ public class FeriadoMB implements Serializable {
                 feriadoList.add(feriado);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("FeriadoMB consultaFeriados " + ex);
         } finally {
             con.Desconectar();
@@ -70,7 +69,7 @@ public class FeriadoMB implements Serializable {
                 }
                 rs.close();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("FeriadoMB consultaFeriadosPorData " + ex);
         } finally {
             con.Desconectar();
@@ -94,7 +93,7 @@ public class FeriadoMB implements Serializable {
                 feriado = new Feriado(id_, nome, data, isOficial);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("FeriadoMB consultaFeriado " + ex);
         } finally {
             con.Desconectar();
@@ -114,7 +113,7 @@ public class FeriadoMB implements Serializable {
                 con.executeUpdate();
                 flag = 1;
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("FeriadoMB inserir " + ex);
             flag = 2;
         } finally {
@@ -136,7 +135,7 @@ public class FeriadoMB implements Serializable {
                 con.pstmt.setInt(4, feriado.getId());
                 con.executeUpdate();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("FeriadoMB alterar "+ex);
             flag = 1;
         } finally {

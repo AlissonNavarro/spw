@@ -4,7 +4,6 @@ import entidades.Perfil;
 import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
@@ -33,7 +32,7 @@ public class PerfilMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("PerfilMB adicionarPerfil " + ex);
             flag = 2;
         } finally {
@@ -186,7 +185,7 @@ public class PerfilMB implements Serializable {
             }
             rs.close();
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("PerfilMB consultaPermissoesPerfil " + ex);
         } finally {
             con.Desconectar();
@@ -275,7 +274,7 @@ public class PerfilMB implements Serializable {
 
                 con.executeUpdate();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("PerfilMB salvarAlteracoesPerfil " + ex);
             flag = 1;
         } finally {
@@ -304,7 +303,7 @@ public class PerfilMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("PerfilMB salvarEditPerfil "+ex);
             flag = 2;
         } finally {

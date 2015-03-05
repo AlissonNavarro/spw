@@ -4,7 +4,6 @@ import entidades.Departamento;
 import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,7 +56,7 @@ public class DepartamentoMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("DepartamentoMB salvarNovoDepartamento " + ex);
             flag = 2;
         } finally {
@@ -86,7 +85,7 @@ public class DepartamentoMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Departamento salvarEditDepartamento " + ex);
             flag = 2;
         } finally {
@@ -106,7 +105,7 @@ public class DepartamentoMB implements Serializable {
             sql = "delete from DEPARTMENTS where DEPTID = " + departamentoSelecionado;
             con.executeUpdate(sql);
             return true;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("DeparamentoMB excluirDepartamento " + ex);
         } finally {
             con.Desconectar();
@@ -303,7 +302,7 @@ public class DepartamentoMB implements Serializable {
                     temFilhos = true;
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Departamento temFilhos " + ex);
         }
         return temFilhos;
@@ -319,7 +318,7 @@ public class DepartamentoMB implements Serializable {
                     temFuncionariosAlocados = true;
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Departamento temFuncionariosAlocados " + ex);
         }
         return temFuncionariosAlocados;
@@ -335,7 +334,7 @@ public class DepartamentoMB implements Serializable {
                 supdeptid = rs.getInt("SUPDEPTID");
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Departamento consultaDeptoPai " + ex);
         } finally {
             con.Desconectar();
@@ -357,7 +356,7 @@ public class DepartamentoMB implements Serializable {
                 filhos.addAll(b.getTodosOsDescendentes(deptid));
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Departamento getTodosOsDescendentes " + ex);
         } finally {
             con.Desconectar();

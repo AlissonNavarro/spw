@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,7 +112,7 @@ public class AfastamentoMB implements Serializable {
         } catch (Exception e) {
             try {
                 con.c.rollback();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 System.out.println("Afastamento: insertAfastamento: " + ex);
                 //Logger.getLogger(AfastamentoMB.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -187,7 +186,7 @@ public class AfastamentoMB implements Serializable {
         try {
             con.Conectar();
             con.c.setAutoCommit(false);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Afastamento: deleteTodosAfastamento 1: " + ex);
             //Logger.getLogger(AfastamentoMB.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -204,7 +203,7 @@ public class AfastamentoMB implements Serializable {
                 con.executeUpdate(queryDelete);
             }
             con.c.commit();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Afastamento: deleteTodosAfastament 2: " + ex);
             //Logger.getLogger(AfastamentoMB.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -468,7 +467,7 @@ public class AfastamentoMB implements Serializable {
                 cpfList.add(cpf);
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();

@@ -3,7 +3,6 @@ package manageBean;
 import entidades.Justificativa;
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class JustificativaMB {
                 justificativaList.add(justificativa);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("JustificativaMB consultaJustificativas " + ex);
         } finally {
             con.Desconectar();
@@ -59,7 +58,7 @@ public class JustificativaMB {
                 justificativa.setIsDescricaoObrigatoria(descricaoObrigatoria);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("JustificativaMB consultaJustificativa " + ex);
         } finally {
             con.Desconectar();
@@ -81,7 +80,7 @@ public class JustificativaMB {
                 flag = con.executeUpdate() > 0;
             }
 
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("JustificativaMB alterar " + ex);
             flag = false;
         } finally {
@@ -125,7 +124,7 @@ public class JustificativaMB {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("JustificativaMB inserir "+ex);
             flag = false;
         } finally {

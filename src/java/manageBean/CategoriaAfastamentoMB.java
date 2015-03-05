@@ -3,7 +3,6 @@ package manageBean;
 import entidades.CategoriaAfastamento;
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class CategoriaAfastamentoMB {
                 categoriaAfastamentoList.add(ca);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CategoriaAfastamentoMB consultaCategoriaAfastamento " + ex);
         } finally {
             con.Desconectar();
@@ -48,7 +47,7 @@ public class CategoriaAfastamentoMB {
                 String legendaAfastamento = rs.getString("legendaAfastamento");
                 ca = new CategoriaAfastamento(cod_categoria, descAfastamento, legendaAfastamento);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CategoriaAfastamento consultaCatgoriaAfastamento " + ex);
         } finally {
             con.Desconectar();
@@ -66,7 +65,7 @@ public class CategoriaAfastamentoMB {
                 con.pstmt.setInt(3, categoriaAfastamento.getId());
                 con.executeUpdate();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CategoriaAfastamentoMB alterar " + ex);
         } finally {
             con.Desconectar();
@@ -106,7 +105,7 @@ public class CategoriaAfastamentoMB {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CategoriaAfastamentoMB inserir "+ex);
             flag = false;
         } finally {

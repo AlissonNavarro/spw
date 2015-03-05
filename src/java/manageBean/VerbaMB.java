@@ -3,9 +3,6 @@ package manageBean;
 import comunicacao.AcessoBD;
 import entidades.Verba;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VerbaMB {
 
@@ -31,7 +28,7 @@ public class VerbaMB {
                 Integer faltas = rs.getInt("Faltas");
                 verba = new Verba(empresa, adicionalNoturno, atrasos, atrasosMenorHora, atrasosMaiorHora, feriadoCritico, dsr, faltas);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
         } finally {
             con.Desconectar();

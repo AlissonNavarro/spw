@@ -4,7 +4,6 @@ import entidades.Empresa;
 import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
@@ -28,7 +27,7 @@ public class EmpresaMB implements Serializable {
                 con.executeUpdate();
                 return true;
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB inserir " + ex);
         } finally {
             con.Desconectar();;
@@ -48,7 +47,7 @@ public class EmpresaMB implements Serializable {
                 con.executeUpdate();
                 return true;
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB alterar " + ex);
         } finally {
             con.Desconectar();;
@@ -76,7 +75,7 @@ public class EmpresaMB implements Serializable {
                 e.setCei(rs.getInt("cei"));
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB consultarEmpresaPorId " + ex);
         } finally {
             con.Desconectar();
@@ -98,7 +97,7 @@ public class EmpresaMB implements Serializable {
                 saida.add(new SelectItem(id, razao_social));
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB consultaEmpresaOrdernado " + ex);
         } finally {
             con.Desconectar();
@@ -123,7 +122,7 @@ public class EmpresaMB implements Serializable {
                 }
                 rs.close();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB consultaDetalhesEmpresa " + ex);
         } finally {
             con.Desconectar();

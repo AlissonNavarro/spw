@@ -4,7 +4,6 @@ import entidades.Cargo;
 import comunicacao.AcessoBD;
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
@@ -36,7 +35,7 @@ public class CargoMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CargoMB inserir " + ex.getMessage());
             flag = 2;
         } finally {
@@ -63,7 +62,7 @@ public class CargoMB implements Serializable {
                     con.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CargoMB alterar " + ex.getMessage());
             flag = 2;
         } finally {
@@ -90,7 +89,7 @@ public class CargoMB implements Serializable {
                 c.setNome(nome);
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CargoMB consultaCargoOrdernado " + ex.getMessage());
         } finally {
             con.Desconectar();
@@ -113,7 +112,7 @@ public class CargoMB implements Serializable {
                 }
                 rs.close();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CargoMB consultaCargoOrdernado " + ex.getMessage());
         } finally {
             con.Desconectar();
@@ -134,7 +133,7 @@ public class CargoMB implements Serializable {
                 saida.add(new SelectItem(codCargo, nome));
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("CargoMB consultaCargoOrdernado " + ex.getMessage());
         } finally {
             con.Desconectar();
