@@ -109,10 +109,18 @@ public class UsuarioBean implements Serializable {
         Usuario userTeste = new Usuario();
         Banco banco = new Banco();
 
-        if (useAD) {
-            userTeste = banco.getUsuarioByMatricula(cod_vinculo_.toString());
+        if (banco.Conectar()) {
+            if (useAD) {
+                userTeste = banco.getUsuarioByMatricula(cod_vinculo_.toString());
+            } else {
+                userTeste = banco.getUsuarioByCPF(login);
+            }
         } else {
-            userTeste = banco.getUsuarioByCPF(login);
+            if (!login.equals("000.000.000-00")) {
+                FacesMessage msgErro = new FacesMessage("Sem comunicação com o banco de dados.");
+                FacesContext.getCurrentInstance().addMessage(null, msgErro);
+                //return "navegarConexaoBanco";
+            }
         }
 
         if (!(userTeste.getLogin() == null || login.equals("000.000.000-00"))) {

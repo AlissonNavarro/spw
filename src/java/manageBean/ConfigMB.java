@@ -2,7 +2,6 @@ package manageBean;
 
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ConfigMB {
     
@@ -19,7 +18,7 @@ public class ConfigMB {
                 con.pstmt.setString(1, ip);
                 return (con.executeUpdate() > 0);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB insertADIP " + ex);
         }
         return false;
@@ -33,7 +32,7 @@ public class ConfigMB {
                 con.pstmt.setString(2, ipSender);
                 return con.executeUpdate() > 0;
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB insertDigitIP " + ex);
         }
         return false;
@@ -52,7 +51,7 @@ public class ConfigMB {
                 servidor = "";
             }
             return servidor;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB getServidorAD " + ex);
         } finally {
             con.Desconectar();
@@ -73,7 +72,7 @@ public class ConfigMB {
                 servidor = "";
             }
             return servidor;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB getServidorDigitSender " + ex);
         } finally {
             con.Desconectar();
@@ -94,7 +93,7 @@ public class ConfigMB {
                 servidor = "";
             }
             return servidor;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("EmpresaMB getServidorDigitCatcher " + ex);
         } finally {
             con.Desconectar();

@@ -3,7 +3,6 @@ package backup;
 import Metodos.Metodos;
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class Banco {
 
@@ -77,7 +76,7 @@ public class Banco {
         return backupConfig;
     }
 
-    public boolean updateBackupConfig(BackupConfig backupConfig) throws SQLException {
+    public boolean updateBackupConfig(BackupConfig backupConfig) throws Exception {
         boolean ok = true;
         String query = "Select * from Backup_Config";
         ResultSet rs = con.executeQuery(query);
@@ -114,7 +113,7 @@ public class Banco {
                 }
 
                 con.executeUpdate();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 System.out.println(e);
                 ok = false;
             } finally {
@@ -149,7 +148,7 @@ public class Banco {
                 }
 
                 con.executeUpdate();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 System.out.println(e);;
                 ok = false;
             } finally {

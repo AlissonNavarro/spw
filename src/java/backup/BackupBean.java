@@ -68,6 +68,9 @@ public class BackupBean {
             } catch (SQLException ex) {
                 System.out.println("salvar: " + ex);
                 //Logger.getLogger(BackupBean.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                System.out.println("salvar: " + ex);
+                //Logger.getLogger(BackupBean.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (testeUpdate) {
                 if (backup()) {

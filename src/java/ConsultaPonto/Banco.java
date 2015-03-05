@@ -13,7 +13,6 @@ import CadastroHoraExtra.TipoHoraExtra;
 import Funcionario.Funcionario;
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 
@@ -295,7 +294,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         } finally {
             con.Desconectar();
@@ -651,7 +650,7 @@ public class Banco {
                 }
                 rs.close();
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("ConsultaPonto.Banco.consultaFuncionario" + e.getMessage());
         } finally {
             con.Desconectar();
@@ -1700,7 +1699,7 @@ public class Banco {
                 cpfList.add(cpf);
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
         } finally {
             con.Desconectar();
         }
@@ -2256,7 +2255,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -2363,7 +2362,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -2595,7 +2594,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -2630,7 +2629,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -2785,7 +2784,7 @@ public class Banco {
             ok = false;
             try {
                 con.c.rollback();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
         } finally {
@@ -2967,7 +2966,7 @@ public class Banco {
             con.pstmt.setString(2, dataInicioStr);
             con.pstmt.setString(3, dataFimStr);
             con.executeUpdate();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("ConsultaPonto: insertHoraExtraEmMassa 1: " + ex);
             //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2988,7 +2987,7 @@ public class Banco {
             System.out.println(e.getMessage());
             try {
                 con.c.rollback();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 System.out.println("ConsultaPonto: insertHoraExtraEmMassa 2: " + ex);
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -3239,7 +3238,7 @@ public class Banco {
                 }
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();

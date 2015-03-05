@@ -7,7 +7,6 @@ import ConsultaPonto.Escala;
 import Funcionario.Funcionario;
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -642,7 +641,7 @@ class Banco {
             con.pstmt.setInt(6, 0);
             con.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.getMessage();
             flag = false;
         } finally {
@@ -704,7 +703,7 @@ class Banco {
             flag = false;
             try {
                 con.c.rollback();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 System.out.println(e);
             }
         } finally {
@@ -813,7 +812,7 @@ class Banco {
         } catch (Exception e) {
             try {
                 con.c.rollback();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 System.out.println("CadastroCronograma: deletarTodasJornadas: " + ex);
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1113,7 +1112,7 @@ class Banco {
                 cpfList.add(cpf);
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();

@@ -76,7 +76,6 @@ public class DesEncrypter {
         } catch (javax.crypto.BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
         } catch (UnsupportedEncodingException e) {
-        } catch (java.io.IOException e) {
         }
         return null;
     }
@@ -95,8 +94,6 @@ public class DesEncrypter {
             System.out.println("DesEncrypter: decrypt 2: "+e);
         } catch (UnsupportedEncodingException e) {
             System.out.println("DesEncrypter: decrypt 3: "+e);
-        } catch (java.io.IOException e) {
-            System.out.println("DesEncrypter: decrypt 4: "+e);
         }
         return null;
     }

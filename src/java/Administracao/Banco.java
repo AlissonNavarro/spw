@@ -5,7 +5,6 @@ import Abono.AbonoEmMassa;
 import comunicacao.AcessoBD;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,7 +74,7 @@ public class Banco {
                 userid = -1;
                 badgenumber = "";
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Administracao.Banco.CorrigePIN() " + ex.getMessage());
         } finally {
             con.Desconectar();
@@ -90,7 +89,7 @@ public class Banco {
             if (rs.next()) {
                 result = rs.getBoolean("checkWithPIN");
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Administracao.Banco.CheckWithPIN() " + ex.getMessage());
         }
         return result;
@@ -459,7 +458,7 @@ public class Banco {
                 cpfList.add(cpf);
             }
             rs.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -516,7 +515,7 @@ public class Banco {
                     }
                 }
             } while (!correnteDia.equals(fimDia));
-        } catch (SQLException e) {
+        } catch (Exception e) {
             ok = false;
             System.out.println("Erro:" + e);
         } finally {
@@ -716,7 +715,7 @@ public class Banco {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try {
             con.c.setAutoCommit(false);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Administracao: deleteTodosAbonoEmMassa 1: " + ex);
             //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -734,13 +733,13 @@ public class Banco {
                 con.executeUpdate(queryDelete);
             }
             con.c.commit();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("Administracao: deleteTodosAbonoEmMassa 2: " + ex);
             //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 con.c.setAutoCommit(true);
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 //Logger.getLogger(Banco.class.getName()).log(Level.SEVERE, null, ex);
             }
             con.Desconectar();
@@ -901,7 +900,7 @@ public class Banco {
                 saida.add(new SelectItem(perfilID, nome));
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
         } finally {
             con.Desconectar();
@@ -1010,7 +1009,7 @@ public class Banco {
                 nome = rs.getString("nome");
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
         } finally {
             con.Desconectar();
@@ -1027,7 +1026,7 @@ public class Banco {
                 nome = rs.getString("nome_perfil");
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
         } finally {
             con.Desconectar();
@@ -1044,7 +1043,7 @@ public class Banco {
                 nome = rs.getString("DEPTNAME");
             }
             rs.close();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println(ex);
         } finally {
             con.Desconectar();

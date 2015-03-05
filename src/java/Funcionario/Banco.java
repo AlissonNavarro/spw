@@ -2,7 +2,6 @@ package Funcionario;
 
 import comunicacao.AcessoBD;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -340,7 +339,7 @@ public class Banco {
                 y++;
                 str = "" + y;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.getMessage();
         } finally {
             con.Desconectar();

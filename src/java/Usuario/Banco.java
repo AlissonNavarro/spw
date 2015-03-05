@@ -1,15 +1,10 @@
 package Usuario;
 
-import Metodos.Metodos;
 import comunicacao.AcessoBD;
 import entidades.Perfil;
 import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +19,10 @@ public class Banco {
 
     public Banco() {
         con = new AcessoBD();
+    }
+    
+    public boolean Conectar() {
+        return con.Conectar();
     }
 
     public Usuario getUsuarioByMatricula(String login) {
@@ -169,7 +168,7 @@ public class Banco {
             con.pstmt.setString(2, cpf);
             con.executeUpdate();
             ok = true;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         } finally {
             con.Desconectar();
@@ -223,7 +222,7 @@ public class Banco {
                 rs.close();
                 
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             con.Desconectar();
@@ -632,7 +631,7 @@ public class Banco {
         return perfil;
     }
 
-    public void select() throws SQLException {
+    public void select() throws Exception {
         ResultSet rs;
         String sql;
         sql = "SELECT * FROM USER_SPEDAY WHERE STARTSPECDAY between #01/06/09 01:20:00# and  #33/06/09 15:50:00#";

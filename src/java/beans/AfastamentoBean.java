@@ -5,7 +5,6 @@ import entidades.Afastamento;
 import Metodos.Metodos;
 import Usuario.UsuarioBean;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +34,7 @@ public class AfastamentoBean implements Serializable {
     private Afastamento alterarAFastamento;
     private Afastamento alterarAFastamentoTemp;
 
-    public AfastamentoBean() throws SQLException {
+    public AfastamentoBean() {
 
         afastamentoList = new ArrayList<Afastamento>();
         alterarAFastamento = new Afastamento();
@@ -77,7 +76,7 @@ public class AfastamentoBean implements Serializable {
         //      departamentolist = banco.consultaDepartamentoOrdernado();
     }
 
-    public void consultaFuncionario() throws SQLException {
+    public void consultaFuncionario() {
         AfastamentoMB banco = new AfastamentoMB();
         cod_funcionario = -1;
         funcionarioList = new ArrayList<SelectItem>();

@@ -1,7 +1,6 @@
 package beans;
 
 import entidades.Cargo;
-import Metodos.Metodos;
 import manageBean.CargoMB;
 import java.io.Serializable;
 import java.util.ArrayList;

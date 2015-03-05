@@ -169,6 +169,9 @@ public class ConexaoBean implements Serializable {
            // UsuarioBean usuarioBean = ((UsuarioBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioBean"));
            // usuarioBean.setIsAtivo(false);
         //}
+        if (hasConexao) {
+            Metodos.carregarUrlCompleta();
+        }
         return hasConexao;
     }
 
