@@ -94,7 +94,7 @@
                                         </rich:dataGrid>
                                     </h:form>
 
-                                    <rich:spacer width="10" rendered="#{not empty empresaBean.ipDigitSender}"/>
+                                    <%--<rich:spacer width="10" rendered="#{not empty empresaBean.ipDigitSender}"/>
                                     <h:panelGrid columns="1" style="text-align:center;float:center" rendered="#{not empty empresaBean.ipDigitSender}">    
                                         <center>
                                             <h:outputLink id="sender" value="#{empresaBean.fullNameIpSender}" 
@@ -103,7 +103,7 @@
                                             </h:outputLink>
                                             <h:outputText value="Enviar Usuários aos Relógios" styleClass="label"/>
                                         </center>
-                                    </h:panelGrid>
+                                    </h:panelGrid>--%>
                                 </a4j:outputPanel>
                             </center>
                         </rich:tab>

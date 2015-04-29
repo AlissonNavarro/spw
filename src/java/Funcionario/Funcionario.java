@@ -7,28 +7,28 @@ public class Funcionario implements Serializable {
 
     //private Integer userid;
     private Integer funcionarioId;
-    private String matricula;
+    private String matricula;//tem como pin
     private String dept;
-    private Integer cod_dept;
-    private String cpf;
-    private String PIS;
-    private String nome;
-    private Integer sexo;
-    private Integer cargo;
+    private Integer cod_dept;//tem
+    private String cpf;//tem
+    private String PIS;//tem
+    private String nome; //tem
+    private Integer sexo;//tem
+    private Integer cargo;//tem
     private String cargoStr;
     private String cracha;
-    private Date dataNascimento;
-    private Date dataContratação;
-    private Boolean sucetivelAFeriado;
-    private Integer cod_regime;
+    private Date dataNascimento;//tem
+    private Date dataContratação;//tem
+    private Boolean sucetivelAFeriado; //tem
+    private Integer cod_regime;//tem
     private String nome_regime;
-    private Integer mat_emcs;
+    private Integer mat_emcs;//tem como matricula
     //login de active Directory
     private String ADUsername;
     //Se está demitido ou não
-    private Boolean isAtivo;
+    private Boolean isAtivo; //tem
     //Se tem acesso livre nas catracas
-    private Boolean livreAcesso;
+    private Boolean livreAcesso;//tem
     
     public Funcionario() {
     }

@@ -52,7 +52,7 @@ public class Banco {
                 con.pstmt.setString(4, addLetraPin(func.getMatricula()));
             }
             con.pstmt.setInt(5, func.getMat_emcs());
-            con.pstmt.setString(6, genderIntToString(func.getSexo()));
+            con.pstmt.setInt(6, func.getSexo());
             con.pstmt.setString(7, nasc);
             con.pstmt.setString(8, contr);
             con.pstmt.setInt(9, dept);
@@ -62,7 +62,9 @@ public class Banco {
             con.pstmt.setInt(13, func.getSucetivelAFeriado() ? 1 : 0);
             con.pstmt.setString(14, matricula);
             con.pstmt.setBoolean(15, func.getLivreAcesso());
-            con.executeUpdate();
+            if (con.executeUpdate() != 1) {
+               flag = 1; 
+            }
 
             /*            try {
              conSQLite = getSQLiteConnection();
@@ -110,7 +112,7 @@ public class Banco {
                 con.pstmt.setString(4, addLetraPin(func.getMatricula()));
             }
             con.pstmt.setInt(5, func.getMat_emcs());
-            con.pstmt.setString(6, genderIntToString(func.getSexo()));
+            con.pstmt.setInt(6, func.getSexo());
             con.pstmt.setString(7, nasc);
             con.pstmt.setString(8, contr);
             con.pstmt.setInt(9, dept);
@@ -272,7 +274,7 @@ public class Banco {
             }
             con.pstmt.setString(2, funcionario.getCpf());
             con.pstmt.setString(3, funcionario.getNome());
-            con.pstmt.setString(4, genderIntToString(funcionario.getSexo()));
+            con.pstmt.setInt(4, funcionario.getSexo());
             con.pstmt.setString(5, carg);
             con.pstmt.setString(6, funcionario.getCracha());
             con.pstmt.setString(7, nasc);
@@ -449,19 +451,6 @@ public class Banco {
             System.out.println(e);
         }
         return saida;
-    }
-
-    public int apagaUserZero() {
-        int flag = 0;
-        try {
-            String sqlSelect = "delete from userinfo where userid = 0";
-            con.executeUpdate(sqlSelect);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            flag = 1;
-        }
-        return flag;
     }
 
     private static String espaces(Integer qnt) {

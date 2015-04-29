@@ -334,7 +334,11 @@
                                                                     <h:outputText value="Sexo: " styleClass="label" style="float:right"/>
                                                                     <rich:spacer width="3"/>
                                                                     <h:selectOneMenu id="newFuncionarioSexo" value="#{funcionarioBean.newFuncionario.sexo}" >
-                                                                        <f:selectItems value="#{funcionarioBean.sexosList}"/>
+                                                                        <%--<f:selectItems value="#{funcionarioBean.sexosList}"/>--%>
+                                                                       <f:selectItem itemLabel="Não especificado" itemValue="0" />
+                                                                        <f:selectItem itemLabel="Masculino" itemValue="1" />
+                                                                        <f:selectItem itemLabel="Feminino" itemValue="2" />
+                                                                       
                                                                         <a4j:support event="onchange"  />
                                                                     </h:selectOneMenu>
                                                                 </h:panelGrid>
@@ -484,8 +488,11 @@
                                                                 <h:outputText value="Sexo: " styleClass="label" style="float:right"/>
                                                                 <rich:spacer width="3"/>
                                                                 <h:selectOneMenu id="dadosFuncionariosexo" value="#{funcionarioBean.funcionario.sexo}" >
-                                                                    <f:selectItems value="#{funcionarioBean.sexosList}"/>
-                                                                    <a4j:support event="onchange"  />
+                                                                    <%--<f:selectItems value="#{funcionarioBean.sexosList}"/>--%>
+                                                                    <f:selectItem itemLabel="Não especificado" itemValue="0" />
+                                                                    <f:selectItem itemLabel="Masculino" itemValue="1"/>
+                                                                    <f:selectItem itemLabel="Feminino" itemValue="2"/>
+                                                                    <%--<a4j:support event="onchange"  />--%>
                                                                 </h:selectOneMenu>
                                                             </h:panelGrid>
                                                             <rich:spacer width="25"/>

@@ -16,7 +16,7 @@ public class FuncionarioBean implements Serializable {
 
     private List<SelectItem> departamentolist;
     private Boolean sucetivelAFeriado;
-    private List<SelectItem> sexosList;
+    //private List<SelectItem> sexosList;
     private List<SelectItem> cargosList;
     private List<SelectItem> departamentolistDestino;
     private List<SelectItem> funcionarioList;
@@ -57,7 +57,7 @@ public class FuncionarioBean implements Serializable {
         inicializarAtributos();
         departamentolist = new ArrayList<SelectItem>();
         funcionarioList = new ArrayList<SelectItem>();
-        sexosList = new ArrayList<SelectItem>();
+//        sexosList = new ArrayList<SelectItem>();
         cargosList = new ArrayList<SelectItem>();
         departamentolistDestino = new ArrayList<SelectItem>();
         regimelist = new ArrayList<SelectItem>();
@@ -76,7 +76,7 @@ public class FuncionarioBean implements Serializable {
         consultaDepartamento();
         //       consultaDepartamentos();
         consultaCargosList();
-        consultaSexosList();
+//        consultaSexosList();
         consultaRegimeList();
         Locale.setDefault(new Locale("pt", "BR"));
     }
@@ -103,7 +103,6 @@ public class FuncionarioBean implements Serializable {
 
     public void addNewFunc() {
         Banco b = new Banco();
-        Integer userZero = b.apagaUserZero();
         Integer flag = b.cadastrarNovoFuncionario(newFuncionario);
         if (flag == 0) {
             FacesMessage msgErro = new FacesMessage("Funcionário cadastrado com sucesso!");
@@ -120,12 +119,12 @@ public class FuncionarioBean implements Serializable {
         }
     }
 
-    public void consultaSexosList() {
+/*    public void consultaSexosList() {
         sexosList = new ArrayList<SelectItem>();
         sexosList.add(new SelectItem(null, "Não Especificado"));
         sexosList.add(new SelectItem(1, "Masculino"));
         sexosList.add(new SelectItem(2, "Feminino"));
-    }
+    }*/
 
     public void consultaCargosList() {
         Banco banco = new Banco();
@@ -260,7 +259,7 @@ public class FuncionarioBean implements Serializable {
 
     public void salvarFuncionarioAlteracoes() {
         Banco banco = new Banco();
-        String cargo = (funcionario.getCargo() == null || funcionario.getCargo() == 0) ? "Não Especificado" : banco.consultaCargo(funcionario.getCargo());
+        //String cargo = (funcionario.getCargo() == null || funcionario.getCargo() == 0) ? "Não Especificado" : banco.consultaCargo(funcionario.getCargo());
 
         Boolean flag = banco.salvarAlteracoes(funcionario);
         if (flag == true) {
@@ -441,13 +440,13 @@ public class FuncionarioBean implements Serializable {
         this.cargosList = cargosList;
     }
 
-    public List<SelectItem> getSexosList() {
+/*    public List<SelectItem> getSexosList() {
         return sexosList;
     }
 
     public void setSexosList(List<SelectItem> sexosList) {
         this.sexosList = sexosList;
-    }
+    }*/
 
     public Boolean getSucetivelAFeriado() {
         return sucetivelAFeriado;

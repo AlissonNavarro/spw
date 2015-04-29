@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package RelatorioMensal;
 
 import Metodos.Metodos;
@@ -24,10 +20,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import net.sf.jasperreports.engine.JRException;
 
-/**
- *
- * @author Alexandre
- */
 public class RelatorioMensalBean implements Serializable {
 
     private String departamentoSelecionado;
