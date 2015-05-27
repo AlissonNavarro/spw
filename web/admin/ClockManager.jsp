@@ -121,8 +121,10 @@
                                         </f:facet>
                                         <h:form id="formAFD">
                                             <center>
+                                            
+                                                <h:outputLabel id="resultadoMsg"  style="font-size: 16px;background-color: #aaffaa;" value="#{clockManagerBean.resultadoUpload}"/>
+                                            <br>
                                             <%--
-                                            <h:outputLabel value="Data mínima das marcações"/>
                                             <rich:calendar inputSize="8" locale="pt/BR" value="#{clockManagerBean.dataLimite}" />
                                             --%>
                                             <rich:fileUpload fileUploadListener="#{clockManagerBean.abreAFD}" 
@@ -131,12 +133,14 @@
                                                              cancelEntryControlLabel="Cancelar"
                                                              clearAllControlLabel="Limpar"
                                                              addControlLabel="Adicionar">
-                                               <a4j:support event="onclear" reRender="upload,formAFD"/>
+                                                <a4j:support event="onclear" action="#{clockManagerBean.resetResultadoUpload()}" reRender="upload,formAFD,f_messagens,resultadoMsg"/>
+                                                <a4j:support event="onuploadcomplete" reRender="resultadoMsg"/>
                                             </rich:fileUpload>
                                             
                                             <h:outputText style="font-color:red; font-size:9px" value="OBS: Anexar o arquivo .txt gerado pelo relógio na porta USB fiscal"/>
                                             <br>
                                             <h:outputText style="font-color:red; font-size:9px" value="Exemplo: AFD00022000760001483.txt"/>
+                                                     
                                             </center>
                                             <%--
                                             <h:panelGrid columns="5">

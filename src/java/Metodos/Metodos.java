@@ -50,7 +50,7 @@ public class Metodos {
     static Document doc = null;
     static String driver = "jdbc:jtds:sqlserver://";
     static boolean servidorAtivo = false;
-    private static String version = "1.9.2";
+    private static String version = "1.9.3";
     private static String urlCompleta = "";
     
     public static void carregarUrlCompleta() {

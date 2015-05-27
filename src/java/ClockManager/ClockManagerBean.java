@@ -37,6 +37,7 @@ public class ClockManagerBean implements Serializable {
 
     
     private MachineBanco banco;
+    private String resultadoUpload;
     //Variaveis do Bean
     private String abaCorrente;
     //Tabela de relógios
@@ -387,22 +388,25 @@ public class ClockManagerBean implements Serializable {
                 }                         
                 qtdLines++;
             }
-            System.out.println("Resultado");
+            /*System.out.println("Resultado");
             System.out.println("tipo 1: " + qtdLog1);
             System.out.println("tipo 3: " + qtdLog3);
             System.out.println("tipo 5: " + qtdLog5);
             System.out.println("outros: " + qtdLogOutros);
             System.out.println("Total : " + (qtdLog1 + qtdLog3 + qtdLog5 + qtdLogOutros));
-            System.out.println("linhas: " + qtdLines);
+            System.out.println("linhas: " + qtdLines);*/
+            resultadoUpload = "Finalizado! Foram processadas: " + qtdLines + " linhas, sendo destas " + qtdLog3 + " marcações";
             if (lastNSR != 0 && repid != 0) {
                 banco.updateLastNSR(repid, lastNSR);
             }
             //System.out.println("Documento possui: " + qtdLines + " linhas, " + qtdLog3 + " do tipo Log3");
-            FacesMessage msgErro = new FacesMessage("Finalizado! Foram processadas: " + qtdLines + " linhas, sendo destas " + qtdLog3 + " marcações");
-            FacesContext.getCurrentInstance().addMessage(null, msgErro);
+            /*FacesMessage msgErro = new FacesMessage("Finalizado! Foram processadas: " + qtdLines + " linhas, sendo destas " + qtdLog3 + " marcações");
+            FacesContext.getCurrentInstance().addMessage(null, msgErro);*/
+            
             bf.close();
         } catch (Exception e) {
-            System.out.println("erro: " + e.getMessage());
+            //System.out.println("erro: " + e.getMessage());
+            resultadoUpload = e.getMessage();
         } finally {
             banco.Desonectar();
         }
@@ -749,4 +753,17 @@ public class ClockManagerBean implements Serializable {
     public void setPage(int page) {
         this.page = page;
     }
+
+    public String getResultadoUpload() {
+        return resultadoUpload;
+    }
+
+    public void setResultadoUpload(String resultadoUpload) {
+        this.resultadoUpload = resultadoUpload;
+    }
+    
+    public void resetResultadoUpload() {
+        resultadoUpload = "";
+    }
+    
 }
