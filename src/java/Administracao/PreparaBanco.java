@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Administracao;
 
 import Metodos.Metodos;
@@ -12,10 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- *
- * @author ppccardoso
- */
 public class PreparaBanco {
 
     Connection c;
@@ -38,67 +30,21 @@ public class PreparaBanco {
             System.out.println("Administracao: Conectar: " + cnfe);
         }
     }
-    
-    public Boolean prepareVerba() {
-        Boolean ok = false;
+
+    public boolean prepareVerba() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
-            //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
-            String sql = "if not exists (select * from sys.objects where object_id = OBJECT_ID(N'[dbo].[Verba]') and type=(N'U')) "
-               +" begin CREATE TABLE [dbo].[Verba]( [empresa] [int] NOT NULL, [adicionalNoturno] [int] NOT NULL, [atrasos] [int] NOT NULL, [atrasosMenorHora] [int] NOT NULL, "
-               +" [atrasosMaiorHora] [int] NOT NULL, [FeriadoCritico] [int] NOT NULL, [DSR] [int] NOT NULL, [Faltas] [int] NOT NULL "
-               +" ) ON [PRIMARY] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_Empresa]  DEFAULT ((0)) FOR [empresa] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_adicionalNoturno]  DEFAULT ((0)) FOR [adicionalNoturno] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_atrasos]  DEFAULT ((0)) FOR [atrasos] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_atrasosMenorHora]  DEFAULT ((0)) FOR [atrasosMenorHora] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_atrasosMaiorHora]  DEFAULT ((0)) FOR [atrasosMaiorHora] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_FeriadoCritico]  DEFAULT ((0)) FOR [FeriadoCritico] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_DSR]  DEFAULT ((0)) FOR [DSR] "
-                +" ALTER TABLE [dbo].[Verba] ADD  CONSTRAINT [DF_Verba_Faltas]  DEFAULT ((0)) FOR [Faltas] "
-                +" end else "
-                    + "begin"
-                    + "	if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Empresa') "
-                    + "     alter table dbo.VERBA add Empresa int not null default ((0))"
-                    + " if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Empresa' and (xtype <> TYPE_ID('int') or isnullable<>0)) "
-                    + "     alter table dbo.Verba alter column Empresa int not null"
-                    + "	if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AdicionalNoturno')"
-                    + "     alter table dbo.VERBA add AdicionalNoturno int not null default ((0))"
-                    + "	if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AdicionalNoturno' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column AdicionalNorturno int not null"
-                    + "	if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Atrasos')"
-                    + "     alter table dbo.VERBA add Atrasos int not null default ((0)) "
-                    + " if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Atrasos' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column Atrasos int not null	"
-                    + "	if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AtrasosMenorHora')"
-                    + "     alter table dbo.VERBA add AtrasosMenorHora int not null default ((0))"
-                    + "	if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AtrasosMenorHora' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column AtrasosMenorHora int not null"
-                    + "	if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AtrasosMaiorHora')"
-                    + "     alter table dbo.VERBA add AtrasosMaiorHora int not null default ((0)) "
-                    + " if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'AtrasosMaiorHora' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column AtrasosMaiorHora int not null "
-                    + " if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'FeriadoCritico') "
-                    + "     alter table dbo.VERBA add FeriadoCritico int not null default ((0)) "
-                    + "	if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'FeriadoCritico' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column FeriadoCritico int not null"
-                    + " if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'DSR')"
-                    + "     alter table dbo.VERBA add DSR int not null default ((0))"
-                    + " if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'DSR' and (xtype <> TYPE_ID('int') or isnullable<>0) )"
-                    + "     alter table dbo.Verba alter column DSR int not null	"
-                    + " if not exists (select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Faltas') "
-		    + "     alter table dbo.VERBA add Faltas int not null default ((0)) "
-                    + " if exists(select * from syscolumns where id = OBJECT_ID(N'[dbo].[Verba]') and name = 'Faltas' and (xtype <> TYPE_ID('int') or isnullable<>0) ) "
-                    + " alter table dbo.Verba alter column Faltas int not null end ";
+            String sql = "select * from verba";
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+            if (rs.next()) {
                 fazer = false;
             }
             if (fazer) {
@@ -121,11 +67,11 @@ public class PreparaBanco {
             System.out.println("Erro: " + e);
         } finally {
             try {
-                if (c != null) {
-                    c.close();
-                }
                 if (pstmt != null) {
                     pstmt.close();
+                }
+                if (c != null) {
+                    c.close();
                 }
             } catch (Exception e) {
                 System.out.println("Erro: " + e.getMessage());
@@ -133,16 +79,16 @@ public class PreparaBanco {
         }
         return ok;
     }
-    
-    public Boolean prepareTipoHoraExtra() {
-        Boolean ok = false;
+
+    public boolean prepareTipoHoraExtra() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from tipo_horaextra";
@@ -155,7 +101,7 @@ public class PreparaBanco {
                 //Insere os tipo Hora Extra
                 String sqlTipoHoraExtra = "INSERT INTO tipo_horaextra (cod_regime, nome, padrao, valor ) VALUES (?,?,?,?)";
                 pstmt = c.prepareStatement(sqlTipoHoraExtra);
-                
+
                 pstmt.setInt(1, 1);
                 pstmt.setString(2, "H E 100%");
                 pstmt.setBoolean(3, true);
@@ -165,7 +111,7 @@ public class PreparaBanco {
                 pstmt.setInt(1, 1);
                 pstmt.setString(2, "H E 50%");
                 pstmt.setBoolean(3, false);
-                pstmt.setFloat(4, Float.parseFloat("0.5") );
+                pstmt.setFloat(4, Float.parseFloat("0.5"));
                 pstmt.executeUpdate();
 
                 pstmt.setInt(1, 2);
@@ -177,20 +123,20 @@ public class PreparaBanco {
                 pstmt.setInt(1, 2);
                 pstmt.setString(2, "H. E. 50%");
                 pstmt.setBoolean(3, true);
-                pstmt.setFloat(4, Float.parseFloat("0.5") );
+                pstmt.setFloat(4, Float.parseFloat("0.5"));
                 pstmt.executeUpdate();
-                
+
                 ok = true;
             }
         } catch (Exception e) {
             System.out.println("Erro: " + e);
         } finally {
             try {
-                if (c != null) {
-                    c.close();
-                }
                 if (pstmt != null) {
                     pstmt.close();
+                }
+                if (c != null) {
+                    c.close();
                 }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
@@ -198,16 +144,16 @@ public class PreparaBanco {
         }
         return ok;
     }
-    
-    public Boolean prepareRegime() {
-        Boolean ok = false;
+
+    public boolean prepareRegime() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from regime_horaextra";
@@ -218,22 +164,22 @@ public class PreparaBanco {
             }
             if (fazer) {
                 //Insere os regimes
-                String sqlCargo = "INSERT INTO regime_horaextra (nome, feriadoCritico, modoTolerancia, tolerancia) VALUES (?,?,?)";
+                String sqlCargo = "INSERT INTO regime_horaextra (nome, feriadoCritico, modoTolerancia, tolerancia) VALUES (?,?,?,?)";
                 pstmt = c.prepareStatement(sqlCargo);
                 pstmt.setString(1, "CELETISTA");
                 pstmt.setBoolean(2, true);
                 pstmt.setInt(3, 1);
                 pstmt.setInt(4, 10);
                 pstmt.executeUpdate();
-                
-                sqlCargo = "INSERT INTO regime_horaextra (nome, feriadoCritico, modoTolerancia, tolerancia) VALUES (?,?,?)";
+
+                sqlCargo = "INSERT INTO regime_horaextra (nome, feriadoCritico, modoTolerancia, tolerancia) VALUES (?,?,?,?)";
                 pstmt = c.prepareStatement(sqlCargo);
                 pstmt.setString(1, "ESTATUTARIO");
                 pstmt.setBoolean(2, true);
                 pstmt.setInt(3, 2);
                 pstmt.setInt(4, 9);
                 pstmt.executeUpdate();
-                
+
                 ok = true;
             }
         } catch (Exception e) {
@@ -253,8 +199,8 @@ public class PreparaBanco {
         return ok;
     }
 
-    public Boolean preparePerfil() {
-        Boolean ok = false;
+    public boolean preparePerfil() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
 
@@ -262,28 +208,75 @@ public class PreparaBanco {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from perfil";
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+            if (rs.next()) {
                 fazer = false;
             }
             if (fazer) {
                 //Insere o primeiro Perfil
-                String sqlPerfil = "INSERT INTO perfil (nome_perfil, cadastrosEConfiguracoes, permissoes, funcionarios, deptos, "
-                        + " cargos, feriados, justificativas, tituloDoRelatorio, horaExtraEGratificacoes, consInd, freqnComEscala, "
-                        + " freqnSemEscala, horaExtra, horCronoJorn, horarios, cronogramas, jornadas, relatorios, relatorioMensComEscala, "
-                        + " relatorioMensSemEscala, relatorioDeResumoDeEscalas, relatorioDeResumoDeFrequencias, listaDePresenca, abonos, "
-                        + " solicitacao, diasEmAberto, abonoRapido, historicoAbono, abonosEmMassa, exclusaoAbono, rankingAbono, "
-                        + " afdt, acjef, espelhoDePonto, bancoDeDados, logs, relatorioConfiguracao, categoriaAfastamento, afastamento, "
-                        + " empresas, verbas, cadastroDeFuncionarios, showResumo, relatorioCatracas, pesquisarData) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                String sqlPerfil = "INSERT INTO perfil (nome_perfil "
+                        + " , cadastrosEConfiguracoes "
+                        + " , permissoes "
+                        + " , funcionarios "
+                        + " , deptos "
+                        + " , cargos "
+                        + " , feriados "
+                        + " , justificativas "
+                        + " , tituloDoRelatorio "
+                        + " , horaExtraEGratificacoes "
+                        + " , consInd "
+                        + " , freqnComEscala "
+                        + " , freqnSemEscala "
+                        + " , horaExtra "
+                        + " , horCronoJorn "
+                        + " , horarios "
+                        + " , cronogramas "
+                        + " , jornadas "
+                        + " , relatorios "
+                        + " , relatorioMensComEscala "
+                        + " , relatorioMensSemEscala "
+                        + " , relatorioDeResumoDeEscalas "
+                        + " , relatorioDeResumoDeFrequencias "
+                        + " , listaDePresenca "
+                        + " , abonos "
+                        + " , solicitacao "
+                        + " , diasEmAberto "
+                        + " , abonoRapido "
+                        + " , historicoAbono "
+                        + " , abonosEmMassa "
+                        + " , exclusaoAbono "
+                        + " , rankingAbono "
+                        + " , afdt "
+                        + " , acjef "
+                        + " , espelhoDePonto "
+                        + " , bancoDeDados "
+                        + " , logs "
+                        + " , relatorioConfiguracao "
+                        + " , categoriaAfastamento "
+                        + " , afastamento "
+                        + " , empresas "
+                        + " , verbas "
+                        + " , manutencao "
+                        + " , showResumo "
+                        + " , relatorioCatracas "
+                        + " , pesquisarData "
+                        + " , consultaHoraExtra "
+                        + " , consultaIrregulares "
+                        + " , presenca "
+                        + " , listaRelogios "
+                        + " , scanIps "
+                        + " , downloadAfd "
+                        + " , autenticaSerial "
+                        + " , relogioPonto ) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 pstmt = c.prepareStatement(sqlPerfil);
                 pstmt.setString(1, "AdminSPW");
-                for (int i = 2; i <= 46; i++) {
+                for (int i = 2; i <= 54; i++) {
                     pstmt.setBoolean(i, true);
                 }
                 pstmt.executeUpdate();
@@ -298,7 +291,7 @@ public class PreparaBanco {
                 }
                 if (pstmt != null) {
                     pstmt.close();
-                }                
+                }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
             }
@@ -306,15 +299,15 @@ public class PreparaBanco {
         return ok;
     }
 
-    public Boolean prepareCargo() {
-        Boolean ok = false;
+    public boolean prepareCargo() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from cargo";
@@ -340,7 +333,7 @@ public class PreparaBanco {
                 }
                 if (pstmt != null) {
                     pstmt.close();
-                }                
+                }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
             }
@@ -348,15 +341,15 @@ public class PreparaBanco {
         return ok;
     }
 
-    public Boolean prepareDepartamento() {
-        Boolean ok = false;
+    public boolean prepareDepartamento() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from DEPARTMENTS";
@@ -383,7 +376,7 @@ public class PreparaBanco {
                 }
                 if (pstmt != null) {
                     pstmt.close();
-                }                
+                }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
             }
@@ -391,15 +384,15 @@ public class PreparaBanco {
         return ok;
     }
 
-    public Boolean prepareusuario() {
-        Boolean ok = false;
+    public boolean prepareusuario() {
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from userinfo";
@@ -459,7 +452,7 @@ public class PreparaBanco {
                 }
                 if (pstmt != null) {
                     pstmt.close();
-                }                
+                }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
             }
@@ -467,16 +460,16 @@ public class PreparaBanco {
         return ok;
     }
 
-    public Boolean preparaRepTipo() {
+    public boolean preparaRepTipo() {
         System.out.println("repTIpo");
-        Boolean ok = false;
+        boolean ok = false;
         PreparedStatement pstmt = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
             //Verifica se ja foi feito
-            Boolean fazer = true;
+            boolean fazer = true;
             Statement stmt;
             ResultSet rs;
             String sql = "select * from RepTipo";
@@ -509,14 +502,13 @@ public class PreparaBanco {
                     pstmt.setBoolean(x, true);
                 }
                 pstmt.executeUpdate();
-                
+
                 pstmt.setInt(1, 3);
                 pstmt.setString(2, "Zk");
                 for (int x = 3; x <= 15; x++) {
                     pstmt.setBoolean(x, false);
                 }
                 pstmt.executeUpdate();
-
 
                 ok = true;
             }
@@ -529,7 +521,60 @@ public class PreparaBanco {
                 }
                 if (pstmt != null) {
                     pstmt.close();
-                }                
+                }
+            } catch (Exception e) {
+                System.out.println("Erro: " + e);
+            }
+        }
+        return ok;
+    }
+
+    public boolean prepareConfig() {
+        boolean ok = false;
+        PreparedStatement pstmt = null;
+        try {
+            if (c.isClosed()) {
+                Conectar();
+            }
+            //Verifica se ja foi feito
+            boolean fazer = true;
+            Statement stmt;
+            ResultSet rs;
+            String sql = "select * from config";
+            stmt = c.createStatement();
+            rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                fazer = false;
+            }
+            if (fazer) {
+                //Insere o primeiro Cargo
+                String sqlCargo = "INSERT INTO config VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                pstmt = c.prepareStatement(sqlCargo);
+                pstmt.setString(1, null);
+                pstmt.setString(2, "ol7LiUsfRxg=");
+                pstmt.setInt(3, 1);
+                pstmt.setBytes(4, null);
+                pstmt.setString(5, null);
+                pstmt.setString(6, null);
+                pstmt.setString(7, null);
+                pstmt.setString(8, "ip_sender");
+                pstmt.setString(9, "ip_digitais");
+                pstmt.setInt(10, 0);
+                pstmt.setString(11, null);
+                pstmt.setString(12, null);
+                pstmt.executeUpdate();
+                ok = true;
+            }
+        } catch (Exception e) {
+            System.out.println("Erro: " + e);
+        } finally {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
             } catch (Exception e) {
                 System.out.println("Erro: " + e);
             }

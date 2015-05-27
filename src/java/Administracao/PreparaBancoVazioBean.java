@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package Administracao;
 
 import java.io.Serializable;
@@ -9,10 +5,6 @@ import java.sql.SQLException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-/**
- *
- * @author ppccardoso
- */
 public class PreparaBancoVazioBean implements Serializable {
 
     public void preparar() throws SQLException, ClassNotFoundException {
@@ -50,12 +42,12 @@ public class PreparaBancoVazioBean implements Serializable {
         } else {
             msgErro += "Cargo; ";
         }
-        flag = banco.prepareDepartamento();
+        /*flag = banco.prepareDepartamento();
         if (flag) {
             msg += "Departaments; ";
         } else {
             msgErro += "Departaments; ";
-        }
+        }*/
         flag = banco.prepareusuario();
         if (flag) {
             msg += "Usuário; ";
@@ -68,6 +60,13 @@ public class PreparaBancoVazioBean implements Serializable {
             msg += "RepTipo; ";
         } else {
             msgErro += "RepTipo; ";
+        }
+        
+        flag = banco.prepareConfig();
+        if (flag) {
+            msg += "Config; ";
+        } else {
+            msgErro += "Config; ";
         }
 
         FacesMessage mensagem = new FacesMessage("Banco preparado para uso! " + msg + " " + msgErro);

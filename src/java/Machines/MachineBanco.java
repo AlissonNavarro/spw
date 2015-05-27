@@ -343,7 +343,7 @@ public class MachineBanco implements Serializable {
                 }
             }
 
-            String sql = "select userid from USERINFO where pis = '" + userPis + "'";
+            String sql = "select userid from USERINFO where pis like '%" + userPis + "'";
 
             stmt = c.createStatement();
             rs = stmt.executeQuery(sql);
@@ -373,34 +373,35 @@ public class MachineBanco implements Serializable {
             }
         } catch (Exception e) {
             //System.out.println("Erro:" + e);
+            //System.out.println(userPis + " " + dateStr);
+            // System.out.println();
         } finally {
             try {
-                if (c != null) {
+                if (pstmt != null) {
                     pstmt.close();
-                    c.close();
                 }
             } catch (Exception e) {
             }
         }
     }
-    
+
     public void criaDepartments() {
         PreparedStatement pstmt = null;
         Statement stmt = null;
-        ResultSet rs = null;        
+        ResultSet rs = null;
         try {
             if (c.isClosed()) {
                 Conectar();
             }
 
-            String sql = "select deptid from departments where deptname = 'Coletado via AFD'" ;
-                stmt = c.createStatement();
-                rs = stmt.executeQuery(sql);
-                if (!rs.next()) {
-                    sql = "insert into departments (deptname, supdeptid) values ('Coletado via AFD', 1)";
-                    pstmt = c.prepareStatement(sql);
-                    pstmt.executeUpdate();
-                }
+            String sql = "select deptid from departments where deptname = 'Coletado via AFD'";
+            stmt = c.createStatement();
+            rs = stmt.executeQuery(sql);
+            if (!rs.next()) {
+                sql = "insert into departments (deptname, supdeptid) values ('Coletado via AFD', 1)";
+                pstmt = c.prepareStatement(sql);
+                pstmt.executeUpdate();
+            }
         } catch (Exception e) {
             System.out.println("Erro:" + e);
         } finally {
@@ -412,7 +413,7 @@ public class MachineBanco implements Serializable {
             } catch (Exception e) {
             }
         }
-        
+
     }
 
     public void cadastraUserRepToBanco(String status, String pis, String nome, int rep) {
@@ -433,7 +434,7 @@ public class MachineBanco implements Serializable {
             String sql = "";
 
             if (status.toUpperCase().equals("I")) {
-                sql = "select userid from USERINFO where pis = '" + pis + "'";
+                sql = "select userid from USERINFO where pis like '%" + pis + "'";
                 stmt = c.createStatement();
                 //System.out.print(pis+"       "+ nome);
                 rs = stmt.executeQuery(sql);
@@ -453,12 +454,20 @@ public class MachineBanco implements Serializable {
             System.out.println("Erro:" + e);
         } finally {
             try {
-                if (c != null) {
+                if (pstmt != null) {
                     pstmt.close();
-                    c.close();
                 }
             } catch (Exception e) {
             }
+        }
+    }
+
+    public void Desonectar() {
+        try {
+            if (c != null) {
+                c.close();
+            }
+        } catch (Exception e) {
         }
     }
 

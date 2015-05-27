@@ -127,12 +127,13 @@
                                             --%>
                                             <rich:fileUpload fileUploadListener="#{clockManagerBean.abreAFD}" 
                                                              id="upload" acceptedTypes="txt" maxFilesQuantity="1"
-                                                             listHeight="60" listWidth="250" 
+                                                             listHeight="80" listWidth="550" 
                                                              cancelEntryControlLabel="Cancelar"
                                                              clearAllControlLabel="Limpar"
                                                              addControlLabel="Adicionar">
-                                                <a4j:support event="onuploadcomplete" reRender="formAFD"/>
+                                               <a4j:support event="onclear" reRender="upload,formAFD"/>
                                             </rich:fileUpload>
+                                            
                                             <h:outputText style="font-color:red; font-size:9px" value="OBS: Anexar o arquivo .txt gerado pelo relógio na porta USB fiscal"/>
                                             <br>
                                             <h:outputText style="font-color:red; font-size:9px" value="Exemplo: AFD00022000760001483.txt"/>

@@ -35,6 +35,8 @@ import org.richfaces.model.UploadItem;
  */
 public class ClockManagerBean implements Serializable {
 
+    
+    private MachineBanco banco;
     //Variaveis do Bean
     private String abaCorrente;
     //Tabela de relógios
@@ -354,36 +356,44 @@ public class ClockManagerBean implements Serializable {
             BufferedReader bf = new BufferedReader(fr);
             String rep = "";
 
-            MachineBanco banco = new MachineBanco();
+            banco = new MachineBanco();
             int repid = 0;
 
             String linha;
             int qtdLines = 0;
+            int qtdLog1 = 0;
             int qtdLog3 = 0;
+            int qtdLog5 = 0;
+            int qtdLogOutros = 0;
             int lastNSR = 0;
+            String tipoRegistro = "";
             banco.criaDepartments();
             while ((linha = bf.readLine()) != null) {
-                if (Character.toString(linha.charAt(9)).equals("1")) {
+                tipoRegistro = Character.toString(linha.charAt(9));
+                if (tipoRegistro.equals("1")) {
                     rep = linha.substring(187, 204);
                     repid = banco.consultaRelogioIdByNFR(rep);
-                }
-                // if (repid != 0) {
-                if (Character.toString(linha.charAt(9)).equals("3")) {
+                    qtdLog1++;
+                } else
+                if (tipoRegistro.equals("3")) {
                     lastNSR = saveLog3(repid, linha);
                     qtdLog3++;
-                }
-                if (Character.toString(linha.charAt(9)).equals("5")) {
+                } else
+                if (tipoRegistro.equals("5")) {
                     lastNSR = saveLog5(repid, linha);
-                    qtdLog3++;
-                }                
-                
+                    qtdLog5++;
+                } else {
+                    qtdLogOutros++;
+                }                         
                 qtdLines++;
-                    //banco.updateLastNSR(repid, lastNSR);
-                /*} else {
-                 FacesMessage msgErro = new FacesMessage("REP do AFD não está cadastrado no sistema de ponto!");
-                 FacesContext.getCurrentInstance().addMessage(null, msgErro);
-                 }*/
             }
+            System.out.println("Resultado");
+            System.out.println("tipo 1: " + qtdLog1);
+            System.out.println("tipo 3: " + qtdLog3);
+            System.out.println("tipo 5: " + qtdLog5);
+            System.out.println("outros: " + qtdLogOutros);
+            System.out.println("Total : " + (qtdLog1 + qtdLog3 + qtdLog5 + qtdLogOutros));
+            System.out.println("linhas: " + qtdLines);
             if (lastNSR != 0 && repid != 0) {
                 banco.updateLastNSR(repid, lastNSR);
             }
@@ -393,6 +403,8 @@ public class ClockManagerBean implements Serializable {
             bf.close();
         } catch (Exception e) {
             System.out.println("erro: " + e.getMessage());
+        } finally {
+            banco.Desonectar();
         }
     }
 
@@ -414,7 +426,6 @@ public class ClockManagerBean implements Serializable {
         //System.out.println("data: "+dateStr);
         Timestamp time = Timestamp.valueOf(dateStr);
         if (dataLimite == null || time.after(dataLimite)) {
-            MachineBanco banco = new MachineBanco();
             banco.cadastraCheckInOut(pis, time, rep);
         }
         return Integer.valueOf(NSR);
@@ -437,7 +448,6 @@ public class ClockManagerBean implements Serializable {
         //System.out.println("data: "+dateStr);
         //Timestamp time = Timestamp.valueOf(dateStr);
         //if (dataLimite == null || time.after(dataLimite)) {
-            MachineBanco banco = new MachineBanco();
             banco.cadastraUserRepToBanco(status, pis, nome, rep);
         //}
         return Integer.valueOf(NSR);

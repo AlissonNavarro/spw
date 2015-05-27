@@ -20,8 +20,8 @@ public class Banco {
         con = new AcessoBD();
     }
 
-    public Integer cadastrarNovoFuncionario(Funcionario func) {
-        Integer flag = 0;
+    public int cadastrarNovoFuncionario(Funcionario func) {
+        int flag = 0;
         try {
             int nextId = 0;
             ResultSet rs;
@@ -90,8 +90,8 @@ public class Banco {
         return flag;
     }
 
-    public Integer cadastrarNovoFuncionarioItdentity(Funcionario func) {
-        Integer flag = 0;
+    public int cadastrarNovoFuncionarioItdentity(Funcionario func) {
+        int flag = 0;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             String nasc = func.getDataNascimento() == null ? null : sdf.format(func.getDataNascimento());
@@ -231,7 +231,7 @@ public class Banco {
                 Integer cod_regime = rs.getInt("cod_regime");
                 Integer mat_emcs = rs.getInt("mat_emcs");
                 Integer feriado = rs.getInt("holiday");
-                Boolean sucetivelAFeriado = (feriado == 1) ? true : false;
+                Boolean sucetivelAFeriado = (feriado == 1);
                 String ADUsername = rs.getString("adusername");
                 Boolean livreAcesso = rs.getBoolean("livreAcesso");
                 func = new Funcionario(funcionarioId, matricula, cpf, PIS, nome, sexo, cargo,
@@ -249,8 +249,8 @@ public class Banco {
         return func;
     }
 
-    public Boolean salvarAlteracoes(Funcionario funcionario) {
-        Boolean flag = true;
+    public boolean salvarAlteracoes(Funcionario funcionario) {
+        boolean flag = true;
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String nasc = funcionario.getDataNascimento() == null ? null : sdf.format(funcionario.getDataNascimento());
@@ -298,8 +298,8 @@ public class Banco {
         return flag;
     }
 
-    public Integer salvarTransferencia(Integer departamentoDestino, Integer cod_funcionario) {
-        Integer flag = 0;
+    public int salvarTransferencia(Integer departamentoDestino, Integer cod_funcionario) {
+        int flag = 0;
         String query = "update USERINFO set DEFAULTDEPTID=? "
                 + " where userid=? ";
         flag = departamentoDestino == 0 ? 0 : 1;
