@@ -74,8 +74,8 @@ public class Banco implements Serializable {
                         + " sa.userid = u.userid" + " and"
                         + " sa.Status = 'Pendente' and"
                         + " u.permissao != " + usuario.getPermissao() + " and "
-                        + " sa.data between '" + inicioString + "' and '" + fimString
-                        + "' order by inclusao";
+                        + " sa.data between '" + inicioString + "' and '" + fimString + "' "
+                        + " order by inclusao";
                 rs = con.executeQuery(sql);
 
                 while (rs.next()) {
@@ -305,8 +305,8 @@ public class Banco implements Serializable {
 
         List<SelectItem> justificativaList = new ArrayList<SelectItem>();
         try {
-            String query = "select l.leaveid,l.leavename from LEAVECLASS l"
-                    + " where administrador = 0 and descricaoObrigatoria = 0";
+            String query = "select l.leaveid,l.leavename from LEAVECLASS l";
+            //+ " where administrador = 0";// and descricaoObrigatoria = 0";
 
             ResultSet rs = con.executeQuery(query);
             justificativaList.add(new SelectItem(-1, "Selecione a Justificativa"));
@@ -868,6 +868,39 @@ public class Banco implements Serializable {
                 String dataFimSrt = sdf.format(dataFim.getTime() + 86399999);
                 con.pstmt.setString(1, dataInicioSrt);
                 con.pstmt.setString(2, dataFimSrt);
+
+                rs = con.executeQuery();
+
+                while (rs.next()) {
+                    String funcionario = rs.getString("name");
+                    Integer departamento = rs.getInt("defaultdeptid");
+                    Timestamp checktime = rs.getTimestamp("checktime");
+                    String categoriaJustificativa = rs.getString("leavename");
+                    String justificativa = rs.getString("yuanying");
+                    Timestamp diaAbono = rs.getTimestamp("date");
+                    String responsavel = rs.getString("responsavel");
+                    String solicitacao = rs.getString("descricao");
+                    Integer cod_registro_abono = rs.getInt("cod_registro_abono");
+                    Integer cod_solicitacao = rs.getInt("codigo");
+                    String status = rs.getString("status");
+
+                    HistoricoAbono historicoAbono = new HistoricoAbono();
+                    historicoAbono.setCod_registro_abono(cod_registro_abono);
+                    historicoAbono.setCod_solicitacao(cod_solicitacao);
+                    historicoAbono.setFuncionario(funcionario);
+                    historicoAbono.setAbono(sdf.format(checktime));
+                    historicoAbono.setCategoriaJustificativa(categoriaJustificativa);
+                    historicoAbono.setJustificativa(justificativa);
+                    historicoAbono.setDiaAbono(diaAbono);
+                    historicoAbono.setResponsavel(responsavel);
+                    historicoAbono.setSolicitacao(solicitacao);
+                    historicoAbono.setStatus(status);
+                    // if (cod_funcionario.equals(-1)) {
+                    if (deptIDList.contains(departamento)) {
+                        historicoAbonoList.add(historicoAbono);
+                    }
+                }
+                rs.close();
 
             } else {
 

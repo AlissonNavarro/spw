@@ -903,7 +903,7 @@
                                             <h:outputText value="SELECIONE"  />
                                         </f:facet>
                                         <h:selectBooleanCheckbox value="#{linha.marked}"/>
-                                    </rich:column>--%>
+                                    </rich:column>
                                 </rich:extendedDataTable>
                                 <rich:datascroller  id="datascrollersT"
                                                     for="historicoT"
